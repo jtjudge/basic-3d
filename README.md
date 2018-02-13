@@ -15,6 +15,6 @@ The project is an elementary 3D modeling application titled “Basic3D.” The a
  Will Tinguely | willt@iastate.edu | @willt
  Akaash Suresh | agsuresh@iastate.edu | @agsuresh
  
- ### Links
+### Links
  * Trello: https://trello.com/b/qzJdoVNa
  * Slack: https://coms319.slack.com
