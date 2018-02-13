@@ -1,0 +1,8 @@
+1. Clone the repo ("git clone https://git.linux.iastate.edu/319Spring18/A3")
+2. Create a branch ("git checkout -b your_name-0")
+3. Create a new directory with the path "A3/experiments/your_git_username"
+4. Put a .txt file or something in there and commit
+5. Push to the repo ("git push origin your_name-0")
+6. In GitLab, create a merge request
+7. Assign me or someone else to confirm it
+8. Set the branch to delete itself after the merge
