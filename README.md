@@ -16,5 +16,5 @@ The project is an elementary 3D modeling application titled “Basic3D.” The a
  Akaash Suresh | agsuresh@iastate.edu | @agsuresh
  
  ### Links
- Trello: https://trello.com/b/qzJdoVNa
- Slack: https://coms319.slack.com
+ * Trello: https://trello.com/b/qzJdoVNa
+ * Slack: https://coms319.slack.com
