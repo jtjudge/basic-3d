@@ -4,6 +4,9 @@ const path = require("path");
 
 const { app, BrowserWindow } = electron;
 
+// Set environment
+process.env.NODE_ENV = "production";
+
 let mainWindow;
 
 app.on("ready", function() {
