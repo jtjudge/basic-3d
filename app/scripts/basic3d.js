@@ -89,4 +89,10 @@ function main() {
 
 	// Schedule the first frame.
 	requestAnimationFrame(update);
+	
+	// Set up key listener
+	window.onkeypress = function(event) {
+		cameraControl(camera, 
+			String.fromCharCode(event.keyCode));
+	};
 }
