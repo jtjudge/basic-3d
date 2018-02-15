@@ -1,0 +1,14 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Basic3D Modeling Software\u001b[D\u001b[D\u001b[\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[C\u001b[C\u001b[C\u001b[D\u001b[D\u001b[D\u001b[D[A3] Basic3D app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Thomas Judge",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^1.8.2"
+  }
+}
