@@ -28,6 +28,13 @@ function main() {
 
 	const scene = new THREE.Scene();
 
+	// Set initial camera position
+	camera.position.x = 150;
+	camera.position.y = 100;
+	camera.position.z = 150;
+	
+	camera.lookAt(new THREE.Vector3(0, 0, 0));
+	
 	// Add the camera to the scene.
 	scene.add(camera);
 
@@ -38,34 +45,15 @@ function main() {
 	// DOM element.
 	container.appendChild(renderer.domElement);
 	
-	// Set up the sphere vars
-	const RADIUS = 50;
-	const SEGMENTS = 16;
-	const RINGS = 16;
-	
-	// create the sphere's material
-	const sphereMaterial = new THREE.MeshLambertMaterial({
-			color: 0xCC0000
-    });
-	
-	// Create a new mesh with
-	// sphere geometry - we will cover
-	// the sphereMaterial next!
-	const sphere = new THREE.Mesh(
+	// Create Grid vars
+	const GRID_SIZE = 100;
+	const GRID_DIVISIONS = 10;
 
-	  new THREE.SphereGeometry(
-		RADIUS,
-		SEGMENTS,
-		RINGS),
+	// Create Grid
+	const grid = new THREE.GridHelper(GRID_SIZE, GRID_DIVISIONS);
 
-	  sphereMaterial);
-
-	// Move the Sphere back in Z so we
-	// can see it.
-	sphere.position.z = -300;
-
-	// Finally, add the sphere to the scene.
-	scene.add(sphere);
+	// Add Grid to Scene
+	scene.add(grid);
 	
 	// create a point light
 	const pointLight =
