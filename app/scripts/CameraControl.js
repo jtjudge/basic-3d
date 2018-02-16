@@ -1,29 +1,98 @@
+function addControls(c) {
+	var camera = c;
+	var input = [];
+
+	function reset() {
+		camera.position.x = 150;
+		camera.position.y = 100;
+		camera.position.z = 150;
+		camera.lookAt(new THREE.Vector3(0, 0, 0));
+	}
+	
+	reset();
+	
+	return {
+		keyDown: function(event) {
+			input[event.code] = true;
+		},
+		keyUp: function(event) {
+			input[event.code] = false;
+		},
+		mouseDown: function(event) {
+			switch(event.which) {
+			case 1:
+				input["LMB"] = true;
+				break;
+			case 2:
+				input["MMB"] = true;
+				break;
+			case 3:
+				input["RMB"] = true;
+				break;
+			default:
+				break;
+			}
+		},
+		mouseUp: function(event) {
+			switch(event.which) {
+			case 1:
+				input["LMB"] = false;
+				break;
+			case 2:
+				input["MMB"] = false;
+				break;
+			case 3:
+				input["RMB"] = false;
+				break;
+			default:
+				break;
+			}
+		},
+		mouseMove: function(event) {
+			if(input["RMB"]) {
+				// Right-click pans the camera
+				console.log("PAN");
+			}
+			if(input["MMB"]) {
+				// Middle-click orbits the camera
+				console.log("ORBIT");
+			}
+		},
+		update: function() {
+			var speed = (input["ShiftLeft"] || input["ShiftRight"]) ? 6 : 2;
+			if(input["KeyW"]) {
+				c.translateZ(-speed);
+			}
+			if(input["KeyA"]) {
+				c.translateX(-speed);
+			}
+			if(input["KeyS"]) {
+				c.translateZ(speed);
+			}
+			if(input["KeyD"]) {
+				c.translateX(speed);
+			}
+			if(input["KeyQ"]) {
+				c.translateY(speed);
+			}
+			if(input["KeyZ"]) {
+				c.translateY(-speed);
+			}
+			if(input["KeyO"]) {
+				reset();
+			}
+		}
+	};
+}
+
 function cameraControl(c, ch)
 {
   var distance = c.position.length();
   var q, q2;
-  var speed = 10;
+
   switch (ch)
   {
-  // camera controls
-  case 'w':
-    c.translateZ(-0.1 * speed);
-    return true;
-  case 'a':
-    c.translateX(-0.1 * speed);
-    return true;
-  case 's':
-    c.translateZ(0.1 * speed);
-    return true;
-  case 'd':
-    c.translateX(0.1 * speed);
-    return true;
-  case 'r':
-    c.translateY(0.1 * speed);
-    return true;
-  case 'f':
-    c.translateY(-0.1 * speed);
-    return true;
+
   case 'j':
     // need to do extrinsic rotation about world y axis, so multiply camera's quaternion
     // on left
