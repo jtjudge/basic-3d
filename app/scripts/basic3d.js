@@ -27,7 +27,16 @@ function main() {
 	document.onkeyup = controller.keyUp;
 	document.onmousedown = controller.mouseDown;
 	document.onmouseup = controller.mouseUp;
-	document.onmousemove = controller.mouseMove;
+	document.onmousemove = function(event) {
+		console.log("MOVE");
+		var rect = container.getBoundingClientRect();
+		var coords = {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top
+		};
+		console.log(coords);
+		controller.mouseMove(coords);
+	};
 	
 	// Create grid
 	const grid = new THREE.GridHelper(100, 10);
