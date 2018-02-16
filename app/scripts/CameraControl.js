@@ -18,6 +18,7 @@ function addControls(c) {
 			input[event.code] = false;
 		},
 		mouseDown: function(event) {
+			event.preventDefault();
 			switch(event.which) {
 			case 1:
 				input["LMB"] = true;
@@ -49,22 +50,23 @@ function addControls(c) {
 		},
 		mouseMove: function(coords) {
 			if(input["RMB"] || input["MMB"]) {
-				var angle = (input["ShiftLeft"] || input["ShiftRight"]) ? Math.PI / 60 : Math.PI / 180;
-				var vector = new THREE.Vector3(coords.x - mouseCoords.x, mouseCoords.y - coords.y, 0);
-				var axis = new THREE.Vector3(0, 0, 1).cross(vector).normalize();
-				mouseCoords = coords;
-				var q = new THREE.Quaternion().setFromAxsisAngle(axis, angle);
+				var base = (input["ShiftLeft"] || input["ShiftRight"]) ? Math.PI / 120 : Math.PI / 360;
+				var yAngle = base * (coords.x - mouseCoords.x);
+				var xAngle = base * (mouseCoords.y - coords.y);
 				if(input["RMB"]) {
 					// Right-click pans the camera
-					camera.setRotationFromQuaternion(q.multiply(camera.quaternion));
+					camera.rotateY(0.2 * yAngle);
+					camera.rotateX(0.2 * xAngle);
 				} else {
 					// Middle-click orbits the camera
 					var distance = camera.position.length();
 					camera.translateZ(-distance);
-					camera.setRotationFromQuaternion(q.multiply(c.quaternion));
+					camera.rotateY(yAngle);
+					camera.rotateX(xAngle);
 					camera.translateZ(distance);
 				}
 			}
+			mouseCoords = coords;
 		},
 		update: function() {
 			var speed = (input["ShiftLeft"] || input["ShiftRight"]) ? 6 : 2;
