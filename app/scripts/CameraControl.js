@@ -52,16 +52,16 @@ function addControls(c) {
 			if(input["RMB"] || input["MMB"]) {
 				var base = (input["ShiftLeft"] || input["ShiftRight"]) ? Math.PI / 120 : Math.PI / 360;
 				var yAngle = base * (coords.x - mouseCoords.x);
-				var xAngle = base * (mouseCoords.y - coords.y);
+				var xAngle = base * (coords.y - mouseCoords.y);
 				if(input["RMB"]) {
 					// Right-click pans the camera
-					camera.rotateY(0.2 * yAngle);
+					camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), 0.2 * yAngle);
 					camera.rotateX(0.2 * xAngle);
 				} else {
 					// Middle-click orbits the camera
 					var distance = camera.position.length();
 					camera.translateZ(-distance);
-					camera.rotateY(yAngle);
+					camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), yAngle);
 					camera.rotateX(xAngle);
 					camera.translateZ(distance);
 				}
