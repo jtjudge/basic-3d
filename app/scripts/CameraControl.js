@@ -4,9 +4,7 @@ function addControls(c) {
 	var mouseCoords = { x: 0, y: 0 };
 	
 	function reset() {
-		camera.position.x = 150;
-		camera.position.y = 100;
-		camera.position.z = 150;
+		camera.position.set(150, 100, 150);
 		camera.lookAt(new THREE.Vector3(0, 0, 0));
 	}
 	reset();

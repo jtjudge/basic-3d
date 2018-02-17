@@ -2,56 +2,67 @@ window.onload = main;
 
 function main() {
 	// Viewport size
-	const WIDTH = 800;
-	const HEIGHT = 600;
+	var WIDTH = 800;
+	var HEIGHT = 600;
 
-	// Camera attributes.
-	const VIEW_ANGLE = 45;
-	const ASPECT = WIDTH / HEIGHT;
-	const NEAR = 0.1;
-	const FAR = 10000;
+	// Camera attributes
+	var VIEW_ANGLE = 45;
+	var ASPECT = WIDTH / HEIGHT;
+	var NEAR = 0.1;
+	var FAR = 10000;
 
-	const container = document.getElementById("container");
-	const renderer = new THREE.WebGLRenderer();
-	const camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-
-	const scene = new THREE.Scene();
+	var container = document.getElementById("container");
+	
+	// Create workspace scene
+	var renderer = new THREE.WebGLRenderer();
+	var camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+	var scene = new THREE.Scene();
 	scene.add(camera);
 	renderer.setSize(WIDTH, HEIGHT);
 	container.appendChild(renderer.domElement);
 	
-	const controller = addControls(camera);
+	// Create HUD
+	var hudRenderer = new THREE.WebGLRenderer({ alpha: true });
+	var hudCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
+	var hudScene = new THREE.Scene();
+	hudScene.add(hudCamera);
+	hudRenderer.setSize(WIDTH / 8, WIDTH / 8);
+	hudRenderer.domElement.style.position = "absolute";
+	hudRenderer.domElement.style.bottom = "0";
+	hudRenderer.domElement.style.left = "0";
+	container.style.position = "relative";
+	container.appendChild(hudRenderer.domElement);
+	hudCamera.position.set(0, 0, 1);
+	hudCamera.lookAt(new THREE.Vector3(0, 0, 0));
 	
-	// Set up input listeners
+	// Initialize camera controls
+	var controller = addControls(camera);
 	document.onkeydown = controller.keyDown;
 	document.onkeyup = controller.keyUp;
 	document.onmousedown = controller.mouseDown;
 	document.onmouseup = controller.mouseUp;
 	document.onmousemove = function(event) {
-		console.log("MOVE");
 		var rect = container.getBoundingClientRect();
 		var coords = {
 			x: event.clientX - rect.left,
 			y: event.clientY - rect.top
 		};
-		console.log(coords);
 		controller.mouseMove(coords);
 	};
 	
-	// Create grid
-	const grid = new THREE.GridHelper(100, 10);
-	scene.add(grid);
+	// Create axis in HUD
+	var axis = new THREE.AxesHelper(0.35);
+	hudScene.add(axis);
 	
-	// Create point light
-	const pointLight = new THREE.PointLight(0xFFFFFF);
-	pointLight.position.x = 10;
-	pointLight.position.y = 50;
-	pointLight.position.z = 130;
-	scene.add(pointLight);
+	// Create grid in workspace
+	var grid = new THREE.GridHelper(100, 10);
+	scene.add(grid);
 	
 	function update() {
 		controller.update();
+		axis.setRotationFromMatrix(camera.matrixWorldInverse);
 		renderer.render(scene, camera);
+		hudRenderer.render(hudScene, hudCamera);
 		requestAnimationFrame(update);
 	}
 	
