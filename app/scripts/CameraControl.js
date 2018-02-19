@@ -71,16 +71,20 @@ function addControls(c) {
       }
       mouseCoords = coords;
     },
-    placePoint: function(event, scene) {
+    placePoint: function(event, rect, scene) {
       if (input["LMB"] && input["KeyV"]) {
-        var vector = new THREE.Vector3();
-        vector.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-        vector.unproject(camera);
-        var dir = vector.sub(camera.position).normalize();
-        var distance = -camera.position.z / dir.z;
-        var pos = camera.position.clone().add(dir.multiplyScalar(distance));
-        console.log("x: " + pos.x + ", y: " + pos.y);
-
+        var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        var mouse = new THREE.Vector2();
+        var raycaster = new THREE.Raycaster();
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(mouse, camera);
+        var intersection = raycaster.ray.intersectPlane(plane);
+        var dotGeometry = new THREE.Geometry();
+        dotGeometry.vertices.push(new THREE.Vector3(intersection.x, 0, intersection.z));
+        var dotMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: false});
+        var dot = new THREE.Points(dotGeometry, dotMaterial);
+        scene.add(dot);
       }
     },
     update: function() {

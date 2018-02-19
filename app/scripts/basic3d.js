@@ -39,7 +39,8 @@ function main() {
   document.onkeyup = controller.keyUp;
   document.onmousedown = function(event) {
     controller.mouseDown(event);
-    controller.placePoint(event, scene);
+    var rect = container.getBoundingClientRect();
+    controller.placePoint(event, rect, scene);
   }
   document.onmouseup = controller.mouseUp;
   document.onmousemove = function(event) {

@@ -6,7 +6,7 @@ function addPoint(c) {
     y: 0
   };
   return {
-    
+
   }
   if (input["KeyV"]) {
     var vector = new THREE.Vector3();
@@ -16,7 +16,7 @@ function addPoint(c) {
     var distance = -camera.position.z / dir.z;
     var pos = camera.position.clone().add(dir.multiplyScalar(distance));
     var dotGeometry = new THREE.Geometry();
-    dotGeometry.vertices.push(new THREE.Vector3(pos.x, pos.y, 0));
+    dotGeometry.vertices.push(new THREE.Vector3(pos.x, 0 , pos.y));
     var dotMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: false});
     var dot = new THREE.Points(dotGeometry, dotMaterial);
     scene.add(dot);
