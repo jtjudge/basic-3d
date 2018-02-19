@@ -60,14 +60,14 @@ function main() {
   document.onkeydown = controller.keyDown;
   document.onkeyup = function(event){
     controller.keyUp(event);
-    line.geometry.attributes.position.needsUpdate = true;
+    // line.geometry.attributes.position.needsUpdate = true;
   }
   document.onmousedown = function(event) {
     controller.mouseDown(event);
     var rect = container.getBoundingClientRect();
     controller.placePoint(event, rect, positions, count, scene);
-    line.geometry.setDrawRange(0, count.c);
-    line.geometry.attributes.position.needsUpdate = true;
+    // line.geometry.setDrawRange(0, count.c);
+    // line.geometry.attributes.position.needsUpdate = true;
   }
   document.onmouseup = controller.mouseUp;
   document.onmousemove = function(event) {

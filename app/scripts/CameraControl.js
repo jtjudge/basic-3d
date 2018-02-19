@@ -1,6 +1,7 @@
 function addControls(c) {
   var camera = c;
   var input = [];
+  var pointMode = false;
   var mouseCoords = {
     x: 0,
     y: 0
@@ -14,6 +15,11 @@ function addControls(c) {
   return {
     keyDown: function(event) {
       input[event.code] = true;
+      if (event.code == "KeyV" && !pointMode) {
+        pointMode = true;
+      } else {
+        pointMode = false;
+      }
     },
     keyUp: function(event) {
       input[event.code] = false;
@@ -50,7 +56,7 @@ function addControls(c) {
       }
     },
     mouseMove: function(coords) {
-      if (input["RMB"] || input["LMB"]) {
+      if (input["RMB"] || input["LMB"] && !pointMode) {
         var base = (input["ShiftLeft"] || input["ShiftRight"])
           ? Math.PI / 120
           : Math.PI / 360;
@@ -72,11 +78,11 @@ function addControls(c) {
       mouseCoords = coords;
     },
     placePoint: function(event, rect, positions, count, scene) {
-      if (input["LMB"] && input["KeyV"]) {
+      if (input["LMB"] && pointMode) {
         var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
         var mouse = new THREE.Vector2();
         var raycaster = new THREE.Raycaster();
-        mouse.x = ((event.clientX - rect.left) / rect.width ) * 2 - 1;
+        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
         var intersection = raycaster.ray.intersectPlane(plane);
