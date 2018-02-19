@@ -38,29 +38,28 @@ function main() {
   hudCamera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // Initialize camera controls
-  var geometry = new THREE.BufferGeometry();
-  var MAX_POINTS = 500;
   var controller = addControls(camera);
-  positions = new Float32Array(MAX_POINTS * 3);
+
+
+  // Initialize vertex placement
+  var MAX_POINTS = 500;
+  var geometry = new THREE.BufferGeometry();
+  var positions = new Float32Array(MAX_POINTS * 3);
   geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
   var count = {
     c: 0
   };
-
-  // material
   var material = new THREE.LineBasicMaterial({
     color: 0xff0000,
     linewidth: 2
   });
-
-  // line
   line = new THREE.Line(geometry, material);
   scene.add(line);
 
+  // Event listeners
   document.onkeydown = controller.keyDown;
   document.onkeyup = function(event){
     controller.keyUp(event);
-    controller.clearLine();
     line.geometry.attributes.position.needsUpdate = true;
   }
   document.onmousedown = function(event) {
@@ -69,8 +68,6 @@ function main() {
     controller.placePoint(event, rect, positions, count, scene);
     line.geometry.setDrawRange(0, count.c);
     line.geometry.attributes.position.needsUpdate = true;
-    //controller.updateLine(positions, count, geometry)
-    console.log(positions);
   }
   document.onmouseup = controller.mouseUp;
   document.onmousemove = function(event) {
@@ -81,6 +78,12 @@ function main() {
     };
     controller.mouseMove(coords);
   };
+  // Window resize event
+  window.addEventListener('resize', function() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth - 20, window.innerHeight - 20);
+  }, false);
 
   // Create axis in HUD
   var axis = new THREE.AxesHelper(0.35);
@@ -91,21 +94,12 @@ function main() {
   grid.name = 'grid';
   scene.add(grid);
 
-
   function update() {
     controller.update();
     axis.setRotationFromMatrix(camera.matrixWorldInverse);
     renderer.render(scene, camera);
     hudRenderer.render(hudScene, hudCamera);
     requestAnimationFrame(update);
-  }
-
-  window.addEventListener('resize', onWindowResize, false);
-
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth - 20, window.innerHeight - 20);
   }
 
   requestAnimationFrame(update);

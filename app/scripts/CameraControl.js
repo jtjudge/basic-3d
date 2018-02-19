@@ -91,11 +91,6 @@ function addControls(c) {
         count.c++;
       }
     },
-    clearLine: function(event) {
-      if(!input["KeyV"]){
-
-      }
-    },
     update: function() {
       var speed = (input["ShiftLeft"] || input["ShiftRight"])
         ? 6
