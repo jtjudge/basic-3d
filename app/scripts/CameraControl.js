@@ -50,7 +50,7 @@ function addControls(c) {
       }
     },
     mouseMove: function(coords) {
-      if (input["RMB"] || input["MMB"]) {
+      if (input["RMB"] || input["LMB"]) {
         var base = (input["ShiftLeft"] || input["ShiftRight"])
           ? Math.PI / 120
           : Math.PI / 360;
@@ -71,20 +71,29 @@ function addControls(c) {
       }
       mouseCoords = coords;
     },
-    placePoint: function(event, rect, scene) {
+    placePoint: function(event, rect, positions, count, scene) {
       if (input["LMB"] && input["KeyV"]) {
         var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
         var mouse = new THREE.Vector2();
         var raycaster = new THREE.Raycaster();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.x = ((event.clientX - rect.left) / rect.width ) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         raycaster.setFromCamera(mouse, camera);
         var intersection = raycaster.ray.intersectPlane(plane);
         var dotGeometry = new THREE.Geometry();
         dotGeometry.vertices.push(new THREE.Vector3(intersection.x, 0, intersection.z));
-        var dotMaterial = new THREE.PointsMaterial({size: 1, sizeAttenuation: false});
+        var dotMaterial = new THREE.PointsMaterial({size: 3, sizeAttenuation: false});
         var dot = new THREE.Points(dotGeometry, dotMaterial);
         scene.add(dot);
+        positions[count.c * 3 + 0] = intersection.x;
+        positions[count.c * 3 + 1] = intersection.y;
+        positions[count.c * 3 + 2] = intersection.z;
+        count.c++;
+      }
+    },
+    clearLine: function(event) {
+      if(!input["KeyV"]){
+
       }
     },
     update: function() {
