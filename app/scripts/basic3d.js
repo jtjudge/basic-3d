@@ -62,8 +62,14 @@ function main() {
   grid.name = 'grid';
   scene.add(grid);
 
+  // Keep track of the points in the scene
+  var verts = [];
+
   // Initialize vertex placement
-  initVertexPlacement(grid, camera, scene, renderer, inputHandler);
+  initVertexPlacement(grid, verts, camera, scene, renderer, inputHandler);
+
+  // Initialize vertex selection
+  initVertexSelection(grid, verts, camera, scene, renderer, inputHandler);
 
   function update() {
     inputHandler.update();
