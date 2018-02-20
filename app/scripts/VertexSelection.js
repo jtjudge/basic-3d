@@ -4,6 +4,9 @@ function initVertexSelection(grid, vertices, camera, scene, renderer, handler) {
   var selected = [];
   var vMode = false;
 
+  var SELECT_COLOR = 0xff0000;
+  var DESELECT_COLOR = 0xffffff;
+
   handler.register({
     onkeydown: function(input, coords) {
       if(input["KeyV"]) {
@@ -20,16 +23,50 @@ function initVertexSelection(grid, vertices, camera, scene, renderer, handler) {
         );
         var raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera);
-        var intersects = raycaster.intersectObjects(vertices);
-        if (intersects.length > 0) {
-          var id = intersects[0].object.id;
-          if(selected[id] === undefined) selected[id] = false;
-          selected[id] = !selected[id];
-          var color = (selected[id]) ? 0xffffff : 0xff00ff;
-          intersects[0].object.material.color.setHex(color);
+        var verts = raycaster.intersectObjects(vertices);
+        if (verts.length > 0) {
+          if(selected.length > 0) {
+            if(input["ShiftLeft"] || input["ShiftRight"]) {
+              var index = selected.findIndex(function(v) {
+                return v.id === verts[0].object.id;
+              });
+              if(index !== -1) {
+                var vert = selected.splice(index, 1)[0];
+                vert.material.color.setHex(DESELECT_COLOR);
+              } else {
+                selected.push(verts[0].object);
+                verts[0].object.material.color.setHex(SELECT_COLOR);
+              }
+            } else {
+              selected.forEach(function(obj) {
+                obj.material.color.setHex(DESELECT_COLOR);
+              });
+              selected = [];
+              selected.push(verts[0].object);
+              verts[0].object.material.color.setHex(SELECT_COLOR);
+            }
+          } else {
+            selected.push(verts[0].object);
+            verts[0].object.material.color.setHex(SELECT_COLOR);
+          }
+        } else {
+          if(!input["ShiftLeft"] && !input["ShiftRight"]) {
+            selected.forEach(function(obj) {
+              obj.material.color.setHex(DESELECT_COLOR);
+            });
+            selected = [];
+          }
         }
       }
     }
   });
+
+  var interface = {
+    getSelected: function() {
+      return selected;
+    }
+  };
+
+  return interface;
 
 }

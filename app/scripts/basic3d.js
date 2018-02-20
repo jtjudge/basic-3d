@@ -69,7 +69,7 @@ function main() {
   initVertexPlacement(grid, verts, camera, scene, renderer, inputHandler);
 
   // Initialize vertex selection
-  initVertexSelection(grid, verts, camera, scene, renderer, inputHandler);
+  var selector = initVertexSelection(grid, verts, camera, scene, renderer, inputHandler);
 
   function update() {
     inputHandler.update();
