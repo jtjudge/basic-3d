@@ -2,7 +2,10 @@
 var VertexPlacement = (function() {
   
   var initialized = false;
+  
   var MAX_VERTS = 10;
+  var MAX_DIST = 120;
+  var MAX_HEIGHT = 60;
   var SELECT_COLOR = 0x00ff00;
   var DESELECT_COLOR = 0xffffff;
   
@@ -70,11 +73,14 @@ var VertexPlacement = (function() {
             var raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
             var intersection = raycaster.ray.intersectPlane(plane);
-            if(intersection && intersection.length() < 250) {
+            if(intersection) {
               marker.obj.position.copy(intersection);
+              marker.obj.position.clampLength(0, MAX_DIST);
             }
           } else if(input.mode === "VERTEX_Y") {
             marker.obj.position.y += -0.15 * (input.coords.y2 - input.coords.y1);
+            if(marker.obj.position.y > MAX_HEIGHT) marker.obj.position.y = MAX_HEIGHT;
+            if(marker.obj.position.y < -MAX_HEIGHT) marker.obj.position.y = -MAX_HEIGHT;
           }
         }
       });
