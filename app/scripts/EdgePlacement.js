@@ -30,6 +30,11 @@ var EdgePlacement =  (function() {
   }
 
   var interface = {
-    init: function()
+    //Not sure on all the arguments we need
+    init: function(vertices, camera, scene, renderer){
+      //Testing initialization
+      if(!assertInit(false)) return;
+      initialized = true;
+    }
   }
 )
