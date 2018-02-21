@@ -2,9 +2,7 @@ window.onload = main;
 
 function main() {
 
-  // Initialize input handling
-  var inputHandler = initInputHandling();
-
+  // Canvas
   var container = document.getElementById("container");
   var WIDTH = window.innerWidth - 20;
   var HEIGHT = window.innerHeight - 20;
@@ -23,11 +21,15 @@ function main() {
   renderer.setSize(WIDTH, HEIGHT);
   container.appendChild(renderer.domElement);
 
-  // Initialize camera controls
-  var controller = initCameraControls(camera, inputHandler);
+  // Set up workspace camera
+  camera.position.set(150, 100, 150);
+  camera.lookAt(new THREE.Vector3(0, 0, 0));  
 
-  // Window resize event
-  inputHandler.register({
+  // Initialize input handling
+  InputHandling.init();
+
+  // Set window resize event listener
+  InputHandling.register({
     onresize: function() {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -35,10 +37,11 @@ function main() {
     }
   });
 
+  // Initialize camera controls
+  CameraControls.init(camera);
+
   // Create HUD scene
-  var hudRenderer = new THREE.WebGLRenderer({
-    alpha: true
-  });
+  var hudRenderer = new THREE.WebGLRenderer({ alpha: true });
   var hudCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   var hudScene = new THREE.Scene();
   hudScene.add(hudCamera);
@@ -65,14 +68,13 @@ function main() {
   // Keep track of the points in the scene
   var verts = [];
 
-  // Initialize vertex placement
-  initVertexPlacement(grid, verts, camera, scene, renderer, inputHandler);
+  // Initialize remaining modules
+  VertexPlacement.init(verts, camera, scene, renderer);
+  VertexSelection.init(verts, camera, renderer);
 
-  // Initialize vertex selection
-  var selector = initVertexSelection(grid, verts, camera, scene, renderer, inputHandler);
-
+  // Begin update loop
   function update() {
-    inputHandler.update();
+    InputHandling.update();
     axis.setRotationFromMatrix(camera.matrixWorldInverse);
     renderer.render(scene, camera);
     hudRenderer.render(hudScene, hudCamera);

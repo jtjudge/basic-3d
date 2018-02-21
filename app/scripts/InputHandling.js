@@ -1,9 +1,17 @@
 
-function initInputHandling() {
-  var input = [];
-  var coords = {
-    x1: 0, x2: 0,
-    y1: 0, y2: 0
+var InputHandling = (function() {
+
+  var initialized = false;
+
+  var bindings = KeyBindings.getKeyBindings();
+
+  var input = {
+    mode: "EDIT",
+    actions: bindings.actions,
+    coords: {
+      x1: 0, x2: 0,
+      y1: 0, y2: 0
+    }
   };
 
   var handlers = {
@@ -13,80 +21,110 @@ function initInputHandling() {
     onmouseup: [],
     onmousemove: [],
     onresize: [],
-    onupdate: []
+    onupdate: [],
+    onmode: []
   };
 
+  var mouseEvents = {
+    1: "LMB",
+    2: "MMB",
+    3: "RMB"
+  };
+
+  function hasBinding(code) {
+    if(bindings.keys[code] === undefined) {
+      Debug.log("[InputHandling] No binding for " + code);
+      return false;
+    }
+    return true;
+  }
+
+  function assertInit(val) {
+    if(initialized && !val) {
+      Debug.log("[InputHandling] ERROR: Module already initialized");
+      return false;
+    } else if(!initialized && val) {
+      Debug.log("[InputHandling] ERROR: Module not initialized");
+      return false;
+    }
+    return true;
+  }
+
+  function keydown(event) {
+    if(!hasBinding(event.code)) return;
+    bindings.keys[event.code].forEach(function(action) {
+      input.actions[action] = true;
+    });
+    handlers.onkeydown.forEach(function(handler) {
+      handler(input);
+    });
+  }
+  
+  function keyup(event){
+    if(!hasBinding(event.code)) return;
+    bindings.keys[event.code].forEach(function(action) {
+      input.actions[action] = false;
+    });
+    handlers.onkeyup.forEach(function(handler) {
+      handler(input);
+    });
+  }
+
+  function mousedown(event) {
+    event.preventDefault();
+    var code = mouseEvents[event.which];
+    if(!hasBinding(code)) return;
+    bindings.keys[code].forEach(function(action) {
+      input.actions[action] = true;
+    });
+    handlers.onmousedown.forEach(function(handler) {
+      handler(input);
+    });
+  }
+
+  function mouseup(event) {
+    event.preventDefault();
+    var code = mouseEvents[event.which];
+    if(!hasBinding(code)) return;
+    bindings.keys[code].forEach(function(action) {
+      input.actions[action] = false;
+    });
+    handlers.onmouseup.forEach(function(handler) {
+      handler(input);
+    });
+  }
+
+  function mousemove(event) {
+    var rect = container.getBoundingClientRect();
+    input.coords.x1 = input.coords.x2;
+    input.coords.y1 = input.coords.y2;
+    input.coords.x2 = event.clientX - rect.left;
+    input.coords.y2 = event.clientY - rect.top;
+    handlers.onmousemove.forEach(function(handler) {
+      handler(input);
+    });
+  }
+
+  function resize() {
+    handlers.onresize.forEach(function(handler) {
+      handler(input);
+    });
+  }
+
   var interface = {
-    keydown: function(event) {
-      input[event.code] = true;
-      handlers.onkeydown.forEach(function(handler) {
-        handler(input, coords);
-      });
-    },
-    keyup: function(event){
-      input[event.code] = false;
-      handlers.onkeyup.forEach(function(handler) {
-        handler(input, coords);
-      });
-    },
-    mousedown: function(event) {
-      event.preventDefault();
-      switch (event.which) {
-        case 1:
-          input["LMB"] = true;
-          break;
-        case 2:
-          input["MMB"] = true;
-          break;
-        case 3:
-          input["RMB"] = true;
-          break;
-        default:
-          break;
-      }
-      handlers.onmousedown.forEach(function(handler) {
-        handler(input, coords);
-      });
-    },
-    mouseup: function(event) {
-      switch (event.which) {
-        case 1:
-          input["LMB"] = false;
-          break;
-        case 2:
-          input["MMB"] = false;
-          break;
-        case 3:
-          input["RMB"] = false;
-          break;
-        default:
-          break;
-      }
-      handlers.onmouseup.forEach(function(handler) {
-        handler(input, coords);
-      });
-    },
-    mousemove: function(event) {
-      var rect = container.getBoundingClientRect();
-      coords.x1 = coords.x2;
-      coords.y1 = coords.y2;
-      coords.x2 = event.clientX - rect.left;
-      coords.y2 = event.clientY - rect.top;
-      handlers.onmousemove.forEach(function(handler) {
-        handler(input, coords);
-      });
-    },
-    resize: function() {
-      handlers.onresize.forEach(function(handler) {
-        handler(input, coords);
-      });
-    },
-    update: function() {
-      handlers.onupdate.forEach(function(handler) {
-        handler(input, coords);
-      });
+    init: function() {
+      if(!assertInit(false)) return;
+      initialized = true;
+      // Activate listeners
+      document.onkeydown = keydown;
+      document.onkeyup = keyup;
+      document.onmousedown = mousedown;
+      document.onmouseup = mouseup;
+      document.onmousemove = mousemove;
+      window.onresize = resize;
     },
     register: function(items) {
+      if(!assertInit(true)) return;
       if(items.onkeydown) handlers.onkeydown.push(items.onkeydown);
       if(items.onkeyup) handlers.onkeyup.push(items.onkeyup);
       if(items.onmousedown) handlers.onmousedown.push(items.onmousedown);
@@ -94,16 +132,22 @@ function initInputHandling() {
       if(items.onmousemove) handlers.onmousemove.push(items.onmousemove);
       if(items.onresize) handlers.onresize.push(items.onresize);
       if(items.onupdate) handlers.onupdate.push(items.onupdate);
+      if(items.onmode) handlers.onmode.push(items.onmode);
+    },
+    update: function() {
+      if(!assertInit(true)) return;
+      handlers.onupdate.forEach(function(handler) {
+        handler(input);
+      });
+    },
+    mode: function() {
+      if(!assertInit(true)) return;
+      handlers.onmode.forEach(function(handler) {
+        handler(input);
+      });
     }
   };
 
-  // Activate listeners
-  document.onkeydown = interface.keydown;
-  document.onkeyup = interface.keyup;
-  document.onmousedown = interface.mousedown;
-  document.onmouseup = interface.mouseup;
-  document.onmousemove = interface.mousemove;
-  window.onresize = interface.resize;
-
   return interface;
-}
+
+})();
