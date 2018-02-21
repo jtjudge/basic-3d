@@ -3,6 +3,8 @@ var VertexPlacement = (function() {
   
   var initialized = false;
   var MAX_VERTS = 10;
+  var SELECT_COLOR = 0x00ff00;
+  var DESELECT_COLOR = 0xffffff;
   
   var marker = {
     active: false,
@@ -31,7 +33,7 @@ var VertexPlacement = (function() {
           } else if(input.mode === "VERTEX_Y" && input.actions["PLACE_VERTEX"]) {
             vertices.push(marker.obj);
             marker.active = false;
-            marker.obj.material.color.setHex(0xffffff);
+            marker.obj.material.color.setHex(DESELECT_COLOR);
             input.mode = "EDIT";
           }
         },
@@ -50,18 +52,16 @@ var VertexPlacement = (function() {
         onmousemove: function(input) {
           if(vertices.length > MAX_VERTS) return;
           if (input.mode === "VERTEX_XZ") {
-
             if(!marker.active) {
               marker.active = true;
               var dotGeometry = new THREE.Geometry();
               dotGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
               var dotMaterial = new THREE.PointsMaterial({
-                size: 2, sizeAttenuation: true, color: 0x00ffff
+                size: 2, sizeAttenuation: true, color: SELECT_COLOR
               });
               marker.obj = new THREE.Points(dotGeometry, dotMaterial);
               scene.add(marker.obj);
             }
-
             var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
             var mouse = new THREE.Vector2(
               (input.coords.x2 / renderer.getSize().width) * 2 - 1,
@@ -70,13 +70,11 @@ var VertexPlacement = (function() {
             var raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
             var intersection = raycaster.ray.intersectPlane(plane);
-            
             if(intersection && intersection.length() < 250) {
               marker.obj.position.copy(intersection);
             }
-
           } else if(input.mode === "VERTEX_Y") {
-            console.log("Y");
+            marker.obj.position.y += -0.15 * (input.coords.y2 - input.coords.y1);
           }
         }
       });
