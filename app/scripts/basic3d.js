@@ -23,7 +23,7 @@ function main() {
 
   // Set up workspace camera
   camera.position.set(150, 100, 150);
-  camera.lookAt(new THREE.Vector3(0, 0, 0));  
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   // Initialize input handling
   InputHandling.init();
@@ -71,6 +71,7 @@ function main() {
   // Initialize remaining modules
   VertexPlacement.init(verts, camera, scene, renderer);
   VertexSelection.init(verts, camera, renderer);
+  EdgePLacement.init(scene);
 
   // Begin update loop
   function update() {

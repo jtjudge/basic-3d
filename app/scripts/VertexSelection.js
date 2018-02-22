@@ -1,6 +1,6 @@
 
 var VertexSelection = (function () {
-  
+
   var initialized = false;
   var selected = [];
 
@@ -24,7 +24,9 @@ var VertexSelection = (function () {
     selected.forEach(function(obj) {
       obj.material.color.setHex(DESELECT_COLOR);
     });
-    selected = [];
+
+    //Clears the selected by setting length to 0
+    selected.length = 0;
   }
 
   function assertInit(val) {
