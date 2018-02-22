@@ -111,8 +111,17 @@ var EdgePlacement =  (function() {
               edge.obj.material.color.setHex(DESELECT_COLOR);
             }
           });
-        }
+        },
+
+        //More Deselecting
+        onmode: function(input)
+        {
+            edges.forEach(function(edge){
+              edge.obj.material.color.setHex(DESELECT_COLOR);
+            });
+        } 
       });
+
 
       KeyBindings.addKeyBinding("KeyE", "PLACE_EDGE");
     }
