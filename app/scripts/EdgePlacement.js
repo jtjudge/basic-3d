@@ -12,8 +12,6 @@ var EdgePlacement =  (function() {
   var edges = [];
   var selected;
 
-};
-
   //Checking to see if the module is initialized before using it
   function assertInit(val){
     if(initialized && !val)
@@ -34,7 +32,7 @@ var EdgePlacement =  (function() {
   function getEdge(v1, v2) {
     var edge = null;
     edges.forEach(function(e) {
-      if((e.v1 === v1.id && e.v2 === v2.id) || e.v1 === v2.id && e.v2 === v1.id)){
+      if((e.v1 === v1.id && e.v2 === v2.id) || (e.v1 === v2.id && e.v2 === v1.id)){
         edge = e;
       }
     });
@@ -87,10 +85,10 @@ var EdgePlacement =  (function() {
 
               //Adding the new edge to edges and the scene
               edges.push(edge);
-              scene.add(edge);
+              scene.add(edge.obj);
             }
           }
-        };
+        },
 
         //Deselecting the edge
         onmousedown: function(input)

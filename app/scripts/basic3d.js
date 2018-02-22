@@ -71,7 +71,7 @@ function main() {
   // Initialize remaining modules
   VertexPlacement.init(verts, camera, scene, renderer);
   VertexSelection.init(verts, camera, renderer);
-  EdgePLacement.init(scene);
+  EdgePlacement.init(scene);
 
   // Begin update loop
   function update() {
