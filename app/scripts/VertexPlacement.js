@@ -25,6 +25,32 @@ var VertexPlacement = (function() {
     return true;
   }
 
+  function makeMarker(scene){
+    marker.active = true;
+    var dotGeometry = new THREE.Geometry();
+    dotGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
+    var dotMaterial = new THREE.PointsMaterial({
+      size: 2, sizeAttenuation: true, color: SELECT_COLOR
+    });
+    marker.obj = new THREE.Points(dotGeometry, dotMaterial);
+    scene.add(marker.obj);
+  }
+
+  function moveMarker(input, renderer, camera){
+    var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    var mouse = new THREE.Vector2(
+      (input.coords.x2 / renderer.getSize().width) * 2 - 1,
+      -(input.coords.y2 / renderer.getSize().height) * 2 + 1
+    );
+    var raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
+    var intersection = raycaster.ray.intersectPlane(plane);
+    if(intersection) {
+      marker.obj.position.copy(intersection);
+      marker.obj.position.clampLength(0, MAX_DIST);
+    }
+  }
+
   var interface = {
     init: function(vertices, camera, scene, renderer) {
       if(!assertInit(false)) return;
@@ -48,6 +74,8 @@ var VertexPlacement = (function() {
               input.mode = "EDIT";
             } else {
               input.mode = "VERTEX_XZ";
+              makeMarker(scene);
+              moveMarker(input, renderer, camera);
             }
             InputHandling.mode();
           }
@@ -56,27 +84,9 @@ var VertexPlacement = (function() {
           if(vertices.length > MAX_VERTS) return;
           if (input.mode === "VERTEX_XZ") {
             if(!marker.active) {
-              marker.active = true;
-              var dotGeometry = new THREE.Geometry();
-              dotGeometry.vertices.push(new THREE.Vector3(0, 0, 0));
-              var dotMaterial = new THREE.PointsMaterial({
-                size: 2, sizeAttenuation: true, color: SELECT_COLOR
-              });
-              marker.obj = new THREE.Points(dotGeometry, dotMaterial);
-              scene.add(marker.obj);
+              makeMarker(scene);
             }
-            var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-            var mouse = new THREE.Vector2(
-              (input.coords.x2 / renderer.getSize().width) * 2 - 1,
-              -(input.coords.y2 / renderer.getSize().height) * 2 + 1
-            );
-            var raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-            var intersection = raycaster.ray.intersectPlane(plane);
-            if(intersection) {
-              marker.obj.position.copy(intersection);
-              marker.obj.position.clampLength(0, MAX_DIST);
-            }
+            moveMarker(input, renderer, camera);
           } else if(input.mode === "VERTEX_Y") {
             marker.obj.position.y += -0.15 * (input.coords.y2 - input.coords.y1);
             if(marker.obj.position.y > MAX_HEIGHT) marker.obj.position.y = MAX_HEIGHT;
