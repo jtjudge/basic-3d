@@ -56,7 +56,6 @@ var EdgePlacement =  (function() {
         {
           if(input.mode === "EDIT" && input.actions["PLACE_EDGE"])
           {
-            console.log("FIRE KEYDOWN");
 
             //Testing to see if selected has a length of 2
             if(selected.length === 2)
