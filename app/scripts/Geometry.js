@@ -82,7 +82,7 @@ Basic3D.loadModule("Geometry", function(Debug) {
     },
     getColors: function() {
       return Colors;
-    }
+      }
   };
 
   return interface;

@@ -1,6 +1,6 @@
 
 Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls, 
-  Geometry, GeometryCreation, GeometrySelection, GeometryTranslation) {
+  Geometry, GeometryCreation, GeometrySelection, GeometryTranslation, AxisHelper) {
 
   // Canvas
   var container = document.getElementById("container");
@@ -37,11 +37,15 @@ Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls,
     }
   });
 
+  AxisHelper.init(scene);
+
   // Initialize camera controls
   CameraControls.init(camera);
 
   // Initialize geometry
   Geometry.init(scene);
+
+  
 
   // Create HUD scene
   var hudRenderer = new THREE.WebGLRenderer({ alpha: true });
@@ -73,7 +77,7 @@ Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls,
   // Initialize remaining modules
   GeometryCreation.init(camera, scene, renderer);
   GeometrySelection.init(camera, renderer);
-  GeometryTranslation.init(camera, renderer);
+  GeometryTranslation.init(camera, renderer, scene);
 
   // Begin update loop
   function update() {
