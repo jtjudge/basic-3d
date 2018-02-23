@@ -3,7 +3,7 @@ Basic3D.loadModule("GeometryCreation", function(Debug, Geometry, InputHandling) 
   
   var initialized = false;
   
-  var MAX_VERTS = 10;
+  var MAX_VERTS = 100;
   var MAX_DIST = 120;
   var MAX_HEIGHT = 60;
   
@@ -90,6 +90,9 @@ Basic3D.loadModule("GeometryCreation", function(Debug, Geometry, InputHandling) 
               var v2 = selected[1];
               var v3 = selected[2];
               Geometry.addFace(v1, v2, v3);
+              Geometry.addEdge(v1, v2);
+              Geometry.addEdge(v2, v3);
+              Geometry.addEdge(v1, v3);
             }
           }
         },

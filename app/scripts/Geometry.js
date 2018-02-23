@@ -60,7 +60,7 @@ Basic3D.loadModule("Geometry", function(Debug) {
       geometry.faces.push(new THREE.Face3(2, 1, 0));
       geometry.computeFaceNormals();
       geometry.computeVertexNormals();
-      var material = new THREE.MeshBasicMaterial({ 
+      var material = new THREE.MeshLambertMaterial({ 
         color: Colors.FACE_SELECT
       });
       var face = {

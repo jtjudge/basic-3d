@@ -67,6 +67,9 @@ Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls,
   var grid = new THREE.GridHelper(100, 10);
   scene.add(grid);
 
+  // Add lighting
+  scene.add(new THREE.AmbientLight(0x212223));
+
   // Initialize remaining modules
   GeometryCreation.init(camera, scene, renderer);
   GeometrySelection.init(camera, renderer);
