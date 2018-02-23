@@ -30,10 +30,10 @@ Basic3D.loadModule("CameraControls", function(Debug, InputHandling) {
       yAngle += baseAngle * (input.coords.x2 - input.coords.x1);
     }
 
-    if(input.actions["CAM_TILT_UP"]) xAngle += baseAngle * 100;
-    if(input.actions["CAM_TILT_DOWN"]) xAngle -= baseAngle * 100;
-    if(input.actions["CAM_TILT_LEFT"]) yAngle += baseAngle * 100;
-    if(input.actions["CAM_TILT_RIGHT"]) yAngle -= baseAngle * 100;
+    if(input.actions["CAM_TILT_UP"]) xAngle += baseAngle * 10;
+    if(input.actions["CAM_TILT_DOWN"]) xAngle -= baseAngle * 10;
+    if(input.actions["CAM_TILT_LEFT"]) yAngle += baseAngle * 10;
+    if(input.actions["CAM_TILT_RIGHT"]) yAngle -= baseAngle * 10;
 
     if(input.actions["CAM_ORBIT_MOD"]) {
       camera.translateZ(-distance);
@@ -52,9 +52,6 @@ Basic3D.loadModule("CameraControls", function(Debug, InputHandling) {
       if(!assertInit(false)) return;
       initialized = true;
       InputHandling.register({
-        onkeydown: function(input) {
-          rotateCam(input, camera);
-        },
         onmousemove: function(input) {
           rotateCam(input, camera);
         },
@@ -71,6 +68,12 @@ Basic3D.loadModule("CameraControls", function(Debug, InputHandling) {
             if(input.actions["CAM_RESET"]) {
               camera.position.set(150, 100, 150);
               camera.lookAt(new THREE.Vector3(0, 0, 0));
+            }
+            if(input.actions["CAM_TILT_UP"] ||
+              input.actions["CAM_TILT_DOWN"] ||
+              input.actions["CAM_TILT_LEFT"] ||
+              input.actions["CAM_TILT_RIGHT"]) {
+              rotateCam(input, camera);
             }
           }
         }
@@ -95,10 +98,10 @@ Basic3D.loadModule("CameraControls", function(Debug, InputHandling) {
       InputHandling.addKeyBinding("ShiftLeft", "CAM_SPEED_MOD");
       InputHandling.addKeyBinding("ShiftRight", "CAM_SPEED_MOD");
 
-      InputHandling.addKeyBinding("ArrowUp", "CAM_TILT_UP");
-      InputHandling.addKeyBinding("ArrowDown", "CAM_TILT_DOWN");
-      InputHandling.addKeyBinding("ArrowLeft", "CAM_TILT_LEFT");
-      InputHandling.addKeyBinding("ArrowRight", "CAM_TILT_RIGHT");
+      InputHandling.addKeyBinding("KeyI", "CAM_TILT_UP");
+      InputHandling.addKeyBinding("KeyK", "CAM_TILT_DOWN");
+      InputHandling.addKeyBinding("KeyJ", "CAM_TILT_LEFT");
+      InputHandling.addKeyBinding("KeyL", "CAM_TILT_RIGHT");
 
       InputHandling.addKeyBinding("Space", "CAM_ORBIT_MOD");
     }
