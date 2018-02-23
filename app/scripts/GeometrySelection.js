@@ -14,6 +14,51 @@ var GeometrySelection = (function () {
     return true;
   }
 
+  function toggleSelect(target) {
+    var vertex = Geometry.getVertices().find(function(v) {
+      return v.obj.id === target.id;
+    });
+    vertex.selected = !vertex.selected;
+    if(vertex.selected) {
+      vertex.obj.material.color.setHex(Geometry.getColors().VERTEX_SELECT);
+    } else {
+      vertex.obj.material.color.setHex(Geometry.getColors().VERTEX);
+    }
+    Geometry.getEdges().forEach(function(edge) {
+      if(edge.v1.selected && edge.v2.selected) {
+        edge.selected = true;
+        edge.obj.material.color.setHex(Geometry.getColors().EDGE_SELECT);
+      } else {
+        edge.selected = false;
+        edge.obj.material.color.setHex(Geometry.getColors().EDGE);
+      }
+    });
+    Geometry.getFaces().forEach(function(face) {
+      if(face.v1.selected && face.v2.selected && face.v3.selected) {
+        face.selected = true;
+        face.obj.material.color.setHex(Geometry.getColors().FACE_SELECT);
+      } else {
+        face.selected = false;
+        face.obj.material.color.setHex(Geometry.getColors().FACE);
+      }
+    });
+  }
+
+  function deselectAll() {
+    Geometry.getVertices().forEach(function(vertex) {
+      vertex.selected = false;
+      vertex.obj.material.color.setHex(Geometry.getColors().VERTEX);
+    });
+    Geometry.getEdges().forEach(function(edge) {
+      edge.selected = false;
+      edge.obj.material.color.setHex(Geometry.getColors().EDGE);
+    });
+    Geometry.getFaces().forEach(function(face) {
+      face.selected = false;
+      face.obj.material.color.setHex(Geometry.getColors().FACE);
+    });
+  }
+
   var interface = {
     init: function(camera, renderer) {
       if(!assertInit(false)) return;
@@ -28,27 +73,33 @@ var GeometrySelection = (function () {
             );
             var raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
-            var verts = raycaster.intersectObjects(Geometry.getVertices());
-            if(verts.length === 0) {
+            var targets = Geometry.getVertices().map(function(v) {
+              return v.obj;
+            });
+            var hits = raycaster.intersectObjects(targets);
+            if(hits.length === 0) {
               if(!input.actions["MULT_SELECT_MOD"]) {
-                Geometry.deselectAll();
+                deselectAll();
               }
             } else {
-              if(Geometry.getSelected().length === 0) {
-                Geometry.toggleSelect(verts[0].object);
+              var selected = Geometry.getVertices().filter(function(v) {
+                return v.selected;
+              });
+              if(selected.length === 0) {
+                toggleSelect(hits[0].object);
               } else {
                 if (input.actions["MULT_SELECT_MOD"]) {
-                  Geometry.toggleSelect(verts[0].object);
+                  toggleSelect(hits[0].object);
                 } else {
-                  Geometry.deselectAll();
-                  Geometry.toggleSelect(verts[0].object);
+                  deselectAll();
+                  toggleSelect(hits[0].object);
                 }
               }
             }
           }
         },
         onmode: function(input) {
-          Geometry.deselectAll();
+          deselectAll();
         }
       });
       KeyBindings.addKeyBinding("LMB", "SELECT_GEOM");

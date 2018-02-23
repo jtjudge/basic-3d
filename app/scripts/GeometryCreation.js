@@ -25,7 +25,8 @@ var GeometryCreation = (function() {
       var geometry = new THREE.Geometry();
       geometry.vertices.push(new THREE.Vector3(0, 0, 0));
       var material = new THREE.PointsMaterial({
-        size: 2, sizeAttenuation: true, color: 0x00ff00
+        size: 2, sizeAttenuation: true, 
+        color: Geometry.getColors().VERTEX_MARKER
       });
       marker = new THREE.Points(geometry, material);
     }
@@ -72,14 +73,18 @@ var GeometryCreation = (function() {
               InputHandling.mode("VERTEX_XZ");
             }
           } else if(input.mode === "EDIT" && input.actions["PLACE_EDGE"]) {
-            var selected = Geometry.getSelected();
+            var selected = Geometry.getVertices().filter(function(v) {
+              return v.selected;
+            });
             if(selected.length === 2) {
               var v1 = selected[0];
               var v2 = selected[1];
               Geometry.addEdge(v1, v2);
             }
           } else if(input.mode === "EDIT" && input.actions["PLACE_FACE"]) {
-            var selected = Geometry.getSelected();
+            var selected = Geometry.getVertices().filter(function(v) {
+              return v.selected;
+            });
             if(selected.length === 3) {
               var v1 = selected[0];
               var v2 = selected[1];

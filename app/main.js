@@ -35,6 +35,10 @@ app.on("ready", function() {
         {
           label: 'Dev Tools',
           click: () => {mainWindow.toggleDevTools()},
+        },
+        {
+          label: 'Reload',
+          click: () => {mainWindow.reload()},
         }
       ]
     },
