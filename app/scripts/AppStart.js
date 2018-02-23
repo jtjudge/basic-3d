@@ -41,6 +41,9 @@ function main() {
   // Initialize camera controls
   CameraControls.init(camera);
 
+  // Initialize geometry
+  Geometry.init(scene);
+
   // Create HUD scene
   var hudRenderer = new THREE.WebGLRenderer({ alpha: true });
   var hudCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
@@ -65,13 +68,9 @@ function main() {
   var grid = new THREE.GridHelper(100, 10);
   scene.add(grid);
 
-  // Keep track of the points in the scene
-  var verts = [];
-
   // Initialize remaining modules
-  VertexPlacement.init(verts, camera, scene, renderer);
-  VertexSelection.init(verts, camera, renderer);
-  EdgePlacement.init(scene);
+  GeometryCreation.init(camera, scene, renderer);
+  GeometrySelection.init(camera, renderer);
 
   // Begin update loop
   function update() {
