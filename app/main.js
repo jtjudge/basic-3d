@@ -61,6 +61,43 @@ app.on("ready", function() {
               click:  () => {changeWindowColor('green')}
             },
           ]
+
+          label: 'Change Keybinds',
+          submenu: [
+            {
+              label: 'Dolly In',
+              //Add function to change keybind
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Dolly Out',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Truck Left',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Truck Right',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Pedestal Up',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Pedestal Down',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Pan Left',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Pan Right',
+              click: () => {changeKeyBind()}
+            },
+          ]
         }
       ]
     },
@@ -80,4 +117,4 @@ function changeWindowColor(color){
     console.log('greens');
     break;
   }
-} 
+}
