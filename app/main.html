@@ -25,6 +25,7 @@
 				loadModule: function(name, loader) {
 				var dependencies = getDependencies(loader);
 				var missing = dependencies.filter(function(dep) {
+					
 					return modules[dep] === undefined;
 				});
 				if(missing.length > 0) {
@@ -49,7 +50,7 @@
 	<script src="scripts/Geometry.js"></script>
 	<script src="scripts/GeometryCreation.js"></script>
   <script src="scripts/GeometrySelection.js"></script>
-  
+  <script src="scripts/GeometryTranslation.js"></script>
   <script src="scripts/AppStart.js"></script>
 
 </body>

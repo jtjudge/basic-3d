@@ -1,6 +1,6 @@
 
 Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls, 
-  Geometry, GeometryCreation, GeometrySelection) {
+  Geometry, GeometryCreation, GeometrySelection, GeometryTranslation) {
 
   // Canvas
   var container = document.getElementById("container");
@@ -73,6 +73,7 @@ Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls,
   // Initialize remaining modules
   GeometryCreation.init(camera, scene, renderer);
   GeometrySelection.init(camera, renderer);
+  GeometryTranslation.init(camera, renderer);
 
   // Begin update loop
   function update() {
