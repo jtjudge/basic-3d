@@ -140,8 +140,9 @@ var InputHandling = (function() {
         handler(input);
       });
     },
-    mode: function() {
+    mode: function(name) {
       if(!assertInit(true)) return;
+      input.mode = name;
       handlers.onmode.forEach(function(handler) {
         handler(input);
       });

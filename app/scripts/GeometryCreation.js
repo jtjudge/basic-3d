@@ -32,6 +32,10 @@ var GeometryCreation = (function() {
     scene.add(marker);
   }
 
+  function hideMarker(scene) {
+    scene.remove(marker);
+  }
+
   function moveMarker(input, renderer, camera){
     var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     var mouse = new THREE.Vector2(
@@ -47,10 +51,6 @@ var GeometryCreation = (function() {
     }
   }
 
-  function hideMarker(scene) {
-    scene.remove(marker);
-  }
-
   var interface = {
     init: function(camera, scene, renderer) {
       if(!assertInit(false)) return;
@@ -58,24 +58,19 @@ var GeometryCreation = (function() {
       InputHandling.register({
         onmousedown: function(input) {
           if(input.mode === "VERTEX_XZ" && input.actions["PLACE_VERTEX"]) {
-            input.mode = "VERTEX_Y";
+            InputHandling.mode("VERTEX_Y");
           } else if(input.mode === "VERTEX_Y" && input.actions["PLACE_VERTEX"]) {
             Geometry.addVertex(marker.position);
-            hideMarker(scene);
-            input.mode = "EDIT";
+            InputHandling.mode("EDIT");
           }
         },
         onkeydown: function(input) {
           if(input.actions["TOGGLE_VERTEX_MODE"]) {
             if(input.mode === "VERTEX_XZ" || input.mode === "VERTEX_Y") {
-              hideMarker(scene);
-              input.mode = "EDIT";
-            } else {
-              input.mode = "VERTEX_XZ";
-              showMarker(scene);
-              moveMarker(input, renderer, camera);
+              InputHandling.mode("EDIT");
+            } else if(Geometry.getVertices().length < MAX_VERTS) {
+              InputHandling.mode("VERTEX_XZ");
             }
-            InputHandling.mode();
           } else if(input.mode === "EDIT" && input.actions["PLACE_EDGE"]) {
             var selected = Geometry.getSelected();
             if(selected.length === 2) {
@@ -100,6 +95,15 @@ var GeometryCreation = (function() {
             marker.position.y += -0.15 * (input.coords.y2 - input.coords.y1);
             if(marker.position.y > MAX_HEIGHT) marker.position.y = MAX_HEIGHT;
             if(marker.position.y < -MAX_HEIGHT) marker.position.y = -MAX_HEIGHT;
+          }
+        },
+        onmode: function(input) {
+          if(input.mode === "EDIT") {
+            hideMarker(scene);
+          }
+          if(input.mode === "VERTEX_XZ") {
+            showMarker(scene);
+            moveMarker(input, renderer, camera);
           }
         }
       });

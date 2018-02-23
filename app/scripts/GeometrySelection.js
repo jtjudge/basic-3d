@@ -5,10 +5,10 @@ var GeometrySelection = (function () {
 
   function assertInit(val) {
     if(initialized && !val) {
-      Debug.log("[VertexSelection] ERROR: Module already initialized");
+      Debug.log("[GeometrySelection] ERROR: Module already initialized");
       return false;
     } else if(!initialized && val) {
-      Debug.log("[VertexSelection] ERROR: Module not initialized");
+      Debug.log("[GeometrySelection] ERROR: Module not initialized");
       return false;
     }
     return true;
@@ -16,12 +16,9 @@ var GeometrySelection = (function () {
 
   var interface = {
     init: function(camera, renderer) {
-
       if(!assertInit(false)) return;
       initialized = true;
-
       InputHandling.register({
-
         onmousedown: function(input) {
           if (input.mode === "EDIT" && input.actions["SELECT_GEOM"]) {
             var mouse = new THREE.Vector3(
@@ -50,11 +47,9 @@ var GeometrySelection = (function () {
             }
           }
         },
-
         onmode: function(input) {
           Geometry.deselectAll();
         }
-
       });
       KeyBindings.addKeyBinding("LMB", "SELECT_GEOM");
       KeyBindings.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
