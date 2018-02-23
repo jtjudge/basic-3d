@@ -1,99 +1,110 @@
 
 Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandling, AxisHelper){
-    var initialized = false;
 
-    var selectedverts = [];
-    var connectededges = [];
-    var connectedfaces = [];
+  var initialized = false;
 
-    var returnmode = "";
+  var selected = [];
 
-    let scene;
+  let scene;
 
-    function assertInit(val) {
-        if(initialized && !val) {
-          Debug.log("[GeometryTranslation] ERROR: Module already initialized");
-          return false;
-        } else if(!initialized && val) {
-          Debug.log("[GeometryTranslation] ERROR: Module not initialized");
-          return false;
-        }
-        return true;
+  function assertInit(val) {
+    if(initialized && !val) {
+      Debug.log("[GeometryTranslation] ERROR: Module already initialized");
+      return false;
+    } else if(!initialized && val) {
+      Debug.log("[GeometryTranslation] ERROR: Module not initialized");
+      return false;
     }
-    
-    var interface = {
-        init: function(camera, renderer, scene_){
-            if(!assertInit(false)) return;
-            initialized = true;
-            scene = scene_;
-            InputHandling.register({
-                onmousedown: function(input){
-                    returnmode = input.mode;
-                    if(input.mode === "TRANSLATION_MODE" && input.actions["TRANSLATE_SELECTION"]){
-                        InputHandling.mode("TRANSLATION_MODIFY_VERTS");
-                        
-                    }
-                },
-                onmouseup: function(input) {
-                    if(!(input.mode === "EDIT")){
-                       
-                        InputHandling.mode(returnmode);
-                    }
-                },
-                onmousemove: function(input) {
+    return true;
+  }
 
-                },
-                onkeydown: function(input) {
-                    if(input.actions["TOGGLE_TRANSLATION_MODE"]){
-                        AxisHelper.setNone(scene);
-                        if(input.mode === "TRANSLATION_MODE" || input.mode === "TRANSLATION_MODIFY_VERTS" || input.mode === "TRANSLATE_X_AXIS_MODE" || input.mode === "TRANSLATE_Y_AXIS_MODE" || input.mode === "TRANSLATE_Z_AXIS_MODE"){
-                            selectedverts = [];
-                            connectededges = [];
-                            connectedfaces = [];
-                            InputHandling.mode("EDIT");
-                            Debug.log("EDIT");
-                        } else {
-                            Geometry.getVertices().forEach(function (vertex) {
-                                if(vertex.selected)
-                                    selectedverts.push(vertex);
-                            });
-    
-                            Geometry.getEdges().forEach(function (edge) {
-                                if(edge.v1.selected || edge.v2.selected)
-                                    connectededges.push(edge);
-                            });
-    
-                            Geometry.getFaces().forEach(function (face) {
-                                if(face.v1.selected || face.v2.selected || face.v3.selected)
-                                    connectedfaces.push(face);
-                            });
-                            InputHandling.mode("TRANSLATION_MODE");
-                            Debug.log("TRANSLATION_MODE");
-                        }
-                    }
-                    if(input.actions["TOGGLE_TRANSLATE_X_AXIS_MODE"] && (input.mode === "TRANSLATION_MODE" || input.mode === "TRANSLATE_Y_AXIS_MODE" || input.mode === "TRANSLATE_Z_AXIS_MODE")){
-                        InputHandling.mode("TRANSLATE_X_AXIS_MODE");
-                        Debug.log("TRANSLATE_X_AXIS_MODE");
-                        AxisHelper.setX(scene);
-                    } else if(input.actions["TOGGLE_TRANSLATE_Y_AXIS_MODE"] && (input.mode === "TRANSLATION_MODE" || input.mode === "TRANSLATE_X_AXIS_MODE" || input.mode === "TRANSLATE_Z_AXIS_MODE")){
-                        InputHandling.mode("TRANSLATE_Y_AXIS_MODE");
-                        Debug.log("TRANSLATE_Y_AXIS_MODE");
-                        AxisHelper.setY(scene);
-                    } else if(input.actions["TOGGLE_TRANSLATE_Z_AXIS_MODE"] && (input.mode === "TRANSLATION_MODE" || input.mode === "TRANSLATE_X_AXIS_MODE" || input.mode === "TRANSLATE_Y_AXIS_MODE")){
-                        InputHandling.mode("TRANSLATE_Z_AXIS_MODE");
-                        Debug.log("TRANSLATE_Z_AXIS_MODE");
-                        AxisHelper.setZ(scene);
-                    }
-                }
-            });
+  function active(mode) {
+    return (mode === "TRANSLATE_MODE" ||
+      mode === "TRANSLATE_X" ||
+      mode === "TRANSLATE_Y" ||
+      mode === "TRANSLATE_Z");
+  }
 
-            InputHandling.addKeyBinding("KeyT", "TOGGLE_TRANSLATION_MODE");
-            InputHandling.addKeyBinding("KeyX", "TOGGLE_TRANSLATE_X_AXIS_MODE");
-            InputHandling.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y_AXIS_MODE");
-            InputHandling.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z_AXIS_MODE");
-            InputHandling.addKeyBinding("LMB", "TRANSLATE_SELECTION");
+  var interface = {
+    init: function(camera, renderer, scene_) {
+      if(!assertInit(false)) return;
+      initialized = true;
+      scene = scene_;
+      InputHandling.register({
+        onmousedown: function(input){
+          if(active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
+            Debug.log("CONFIRMED");
+            InputHandling.mode("EDIT");
+          }
+        },
+        onmousemove: function(input) {
+          if(input.mode === "TRANSLATE_X") {
+            Debug.log("X");
+          }
+          if(input.mode === "TRANSLATE_Y") {
+            Debug.log("Y");
+          }
+          if(input.mode === "TRANSLATE_Z") {
+            Debug.log("Z");
+          }
+        },
+        onkeydown: function(input) {
+          if(input.actions["TOGGLE_TRANSLATE_MODE"]){
+            if(!active(input.mode)) {
+              InputHandling.mode("TRANSLATE_MODE");
+            } else {
+              // To do: Reset geometry
+              Debug.log("CANCELLED");
+              InputHandling.mode("EDIT");
+            }
+          } else if(active(input.mode)) {
+            if(input.actions["TOGGLE_TRANSLATE_X"]){
+              InputHandling.mode("TRANSLATE_X");
+            }
+            if(input.actions["TOGGLE_TRANSLATE_Y"]){
+              InputHandling.mode("TRANSLATE_Y");
+            }
+            if(input.actions["TOGGLE_TRANSLATE_Z"]){
+              InputHandling.mode("TRANSLATE_Z");
+            }
+          }
+        },
+        onmode: function(input) {
+          Debug.log(input.mode);
+          if(!active(input.mode)) {
+            selected = null;
+            AxisHelper.setNone(scene);
+          }
+          if(input.mode === "TRANSLATE_MODE") {
+            if(!selected) {
+              selected = Geometry.getVertices().filter(function(v) {
+                return v.selected;
+              });
+            }
+            if(selected.length === 0) {
+              Debug.log("NO SELECTION");
+              InputHandling.mode("EDIT");
+            }
+          }
+          if(input.mode === "TRANSLATE_X") {
+            AxisHelper.setX(scene);
+          }
+          if(input.mode === "TRANSLATE_Y") {
+            AxisHelper.setY(scene);
+          }
+          if(input.mode === "TRANSLATE_Z") {
+            AxisHelper.setZ(scene);
+          }
         }
-    };
+      });
 
-    return interface;
+      InputHandling.addKeyBinding("KeyT", "TOGGLE_TRANSLATE_MODE");
+      InputHandling.addKeyBinding("KeyX", "TOGGLE_TRANSLATE_X");
+      InputHandling.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y");
+      InputHandling.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z");
+      InputHandling.addKeyBinding("LMB", "TRANSLATE_CONFIRM");
+    }
+  };
+
+  return interface;
 });
