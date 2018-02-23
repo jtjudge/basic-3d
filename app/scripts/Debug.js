@@ -1,5 +1,5 @@
 
-var Debug = (function() {
+Basic3D.loadModule("Debug", function() {
 
   var DEBUG = true;
 
@@ -9,8 +9,6 @@ var Debug = (function() {
     }
   };
 
-  // To be expanded for tests
-
   return interface;
 
-})();
+});

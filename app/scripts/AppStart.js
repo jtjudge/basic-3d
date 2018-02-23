@@ -1,7 +1,6 @@
 
-window.onload = main;
-
-function main() {
+Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls, 
+  Geometry, GeometryCreation, GeometrySelection) {
 
   // Canvas
   var container = document.getElementById("container");
@@ -82,4 +81,5 @@ function main() {
   }
 
   requestAnimationFrame(update);
-}
+
+});

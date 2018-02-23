@@ -1,5 +1,5 @@
 
-var CameraControls = (function() {
+Basic3D.loadModule("CameraControls", function(Debug, InputHandling) {
 
   var initialized = false;
 
@@ -75,35 +75,35 @@ var CameraControls = (function() {
           }
         }
       });
-      KeyBindings.addKeyBinding("KeyW", "CAM_DOLLY_IN");
-      KeyBindings.addKeyBinding("KeyS", "CAM_DOLLY_OUT");
-      KeyBindings.addKeyBinding("KeyA", "CAM_TRUCK_LEFT");
-      KeyBindings.addKeyBinding("KeyD", "CAM_TRUCK_RIGHT");
-      KeyBindings.addKeyBinding("KeyQ", "CAM_PEDESTAL_UP");
-      KeyBindings.addKeyBinding("KeyZ", "CAM_PEDESTAL_DOWN");
+      InputHandling.addKeyBinding("KeyW", "CAM_DOLLY_IN");
+      InputHandling.addKeyBinding("KeyS", "CAM_DOLLY_OUT");
+      InputHandling.addKeyBinding("KeyA", "CAM_TRUCK_LEFT");
+      InputHandling.addKeyBinding("KeyD", "CAM_TRUCK_RIGHT");
+      InputHandling.addKeyBinding("KeyQ", "CAM_PEDESTAL_UP");
+      InputHandling.addKeyBinding("KeyZ", "CAM_PEDESTAL_DOWN");
 
-      KeyBindings.addKeyBinding("KeyO", "CAM_RESET");
+      InputHandling.addKeyBinding("KeyO", "CAM_RESET");
 
-      KeyBindings.addKeyBinding("LMB", "CAM_TILT_FREE");
-      KeyBindings.addKeyBinding("LMB", "CAM_ORBIT_MOD");
+      InputHandling.addKeyBinding("LMB", "CAM_TILT_FREE");
+      InputHandling.addKeyBinding("LMB", "CAM_ORBIT_MOD");
 
-      KeyBindings.addKeyBinding("MMB", "CAM_TILT_FREE");
-      KeyBindings.addKeyBinding("MMB", "CAM_ORBIT_MOD");
+      InputHandling.addKeyBinding("MMB", "CAM_TILT_FREE");
+      InputHandling.addKeyBinding("MMB", "CAM_ORBIT_MOD");
 
-      KeyBindings.addKeyBinding("RMB", "CAM_TILT_FREE");
+      InputHandling.addKeyBinding("RMB", "CAM_TILT_FREE");
 
-      KeyBindings.addKeyBinding("ShiftLeft", "CAM_SPEED_MOD");
-      KeyBindings.addKeyBinding("ShiftRight", "CAM_SPEED_MOD");
+      InputHandling.addKeyBinding("ShiftLeft", "CAM_SPEED_MOD");
+      InputHandling.addKeyBinding("ShiftRight", "CAM_SPEED_MOD");
 
-      KeyBindings.addKeyBinding("ArrowUp", "CAM_TILT_UP");
-      KeyBindings.addKeyBinding("ArrowDown", "CAM_TILT_DOWN");
-      KeyBindings.addKeyBinding("ArrowLeft", "CAM_TILT_LEFT");
-      KeyBindings.addKeyBinding("ArrowRight", "CAM_TILT_RIGHT");
+      InputHandling.addKeyBinding("ArrowUp", "CAM_TILT_UP");
+      InputHandling.addKeyBinding("ArrowDown", "CAM_TILT_DOWN");
+      InputHandling.addKeyBinding("ArrowLeft", "CAM_TILT_LEFT");
+      InputHandling.addKeyBinding("ArrowRight", "CAM_TILT_RIGHT");
 
-      KeyBindings.addKeyBinding("Space", "CAM_ORBIT_MOD");
+      InputHandling.addKeyBinding("Space", "CAM_ORBIT_MOD");
     }
   };
 
   return interface;
 
-})();
+});

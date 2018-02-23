@@ -1,5 +1,5 @@
 
-var GeometrySelection = (function () {
+Basic3D.loadModule("GeometrySelection", function (Debug, Geometry, InputHandling) {
 
   var initialized = false;
 
@@ -102,12 +102,12 @@ var GeometrySelection = (function () {
           deselectAll();
         }
       });
-      KeyBindings.addKeyBinding("LMB", "SELECT_GEOM");
-      KeyBindings.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
-      KeyBindings.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
+      InputHandling.addKeyBinding("LMB", "SELECT_GEOM");
+      InputHandling.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
+      InputHandling.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
     }
   };
 
   return interface;
 
-})();
+});

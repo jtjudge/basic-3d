@@ -1,5 +1,5 @@
 
-var GeometryCreation = (function() {
+Basic3D.loadModule("GeometryCreation", function(Debug, Geometry, InputHandling) {
   
   var initialized = false;
   
@@ -112,13 +112,13 @@ var GeometryCreation = (function() {
           }
         }
       });
-      KeyBindings.addKeyBinding("KeyV", "TOGGLE_VERTEX_MODE");
-      KeyBindings.addKeyBinding("LMB", "PLACE_VERTEX");
-      KeyBindings.addKeyBinding("KeyE", "PLACE_EDGE");
-      KeyBindings.addKeyBinding("KeyF", "PLACE_FACE");
+      InputHandling.addKeyBinding("KeyV", "TOGGLE_VERTEX_MODE");
+      InputHandling.addKeyBinding("LMB", "PLACE_VERTEX");
+      InputHandling.addKeyBinding("KeyE", "PLACE_EDGE");
+      InputHandling.addKeyBinding("KeyF", "PLACE_FACE");
     }
   };
 
   return interface;
 
-})();
+});

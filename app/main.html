@@ -8,14 +8,50 @@
 <body>
 	<div id="container"></div>
 	<script src="scripts/three.min.js"></script>
+
+	<script>
+		var Basic3D = (function() {
+
+			function getDependencies(loader) {
+				var args = loader.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+				return args.split(',').map(function(arg) {
+				return arg.replace(/\/\*.*\*\//, '').trim();
+				}).filter(function(arg) {
+				return arg;
+				});
+			}
+
+			var modules = {
+				loadModule: function(name, loader) {
+				var dependencies = getDependencies(loader);
+				var missing = dependencies.filter(function(dep) {
+					return modules[dep] === undefined;
+				});
+				if(missing.length > 0) {
+					console.log("ERROR: Module '" + name + "' missing dependencies.");
+				} else {
+					var params = dependencies.map(function(dep) {
+					return modules[dep];
+					});
+					modules[name] = loader.apply(null, params);
+				}
+				}
+			};
+
+			return modules;
+			
+		})();
+  </script>
+  
 	<script src="scripts/Debug.js"></script>
-	<script src="scripts/KeyBindings.js"></script>
-	<script src="scripts/InputHandling.js"></script>
-	<script src="scripts/CameraControls.js"></script>
+  <script src="scripts/InputHandling.js"></script>
+  <script src="scripts/CameraControls.js"></script>
 	<script src="scripts/Geometry.js"></script>
 	<script src="scripts/GeometryCreation.js"></script>
-	<script src="scripts/GeometrySelection.js"></script>
-	<script src="scripts/AppStart.js"></script>
+  <script src="scripts/GeometrySelection.js"></script>
+  
+  <script src="scripts/AppStart.js"></script>
+
 </body>
 
 </html>

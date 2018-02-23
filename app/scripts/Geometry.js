@@ -1,5 +1,5 @@
 
-var Geometry = (function() {
+Basic3D.loadModule("Geometry", function(Debug) {
 
   var vertices = [];
   var edges = [];
@@ -87,4 +87,4 @@ var Geometry = (function() {
 
   return interface;
 
-})();
+});
