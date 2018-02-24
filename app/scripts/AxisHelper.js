@@ -35,21 +35,18 @@ Basic3D.loadModule("AxisHelper", function (Debug){
             var xGeometry = new THREE.Geometry();
             xGeometry.vertices.push(
                 new THREE.Vector3( -1000, 10, 0 ),
-                new THREE.Vector3( 0, 10, 0 ),
                 new THREE.Vector3( 1000, 10, 0 )
             );
 
             var yGeometry = new THREE.Geometry();
             yGeometry.vertices.push(
                 new THREE.Vector3( 0, -1000, 0 ),
-                new THREE.Vector3( 0, 0, 0 ),
                 new THREE.Vector3( 0, 1000, 0 )
             );
 
             var zGeometry = new THREE.Geometry();
             zGeometry.vertices.push(
                 new THREE.Vector3( 0, 10, -1000 ),
-                new THREE.Vector3( 0, 10, 0 ),
                 new THREE.Vector3( 0, 10, 1000 )
             );
 
