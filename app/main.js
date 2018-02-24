@@ -2,14 +2,14 @@ const electron = require("electron");
 const url = require("url");
 const path = require("path");
 
-const {app, BrowserWindow} = electron;
+const { app, BrowserWindow } = electron;
 const Menu = electron.Menu;
 // Set environment
 process.env.NODE_ENV = "development";
 
 let mainWindow;
 
-app.on("ready", function() {
+app.on("ready", function () {
   mainWindow = new BrowserWindow();
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, "main.html"),
@@ -22,7 +22,7 @@ app.on("ready", function() {
       submenu: [
         {
           label: 'Quit',
-          click: () => {app.quit()}
+          click: () => { app.quit() }
         }
       ]
     },
@@ -34,11 +34,11 @@ app.on("ready", function() {
       submenu: [
         {
           label: 'Dev Tools',
-          click: () => {mainWindow.toggleDevTools()},
+          click: () => { mainWindow.toggleDevTools() },
         },
         {
           label: 'Reload',
-          click: () => {mainWindow.reload()},
+          click: () => { mainWindow.reload() },
         }
       ]
     },
@@ -50,15 +50,15 @@ app.on("ready", function() {
           submenu: [
             {
               label: 'Red',
-              click:  () => {changeWindowColor('red')}
+              click: () => { changeWindowColor('red') }
             },
             {
               label: 'Blue',
-              click:  () => {changeWindowColor('blue')}
+              click: () => { changeWindowColor('blue') }
             },
             {
               label: 'Green',
-              click:  () => {changeWindowColor('green')}
+              click: () => { changeWindowColor('green') }
             },
           ]
         }
@@ -68,16 +68,16 @@ app.on("ready", function() {
   Menu.setApplicationMenu(menuSettings);
 });
 //TODO: change this so that it actually does something
-function changeWindowColor(color){
-  switch(color){
+function changeWindowColor(color) {
+  switch (color) {
     case 'red':
-    console.log('red');
-    break;
+      console.log('red');
+      break;
     case 'blue':
-    console.log('blue');
-    break;
+      console.log('blue');
+      break;
     case 'green':
-    console.log('greens');
-    break;
+      console.log('greens');
+      break;
   }
 } 

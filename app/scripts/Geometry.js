@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Geometry", function(Debug) {
+Basic3D.loadModule("Geometry", function (Debug) {
 
   var vertices = [];
   var edges = [];
@@ -18,14 +18,14 @@ Basic3D.loadModule("Geometry", function(Debug) {
   var scene;
 
   var interface = {
-    init: function(_scene, colors) {
+    init: function (_scene, colors) {
       scene = _scene;
     },
-    addVertex: function(position) {
+    addVertex: function (position) {
       var geometry = new THREE.Geometry();
       geometry.vertices.push(new THREE.Vector3().copy(position));
       var material = new THREE.PointsMaterial({
-        size: 2, sizeAttenuation: true, 
+        size: 2, sizeAttenuation: true,
         color: Colors.VERTEX_SELECT
       });
       var vertex = {
@@ -35,12 +35,12 @@ Basic3D.loadModule("Geometry", function(Debug) {
       vertices.push(vertex);
       scene.add(vertex.obj);
     },
-    addEdge: function(v1, v2) {
+    addEdge: function (v1, v2) {
       //Creating the material and geometry for the edge
       var geometry = new THREE.Geometry();
       geometry.vertices.push(v1.obj.geometry.vertices[0]);
       geometry.vertices.push(v2.obj.geometry.vertices[0]);
-      var material = new THREE.LineBasicMaterial({ 
+      var material = new THREE.LineBasicMaterial({
         color: Colors.EDGE_SELECT
       });
       var edge = {
@@ -51,7 +51,7 @@ Basic3D.loadModule("Geometry", function(Debug) {
       edges.push(edge);
       scene.add(edge.obj);
     },
-    addFace: function(v1, v2, v3) {
+    addFace: function (v1, v2, v3) {
       var geometry = new THREE.Geometry();
       geometry.vertices.push(v1.obj.geometry.vertices[0]);
       geometry.vertices.push(v2.obj.geometry.vertices[0]);
@@ -60,7 +60,7 @@ Basic3D.loadModule("Geometry", function(Debug) {
       geometry.faces.push(new THREE.Face3(2, 1, 0));
       geometry.computeFaceNormals();
       geometry.computeVertexNormals();
-      var material = new THREE.MeshLambertMaterial({ 
+      var material = new THREE.MeshLambertMaterial({
         color: Colors.FACE_SELECT
       });
       var face = {
@@ -71,18 +71,18 @@ Basic3D.loadModule("Geometry", function(Debug) {
       faces.push(face);
       scene.add(face.obj);
     },
-    getVertices: function() {
+    getVertices: function () {
       return vertices;
     },
-    getEdges: function() {
+    getEdges: function () {
       return edges;
     },
-    getFaces: function() {
+    getFaces: function () {
       return faces;
     },
-    getColors: function() {
+    getColors: function () {
       return Colors;
-      }
+    }
   };
 
   return interface;

@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls, 
+Basic3D.loadModule("Start", function (Debug, InputHandling, CameraControls,
   Geometry, GeometryCreation, GeometrySelection, GeometryTranslation, AxisHelper) {
 
   // Canvas
@@ -30,7 +30,7 @@ Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls,
 
   // Set window resize event listener
   InputHandling.register({
-    onresize: function() {
+    onresize: function () {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth - 20, window.innerHeight - 20);
@@ -45,7 +45,7 @@ Basic3D.loadModule("Start", function(Debug, InputHandling, CameraControls,
   // Initialize geometry
   Geometry.init(scene);
 
-  
+
 
   // Create HUD scene
   var hudRenderer = new THREE.WebGLRenderer({ alpha: true });
