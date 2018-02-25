@@ -3,11 +3,9 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
 
   var initialized = false;
 
-  var selected;
-  var edges = [];
-  var faces = [];
-
   let scene;
+
+  const SPEED = 0.05;
 
   function assertInit(val) {
     if (initialized && !val) {
@@ -27,40 +25,29 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
       mode === "TRANSLATE_Z");
   }
 
-  function getCenter() {
-
-    if (!selected) return new THREE.Vector3(0, 0, 0);
-
-    var minX = Infinity, maxX = -Infinity,
-      minY = Infinity, maxY = -Infinity,
-      minZ = Infinity, maxZ = -Infinity;
-
-    selected.forEach(function (v) {
-      if (!minX || v.obj.geometry.vertices[0].x < minX) {
-        minX = v.obj.geometry.vertices[0].x;
-      }
-      if (!maxX || v.obj.geometry.vertices[0].x > maxX) {
-        maxX = v.obj.geometry.vertices[0].x;
-      }
-      if (!minY || v.obj.geometry.vertices[0].y < minY) {
-        minY = v.obj.geometry.vertices[0].y;
-      }
-      if (!maxY || v.obj.geometry.vertices[0].y > maxY) {
-        maxY = v.obj.geometry.vertices[0].y;
-      }
-      if (!minZ || v.obj.geometry.vertices[0].z < minZ) {
-        minZ = v.obj.geometry.vertices[0].z;
-      }
-      if (!maxZ || v.obj.geometry.vertices[0].z > maxZ) {
-        maxZ = v.obj.geometry.vertices[0].z;
+  function translateVertex(v, diff) {
+    // Update vertex position
+    v.obj.geometry.vertices[0].add(diff);
+    v.obj.geometry.verticesNeedUpdate = true;
+    // Update any connected edges
+    v.edges.forEach(function (e) {
+      var index = (v.obj.id === e.v1.obj.id) ? 0 : 
+        (v.obj.id === e.v2.obj.id) ? 1 : -1;
+      if(index > -1) {
+        e.obj.geometry.vertices[index].add(diff);
+        e.obj.geometry.verticesNeedUpdate = true;
       }
     });
-
-    return new THREE.Vector3(
-      (minX + maxX) / 2,
-      (minY + maxY) / 2,
-      (minZ + maxZ) / 2
-    );
+    // Update any connected faces
+    v.faces.forEach(function (f) {
+      var index = (v.obj.id === f.v1.obj.id) ? 0 : 
+        (v.obj.id === f.v2.obj.id) ? 1 : 
+        (v.obj.id === f.v3.obj.id) ? 2 : -1;
+      if (index > -1) {
+        f.obj.geometry.vertices[index].add(diff);
+        f.obj.geometry.verticesNeedUpdate = true;
+      }
+    });
   }
 
   var interface = {
@@ -77,84 +64,24 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
         },
         onmousemove: function (input) {
           if (input.mode === "TRANSLATE_X") {
-            selected.forEach(function (v) {
-              v.obj.geometry.translate(-0.10 * (input.coords.y2 - input.coords.y1), 0, 0);
-              v.obj.geometry.verticesNeedUpdate = true;
-              edges.forEach(function (e) {
-                if (v.obj.id === e.v1.obj.id) {
-                  e.obj.geometry.vertices[0].x += -0.10 * (input.coords.y2 - input.coords.y1);
-                  e.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === e.v2.obj.id) {
-                  e.obj.geometry.vertices[1].x += -0.10 * (input.coords.y2 - input.coords.y1);
-                  e.obj.geometry.verticesNeedUpdate = true;
-                }
-              });
-              faces.forEach(function (f) {
-                if (v.obj.id === f.v1.obj.id) {
-                  f.obj.geometry.vertices[0].x += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === f.v2.obj.id) {
-                  f.obj.geometry.vertices[1].x += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === f.v3.obj.id) {
-                  f.obj.geometry.vertices[2].x += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                }
-              });
+            Geometry.getSelected().forEach(function (v) {
+              translateVertex(v, new THREE.Vector3(
+                SPEED * (input.coords.y2 - input.coords.y1), 0, 0
+              ));
             });
           }
           if (input.mode === "TRANSLATE_Y") {
-            selected.forEach(function (v) {
-              v.obj.geometry.translate(0, -0.10 * (input.coords.y2 - input.coords.y1), 0);
-              v.obj.geometry.verticesNeedUpdate = true;
-              edges.forEach(function (e) {
-                if (v.obj.id === e.v1.obj.id) {
-                  e.obj.geometry.vertices[0].y += -0.10 * (input.coords.y2 - input.coords.y1);
-                  e.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === e.v2.obj.id) {
-                  e.obj.geometry.vertices[1].y += -0.10 * (input.coords.y2 - input.coords.y1);
-                  e.obj.geometry.verticesNeedUpdate = true;
-                }
-              });
-              faces.forEach(function (f) {
-                if (v.obj.id === f.v1.obj.id) {
-                  f.obj.geometry.vertices[0].y += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === f.v2.obj.id) {
-                  f.obj.geometry.vertices[1].y += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === f.v3.obj.id) {
-                  f.obj.geometry.vertices[2].y += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                }
-              });
+            Geometry.getSelected().forEach(function (v) {
+              translateVertex(v, new THREE.Vector3(
+                0, SPEED * (input.coords.y1 - input.coords.y2), 0
+              ));
             });
           }
           if (input.mode === "TRANSLATE_Z") {
-            selected.forEach(function (v) {
-              v.obj.geometry.translate(0, 0, -0.10 * (input.coords.y2 - input.coords.y1));
-              v.obj.geometry.verticesNeedUpdate = true;
-              edges.forEach(function (e) {
-                if (v.obj.id === e.v1.obj.id) {
-                  e.obj.geometry.vertices[0].z += -0.10 * (input.coords.y2 - input.coords.y1);
-                  e.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === e.v2.obj.id) {
-                  e.obj.geometry.vertices[1].z += -0.10 * (input.coords.y2 - input.coords.y1);
-                  e.obj.geometry.verticesNeedUpdate = true;
-                }
-              });
-              faces.forEach(function (f) {
-                if (v.obj.id === f.v1.obj.id) {
-                  f.obj.geometry.vertices[0].z += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === f.v2.obj.id) {
-                  f.obj.geometry.vertices[1].z += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                } else if (v.obj.id === f.v3.obj.id) {
-                  f.obj.geometry.vertices[2].z += -0.10 * (input.coords.y2 - input.coords.y1);
-                  f.obj.geometry.verticesNeedUpdate = true;
-                }
-              });
+            Geometry.getSelected().forEach(function (v) {
+              translateVertex(v, new THREE.Vector3(
+                0, 0, SPEED * (input.coords.y2 - input.coords.y1)
+              ));
             });
           }
         },
@@ -181,44 +108,22 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
         },
         onmode: function (input) {
           if (!active(input.mode)) {
-            selected = null;
             AxisHelper.setNone();
           }
           if (input.mode === "TRANSLATE_MODE") {
-            if (!selected) {
-              selected = Geometry.getVertices().filter(function (v) {
-                return v.selected;
-              });
-            }
-            if (selected.length === 0) {
+            if (Geometry.getSelected().length === 0) {
               Debug.log("NO SELECTION");
               InputHandling.mode("EDIT");
-            } else {
-              selected.forEach(function (v) {
-                var se = [];
-                se = Geometry.getEdges().filter(function (e) {
-                  if (v.obj.id === e.v1.obj.id || v.obj.id === e.v2.obj.id) return true;
-                  return false;
-                });
-                edges = edges.concat(se);
-                var fe = [];
-                fe = Geometry.getFaces().filter(function (f) {
-                  if (v.obj.id === f.v1.obj.id || v.obj.id === f.v2.obj.id || v.obj.id === f.v3.obj.id) return true;
-                  return false;
-                });
-                faces = faces.concat(fe);
-              });
             }
-
           }
           if (input.mode === "TRANSLATE_X") {
-            AxisHelper.setX(getCenter());
+            AxisHelper.setX(Geometry.getCenter());
           }
           if (input.mode === "TRANSLATE_Y") {
-            AxisHelper.setY(getCenter());
+            AxisHelper.setY(Geometry.getCenter());
           }
           if (input.mode === "TRANSLATE_Z") {
-            AxisHelper.setZ(getCenter());
+            AxisHelper.setZ(Geometry.getCenter());
           }
         }
       });

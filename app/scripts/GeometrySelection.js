@@ -24,7 +24,7 @@ Basic3D.loadModule("GeometrySelection", function (Debug, Geometry, InputHandling
     } else {
       vertex.obj.material.color.setHex(Geometry.getColors().VERTEX);
     }
-    Geometry.getEdges().forEach(function (edge) {
+    vertex.edges.forEach(function (edge) {
       if (edge.v1.selected && edge.v2.selected) {
         edge.selected = true;
         edge.obj.material.color.setHex(Geometry.getColors().EDGE_SELECT);
@@ -33,7 +33,7 @@ Basic3D.loadModule("GeometrySelection", function (Debug, Geometry, InputHandling
         edge.obj.material.color.setHex(Geometry.getColors().EDGE);
       }
     });
-    Geometry.getFaces().forEach(function (face) {
+    vertex.faces.forEach(function (face) {
       if (face.v1.selected && face.v2.selected && face.v3.selected) {
         face.selected = true;
         face.obj.material.color.setHex(Geometry.getColors().FACE_SELECT);
@@ -82,10 +82,7 @@ Basic3D.loadModule("GeometrySelection", function (Debug, Geometry, InputHandling
                 deselectAll();
               }
             } else {
-              var selected = Geometry.getVertices().filter(function (v) {
-                return v.selected;
-              });
-              if (selected.length === 0) {
+              if (Geometry.getSelected().length === 0) {
                 toggleSelect(hits[0].object);
               } else {
                 if (input.actions["MULT_SELECT_MOD"]) {

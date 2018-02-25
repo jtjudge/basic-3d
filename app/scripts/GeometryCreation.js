@@ -73,18 +73,14 @@ Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling)
               InputHandling.mode("VERTEX_XZ");
             }
           } else if (input.mode === "EDIT" && input.actions["PLACE_EDGE"]) {
-            var selected = Geometry.getVertices().filter(function (v) {
-              return v.selected;
-            });
+            var selected = Geometry.getSelected();
             if (selected.length === 2) {
               var v1 = selected[0];
               var v2 = selected[1];
               Geometry.addEdge(v1, v2);
             }
           } else if (input.mode === "EDIT" && input.actions["PLACE_FACE"]) {
-            var selected = Geometry.getVertices().filter(function (v) {
-              return v.selected;
-            });
+            var selected = Geometry.getSelected();
             if (selected.length === 3) {
               var v1 = selected[0];
               var v2 = selected[1];

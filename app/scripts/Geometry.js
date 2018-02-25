@@ -30,6 +30,8 @@ Basic3D.loadModule("Geometry", function (Debug) {
       });
       var vertex = {
         obj: new THREE.Points(geometry, material),
+        edges: [],
+        faces: [],
         selected: true
       };
       vertices.push(vertex);
@@ -48,6 +50,8 @@ Basic3D.loadModule("Geometry", function (Debug) {
         selected: true,
         v1: v1, v2: v2
       };
+      v1.edges.push(edge);
+      v2.edges.push(edge);
       edges.push(edge);
       scene.add(edge.obj);
     },
@@ -68,6 +72,9 @@ Basic3D.loadModule("Geometry", function (Debug) {
         selected: true,
         v1: v1, v2: v2, v3: v3
       };
+      v1.faces.push(face);
+      v2.faces.push(face);
+      v3.faces.push(face);
       faces.push(face);
       scene.add(face.obj);
     },
@@ -82,6 +89,52 @@ Basic3D.loadModule("Geometry", function (Debug) {
     },
     getColors: function () {
       return Colors;
+    },
+    getSelected: function () {
+      return vertices.filter(function(v) {
+        return v.selected;
+      });
+    },
+    getCenter: function () {
+
+      var selected = vertices.filter(function(v) {
+        return v.selected;
+      });
+
+      if (selected.length === 0) {
+        return new THREE.Vector3(0, 0, 0);
+      }
+  
+      var minX = Infinity, maxX = -Infinity,
+        minY = Infinity, maxY = -Infinity,
+        minZ = Infinity, maxZ = -Infinity;
+  
+      selected.forEach(function (v) {
+        if (!minX || v.obj.geometry.vertices[0].x < minX) {
+          minX = v.obj.geometry.vertices[0].x;
+        }
+        if (!maxX || v.obj.geometry.vertices[0].x > maxX) {
+          maxX = v.obj.geometry.vertices[0].x;
+        }
+        if (!minY || v.obj.geometry.vertices[0].y < minY) {
+          minY = v.obj.geometry.vertices[0].y;
+        }
+        if (!maxY || v.obj.geometry.vertices[0].y > maxY) {
+          maxY = v.obj.geometry.vertices[0].y;
+        }
+        if (!minZ || v.obj.geometry.vertices[0].z < minZ) {
+          minZ = v.obj.geometry.vertices[0].z;
+        }
+        if (!maxZ || v.obj.geometry.vertices[0].z > maxZ) {
+          maxZ = v.obj.geometry.vertices[0].z;
+        }
+      });
+  
+      return new THREE.Vector3(
+        (minX + maxX) / 2,
+        (minY + maxY) / 2,
+        (minZ + maxZ) / 2
+      );
     }
   };
 
