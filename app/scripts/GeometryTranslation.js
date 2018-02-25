@@ -27,26 +27,14 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
 
   function translateVertex(v, diff) {
     // Update vertex position
-    v.obj.geometry.vertices[0].add(diff);
-    v.obj.geometry.verticesNeedUpdate = true;
+    v.obj.position.add(diff);
     // Update any connected edges
     v.edges.forEach(function (e) {
-      var index = (v.obj.id === e.v1.obj.id) ? 0 : 
-        (v.obj.id === e.v2.obj.id) ? 1 : -1;
-      if(index > -1) {
-        e.obj.geometry.vertices[index].add(diff);
-        e.obj.geometry.verticesNeedUpdate = true;
-      }
+      e.obj.geometry.verticesNeedUpdate = true;
     });
     // Update any connected faces
     v.faces.forEach(function (f) {
-      var index = (v.obj.id === f.v1.obj.id) ? 0 : 
-        (v.obj.id === f.v2.obj.id) ? 1 : 
-        (v.obj.id === f.v3.obj.id) ? 2 : -1;
-      if (index > -1) {
-        f.obj.geometry.vertices[index].add(diff);
-        f.obj.geometry.verticesNeedUpdate = true;
-      }
+      f.obj.geometry.verticesNeedUpdate = true;
     });
   }
 

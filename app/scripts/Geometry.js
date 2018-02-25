@@ -23,7 +23,7 @@ Basic3D.loadModule("Geometry", function (Debug) {
     },
     addVertex: function (position) {
       var geometry = new THREE.Geometry();
-      geometry.vertices.push(new THREE.Vector3().copy(position));
+      geometry.vertices.push(new THREE.Vector3(0, 0, 0));
       var material = new THREE.PointsMaterial({
         size: 2, sizeAttenuation: true,
         color: Colors.VERTEX_SELECT
@@ -34,14 +34,15 @@ Basic3D.loadModule("Geometry", function (Debug) {
         faces: [],
         selected: true
       };
+      vertex.obj.position.copy(position);
       vertices.push(vertex);
       scene.add(vertex.obj);
     },
     addEdge: function (v1, v2) {
       //Creating the material and geometry for the edge
       var geometry = new THREE.Geometry();
-      geometry.vertices.push(v1.obj.geometry.vertices[0]);
-      geometry.vertices.push(v2.obj.geometry.vertices[0]);
+      geometry.vertices.push(v1.obj.position);
+      geometry.vertices.push(v2.obj.position);
       var material = new THREE.LineBasicMaterial({
         color: Colors.EDGE_SELECT
       });
@@ -57,9 +58,9 @@ Basic3D.loadModule("Geometry", function (Debug) {
     },
     addFace: function (v1, v2, v3) {
       var geometry = new THREE.Geometry();
-      geometry.vertices.push(v1.obj.geometry.vertices[0]);
-      geometry.vertices.push(v2.obj.geometry.vertices[0]);
-      geometry.vertices.push(v3.obj.geometry.vertices[0]);
+      geometry.vertices.push(v1.obj.position);
+      geometry.vertices.push(v2.obj.position);
+      geometry.vertices.push(v3.obj.position);
       geometry.faces.push(new THREE.Face3(0, 1, 2));
       geometry.faces.push(new THREE.Face3(2, 1, 0));
       geometry.computeFaceNormals();
@@ -110,23 +111,23 @@ Basic3D.loadModule("Geometry", function (Debug) {
         minZ = Infinity, maxZ = -Infinity;
   
       selected.forEach(function (v) {
-        if (!minX || v.obj.geometry.vertices[0].x < minX) {
-          minX = v.obj.geometry.vertices[0].x;
+        if (!minX || v.obj.position.x < minX) {
+          minX = v.obj.position.x;
         }
-        if (!maxX || v.obj.geometry.vertices[0].x > maxX) {
-          maxX = v.obj.geometry.vertices[0].x;
+        if (!maxX || v.obj.position.x > maxX) {
+          maxX = v.obj.position.x;
         }
-        if (!minY || v.obj.geometry.vertices[0].y < minY) {
-          minY = v.obj.geometry.vertices[0].y;
+        if (!minY || v.obj.position.y < minY) {
+          minY = v.obj.position.y;
         }
-        if (!maxY || v.obj.geometry.vertices[0].y > maxY) {
-          maxY = v.obj.geometry.vertices[0].y;
+        if (!maxY || v.obj.position.y > maxY) {
+          maxY = v.obj.position.y;
         }
-        if (!minZ || v.obj.geometry.vertices[0].z < minZ) {
-          minZ = v.obj.geometry.vertices[0].z;
+        if (!minZ || v.obj.position.z < minZ) {
+          minZ = v.obj.position.z;
         }
-        if (!maxZ || v.obj.geometry.vertices[0].z > maxZ) {
-          maxZ = v.obj.geometry.vertices[0].z;
+        if (!maxZ || v.obj.position.z > maxZ) {
+          maxZ = v.obj.position.z;
         }
       });
   
