@@ -1,10 +1,7 @@
 
 Basic3D.loadModule("AxisHelper", function (Debug) {
-  var initialized = false;
-
-  let xAxis;
-  let yAxis;
-  let zAxis;
+  let initialized = false;
+  let scene, xAxis, yAxis, zAxis;
 
   function assertInit(val) {
     if (initialized && !val) {
@@ -18,59 +15,60 @@ Basic3D.loadModule("AxisHelper", function (Debug) {
   }
 
   var interface = {
-    init: function (scene) {
+    init: function (_scene) {
       if (!assertInit(false)) return;
-      const xMaterial = new THREE.LineBasicMaterial({
+      initialized = true;
+      scene = _scene;
+
+      let geometry, material;
+      geometry = new THREE.Geometry();
+      geometry.vertices.push(new THREE.Vector3(-1000, 0, 0));
+      geometry.vertices.push(new THREE.Vector3(1000, 0, 0));
+      material = new THREE.LineBasicMaterial({
         color: 0xff0000
       });
+      xAxis = new THREE.Line(geometry, material);
 
-      const yMaterial = new THREE.LineBasicMaterial({
+      geometry = new THREE.Geometry();
+      geometry.vertices.push(new THREE.Vector3(0, -1000, 0));
+      geometry.vertices.push(new THREE.Vector3(0, 1000, 0));
+      material = new THREE.LineBasicMaterial({
         color: 0x00ff00
       });
+      yAxis = new THREE.Line(geometry, material);
 
-      const zMaterial = new THREE.LineBasicMaterial({
-        color: 0x000ff
+      geometry = new THREE.Geometry();
+      geometry.vertices.push(new THREE.Vector3(0, 0, -1000));
+      geometry.vertices.push(new THREE.Vector3(0, 0, 1000));
+      material = new THREE.LineBasicMaterial({
+        color: 0x0000ff
       });
-
-      var xGeometry = new THREE.Geometry();
-      xGeometry.vertices.push(
-        new THREE.Vector3(-1000, 10, 0),
-        new THREE.Vector3(1000, 10, 0)
-      );
-
-      var yGeometry = new THREE.Geometry();
-      yGeometry.vertices.push(
-        new THREE.Vector3(0, -1000, 0),
-        new THREE.Vector3(0, 1000, 0)
-      );
-
-      var zGeometry = new THREE.Geometry();
-      zGeometry.vertices.push(
-        new THREE.Vector3(0, 10, -1000),
-        new THREE.Vector3(0, 10, 1000)
-      );
-
-      xAxis = new THREE.Line(xGeometry, xMaterial);
-
-      yAxis = new THREE.Line(yGeometry, yMaterial);
-
-      zAxis = new THREE.Line(zGeometry, zMaterial);
+      zAxis = new THREE.Line(geometry, material);
     },
-    setNone: function (scene) {
+    setNone: function () {
+      if (!assertInit(true)) return;
       scene.remove(xAxis, yAxis, zAxis);
     },
-    setX: function (scene) {
-      this.setNone(scene);
+    setX: function (pos) {
+      if (!assertInit(true)) return;
+      scene.remove(xAxis, yAxis, zAxis);
+      xAxis.position.copy(pos);
       scene.add(xAxis);
     },
-    setY: function (scene) {
-      this.setNone(scene);
+    setY: function (pos) {
+      if (!assertInit(true)) return;
+      scene.remove(xAxis, yAxis, zAxis);
+      yAxis.position.copy(pos);
       scene.add(yAxis);
     },
-    setZ: function (scene) {
-      this.setNone(scene);
+    setZ: function (pos) {
+      if (!assertInit(true)) return;
+      scene.remove(xAxis, yAxis, zAxis);
+      zAxis.position.copy(pos);
       scene.add(zAxis);
     }
   };
+
   return interface;
+
 });

@@ -3,7 +3,7 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
 
   var initialized = false;
 
-  var selected = [];
+  var selected;
   var edges = [];
   var faces = [];
 
@@ -25,6 +25,42 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
       mode === "TRANSLATE_X" ||
       mode === "TRANSLATE_Y" ||
       mode === "TRANSLATE_Z");
+  }
+
+  function getCenter() {
+
+    if (!selected) return new THREE.Vector3(0, 0, 0);
+
+    var minX = Infinity, maxX = -Infinity,
+      minY = Infinity, maxY = -Infinity,
+      minZ = Infinity, maxZ = -Infinity;
+
+    selected.forEach(function (v) {
+      if (!minX || v.obj.geometry.vertices[0].x < minX) {
+        minX = v.obj.geometry.vertices[0].x;
+      }
+      if (!maxX || v.obj.geometry.vertices[0].x > maxX) {
+        maxX = v.obj.geometry.vertices[0].x;
+      }
+      if (!minY || v.obj.geometry.vertices[0].y < minY) {
+        minY = v.obj.geometry.vertices[0].y;
+      }
+      if (!maxY || v.obj.geometry.vertices[0].y > maxY) {
+        maxY = v.obj.geometry.vertices[0].y;
+      }
+      if (!minZ || v.obj.geometry.vertices[0].z < minZ) {
+        minZ = v.obj.geometry.vertices[0].z;
+      }
+      if (!maxZ || v.obj.geometry.vertices[0].z > maxZ) {
+        maxZ = v.obj.geometry.vertices[0].z;
+      }
+    });
+
+    return new THREE.Vector3(
+      (minX + maxX) / 2,
+      (minY + maxY) / 2,
+      (minZ + maxZ) / 2
+    );
   }
 
   var interface = {
@@ -150,7 +186,7 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
           Debug.log(input.mode);
           if (!active(input.mode)) {
             selected = null;
-            AxisHelper.setNone(scene);
+            AxisHelper.setNone();
           }
           if (input.mode === "TRANSLATE_MODE") {
             if (!selected) {
@@ -181,13 +217,13 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
 
           }
           if (input.mode === "TRANSLATE_X") {
-            AxisHelper.setX(scene);
+            AxisHelper.setX(getCenter());
           }
           if (input.mode === "TRANSLATE_Y") {
-            AxisHelper.setY(scene);
+            AxisHelper.setY(getCenter());
           }
           if (input.mode === "TRANSLATE_Z") {
-            AxisHelper.setZ(scene);
+            AxisHelper.setZ(getCenter());
           }
         }
       });
