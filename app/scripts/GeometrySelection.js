@@ -97,9 +97,6 @@ Basic3D.loadModule("GeometrySelection", function (Debug, Geometry, InputHandling
               }
             }
           }
-        },
-        onmode: function (input) {
-          if (input.mode === "EDIT") deselectAll();
         }
       });
       InputHandling.addKeyBinding("LMB", "SELECT_GEOM");

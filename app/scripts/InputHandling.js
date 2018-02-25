@@ -3,6 +3,10 @@ Basic3D.loadModule("InputHandling", function (Debug) {
 
   var initialized = false;
 
+  // Mechanism to delay mode swap until 
+  // all keydown/mousedown handlers are fired
+  var swapMode = function() {};
+
   var bindings = {
     keys: {},
     actions: {}
@@ -61,6 +65,7 @@ Basic3D.loadModule("InputHandling", function (Debug) {
     handlers.onkeydown.forEach(function (handler) {
       handler(input);
     });
+    swapMode();
   }
 
   function keyup(event) {
@@ -83,6 +88,7 @@ Basic3D.loadModule("InputHandling", function (Debug) {
     handlers.onmousedown.forEach(function (handler) {
       handler(input);
     });
+    swapMode();
   }
 
   function mouseup(event) {
@@ -144,10 +150,16 @@ Basic3D.loadModule("InputHandling", function (Debug) {
     },
     mode: function (name) {
       if (!assertInit(true)) return;
-      input.mode = name;
-      handlers.onmode.forEach(function (handler) {
-        handler(input);
-      });
+      swapMode = function() {
+        // Perform queued mode change
+        Debug.log("'" + name + "'");
+        input.mode = name;
+        handlers.onmode.forEach(function (handler) {
+          handler(input);
+        });
+        // After performing change, dequeue
+        swapMode = function() {};
+      };
     },
     getKeyBindings: function () {
       return bindings;

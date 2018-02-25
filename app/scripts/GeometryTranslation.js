@@ -102,7 +102,6 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
                 }
               });
             });
-            Debug.log("X");
           }
           if (input.mode === "TRANSLATE_Y") {
             selected.forEach(function (v) {
@@ -130,7 +129,6 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
                 }
               });
             });
-            Debug.log("Y");
           }
           if (input.mode === "TRANSLATE_Z") {
             selected.forEach(function (v) {
@@ -158,7 +156,6 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
                 }
               });
             });
-            Debug.log("Z");
           }
         },
         onkeydown: function (input) {
@@ -183,7 +180,6 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
           }
         },
         onmode: function (input) {
-          Debug.log(input.mode);
           if (!active(input.mode)) {
             selected = null;
             AxisHelper.setNone();
@@ -211,7 +207,6 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
                   return false;
                 });
                 faces = faces.concat(fe);
-                Debug.log(faces.length + "");
               });
             }
 
