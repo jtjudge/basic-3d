@@ -58,7 +58,7 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
       InputHandling.register({
         onmousedown: function (input) {
           if (active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
-            Debug.log("CONFIRMED");
+            Debug.log("TRANSLATION CONFIRMED");
             InputHandling.mode("EDIT");
           }
         },
@@ -89,9 +89,13 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
           if (input.actions["TOGGLE_TRANSLATE_MODE"]) {
             if (!active(input.mode)) {
               InputHandling.mode("TRANSLATE_MODE");
+              if (Geometry.getSelected().length === 0) {
+                Debug.log("NO SELECTION");
+                InputHandling.mode("EDIT");
+              }
             } else {
               // To do: Reset geometry
-              Debug.log("CANCELLED");
+              Debug.log("TRANSLATION CANCELLED");
               InputHandling.mode("EDIT");
             }
           } else if (active(input.mode)) {
@@ -107,15 +111,6 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
           }
         },
         onmode: function (input) {
-          if (!active(input.mode)) {
-            AxisHelper.setNone();
-          }
-          if (input.mode === "TRANSLATE_MODE") {
-            if (Geometry.getSelected().length === 0) {
-              Debug.log("NO SELECTION");
-              InputHandling.mode("EDIT");
-            }
-          }
           if (input.mode === "TRANSLATE_X") {
             AxisHelper.setX(Geometry.getCenter());
           }

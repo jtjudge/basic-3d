@@ -152,7 +152,6 @@ Basic3D.loadModule("InputHandling", function (Debug) {
       if (!assertInit(true)) return;
       swapMode = function() {
         // Perform queued mode change
-        Debug.log("'" + name + "'");
         input.mode = name;
         handlers.onmode.forEach(function (handler) {
           handler(input);

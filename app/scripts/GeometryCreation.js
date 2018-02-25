@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling) {
+Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling, AxisHelper) {
 
   var initialized = false;
 
@@ -108,6 +108,9 @@ Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling)
           if (input.mode === "VERTEX_XZ") {
             showMarker(scene);
             moveMarker(input, renderer, camera);
+          }
+          if (input.mode === "VERTEX_Y") {
+            AxisHelper.setY(marker.position);
           }
         }
       });

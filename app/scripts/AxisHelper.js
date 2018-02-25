@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("AxisHelper", function (Debug) {
+Basic3D.loadModule("AxisHelper", function (Debug, InputHandling) {
   let initialized = false;
   let scene, xAxis, yAxis, zAxis;
 
@@ -44,10 +44,15 @@ Basic3D.loadModule("AxisHelper", function (Debug) {
         color: 0x0000ff
       });
       zAxis = new THREE.Line(geometry, material);
-    },
-    setNone: function () {
-      if (!assertInit(true)) return;
-      scene.remove(xAxis, yAxis, zAxis);
+
+      InputHandling.register({
+        onmode: function (input) {
+          if(input.mode === "EDIT") {
+            scene.remove(xAxis, yAxis, zAxis);
+          }
+        }
+      });
+
     },
     setX: function (pos) {
       if (!assertInit(true)) return;
