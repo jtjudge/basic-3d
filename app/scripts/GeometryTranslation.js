@@ -2,8 +2,7 @@
 Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, InputHandling, AxisHelper) {
 
   var initialized = false;
-
-  let scene;
+  var scene, move;
 
   const SPEED = 0.05;
 
@@ -43,6 +42,7 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, In
       InputHandling.register({
         onmousedown: function (input) {
           if (active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
+            move.confirm();
             InputHandling.mode("EDIT");
           }
         },
@@ -75,9 +75,11 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, In
               if (Geometry.getSelected().length === 0) {
                 InputHandling.mode("EDIT");
               } else {
+                move = History.startMove(Geometry.getSelected());
                 InputHandling.mode("TRANSLATE_MODE");
               }
             } else {
+              move.cancel();
               InputHandling.mode("EDIT");
             }
           } else if (active(input.mode)) {

@@ -5,7 +5,7 @@ Basic3D.loadModule("History", function(Debug, InputHandling) {
   var redoHistory = [];
 
   var interface = {
-    init: function() {
+    init: function () {
       InputHandling.register({
         onkeydown: function(input) {
           if(input.actions["HIST_MOD"]) {
@@ -30,7 +30,7 @@ Basic3D.loadModule("History", function(Debug, InputHandling) {
       InputHandling.addKeyBinding("KeyZ", "HIST_UNDO");
       InputHandling.addKeyBinding("KeyY", "HIST_REDO");
     },
-    addMove(move) {
+    addMove: function (move) {
       if(!move.undo || !move.redo) {
         console.log("Invalid move");
         return;
@@ -38,6 +38,42 @@ Basic3D.loadModule("History", function(Debug, InputHandling) {
       redoHistory.length = 0;
       undoHistory.push(move);
       console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
+    },
+    startMove: function (vertices) {
+      console.log("Move started");
+      var moving = true;
+      var states = vertices.map(function(v) {
+        return {
+          current: v.obj.position,
+          previous: new THREE.Vector3().copy(v.obj.position)
+        };
+      });
+      var flipStates = function() {
+        states.forEach(function(s) {
+          var temp = new THREE.Vector3().copy(s.current);
+          s.current.copy(s.previous);
+          s.previous = temp;
+        });
+      };
+      return {
+        confirm: function () {
+          if(!moving) return;
+          moving = false;
+          redoHistory.length = 0;
+          undoHistory.push({
+            undo: flipStates,
+            redo: flipStates
+          });
+          console.log("Move confirmed");
+          console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
+        },
+        cancel: function() {
+          if(!moving) return;
+          moving = false;
+          flipStates();
+          console.log("Move cancelled");
+        }
+      }
     }
   };
 
