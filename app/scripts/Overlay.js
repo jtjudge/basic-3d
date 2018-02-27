@@ -41,10 +41,6 @@ Basic3D.loadModule("Overlay", function (InputHandling, Scene) {
     }
   });
 
-  return {
-    init: function (container) {
-      container.appendChild(hudRenderer.domElement);
-    }
-  };
+  return {};
 
 });

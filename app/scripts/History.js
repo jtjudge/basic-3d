@@ -12,13 +12,11 @@ Basic3D.loadModule("History", function(InputHandling) {
           var move = undoHistory.pop();
           move.undo();
           redoHistory.push(move);
-          console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
         } else if(input.actions["HIST_REDO"]) {
           if(redoHistory.length === 0) return;
           var move = redoHistory.pop();
           move.redo();
           undoHistory.push(move);
-          console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
         }
       }
     }
@@ -31,16 +29,10 @@ Basic3D.loadModule("History", function(InputHandling) {
 
   return {
     addMove: function (move) {
-      if(!move.undo || !move.redo) {
-        console.log("Invalid move");
-        return;
-      }
       redoHistory.length = 0;
       undoHistory.push(move);
-      console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
     },
     startMove: function (vertices) {
-      console.log("Move started");
       var moving = true;
       var states = vertices.map(function(v) {
         return {
@@ -72,14 +64,11 @@ Basic3D.loadModule("History", function(InputHandling) {
             undo: flipStates,
             redo: flipStates
           });
-          console.log("Move confirmed");
-          console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
         },
         cancel: function() {
           if(!moving) return;
           moving = false;
           flipStates();
-          console.log("Move cancelled");
         }
       }
     }

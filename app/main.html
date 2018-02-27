@@ -11,7 +11,9 @@
 
   <script>
     var Basic3D = (function () {
+
       var modules = {};
+
       return {
         loadModule: function (name, loader) {
           var args = loader.toString().match(/function\s.*?\(([^)]*)\)/)[1];
@@ -33,6 +35,7 @@
           }
         }
       };
+      
     })();
   </script>
 
@@ -49,12 +52,16 @@
 
   <script>
     Basic3D.loadModule("Start", function (InputHandling) {
+
       // Begin update loop
       function update() {
         InputHandling.update();
         requestAnimationFrame(update);
       }
       requestAnimationFrame(update);
+
+      return {};
+
     });
   </script>
 
