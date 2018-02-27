@@ -22,13 +22,13 @@ Basic3D.loadModule("Geometry", function (Debug) {
     geometry.vertices.push(new THREE.Vector3(0, 0, 0));
     var material = new THREE.PointsMaterial({
       size: 2, sizeAttenuation: true,
-      color: Colors.VERTEX_SELECT
+      color: Colors.VERTEX
     });
     var vertex = {
       obj: new THREE.Points(geometry, material),
+      selected: false,
       edges: [],
-      faces: [],
-      selected: true
+      faces: []
     };
     vertex.obj.position.copy(position);
     return vertex;
@@ -39,11 +39,11 @@ Basic3D.loadModule("Geometry", function (Debug) {
     geometry.vertices.push(v1.obj.position);
     geometry.vertices.push(v2.obj.position);
     var material = new THREE.LineBasicMaterial({
-      color: Colors.EDGE_SELECT
+      color: Colors.EDGE
     });
     var edge = {
       obj: new THREE.Line(geometry, material),
-      selected: true,
+      selected: false,
       v1: v1, v2: v2
     };
     return edge;
@@ -59,11 +59,11 @@ Basic3D.loadModule("Geometry", function (Debug) {
     geometry.computeFaceNormals();
     geometry.computeVertexNormals();
     var material = new THREE.MeshLambertMaterial({
-      color: Colors.FACE_SELECT
+      color: Colors.FACE
     });
     var face = {
       obj: new THREE.Mesh(geometry, material),
-      selected: true,
+      selected: false,
       v1: v1, v2: v2, v3: v3
     };
     return face;
@@ -75,9 +75,11 @@ Basic3D.loadModule("Geometry", function (Debug) {
       return v.obj.id === vertex.obj.id;
     });
     if(exists) return;
+    vertex.selected = true;
+    vertex.obj.material.color.setHex(Colors.VERTEX_SELECT);
     vertices.push(vertex);
     scene.add(vertex.obj);
-    console.log("Added vertex " + vertex.obj.id);
+    console.log("Adding vertex " + vertex.obj.id);
   }
 
   function addEdge(edge) {
@@ -87,9 +89,11 @@ Basic3D.loadModule("Geometry", function (Debug) {
     if(exists) return;
     edge.v1.edges.push(edge);
     edge.v2.edges.push(edge);
+    edge.selected = true;
+    edge.obj.material.color.setHex(Colors.EDGE_SELECT);
     edges.push(edge);
     scene.add(edge.obj);
-    console.log("Added edge " + edge.obj.id);
+    console.log("Adding edge " + edge.obj.id);
   }
 
   function addFace(face) {
@@ -100,9 +104,11 @@ Basic3D.loadModule("Geometry", function (Debug) {
     face.v1.faces.push(face);
     face.v2.faces.push(face);
     face.v3.faces.push(face);
+    face.selected = true;
+    face.obj.material.color.setHex(Colors.FACE_SELECT);
     faces.push(face);
     scene.add(face.obj);
-    console.log("Added face " + face.obj.id);
+    console.log("Adding face " + face.obj.id);
   }
 
   function removeVertex(vertex) {
@@ -113,10 +119,9 @@ Basic3D.loadModule("Geometry", function (Debug) {
       // Remove vertex from model and scene
       var target = vertices.splice(index, 1)[0];
       scene.remove(target.obj);
-      // Remove associated edges and faces
-      target.edges.forEach(removeEdge);
-      target.faces.forEach(removeFace);
-      console.log("Removed vertex " + vertex.obj.id);
+      target.selected = false;
+      target.obj.material.color.setHex(Colors.VERTEX);
+      console.log("Removing vertex " + vertex.obj.id);
     }
   }
 
@@ -128,11 +133,9 @@ Basic3D.loadModule("Geometry", function (Debug) {
       // Remove edge from model and scene
       var target = edges.splice(index, 1)[0];
       scene.remove(target.obj);
-      // Remove edge from the vertex edge lists
-      var getInd = function(e) { return e.obj.id === target.obj.id; };
-      target.v1.edges.splice(target.v1.edges.findIndex(getInd), 1);
-      target.v2.edges.splice(target.v2.edges.findIndex(getInd), 1);
-      console.log("Removed edge " + edge.obj.id);
+      target.selected = false;
+      target.obj.material.color.setHex(Colors.EDGE);
+      console.log("Removing edge " + edge.obj.id);
     }
   }
 
@@ -144,12 +147,9 @@ Basic3D.loadModule("Geometry", function (Debug) {
       // Remove face from model and scene
       var target = faces.splice(index, 1)[0];
       scene.remove(target.obj);
-      // Remove face from vertex face lists
-      var getInd = function(f) { return f.obj.id === target.obj.id; };
-      target.v1.faces.splice(target.v1.faces.findIndex(getInd), 1);
-      target.v2.faces.splice(target.v2.faces.findIndex(getInd), 1);
-      target.v3.faces.splice(target.v3.faces.findIndex(getInd), 1);
-      console.log("Removed face " + face.obj.id);
+      target.selected = false;
+      target.obj.material.color.setHex(Colors.FACE);
+      console.log("Removing face " + face.obj.id);
     }
   }
 

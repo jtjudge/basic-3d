@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("History", function(Debug, Geometry, InputHandling) {
+Basic3D.loadModule("History", function(Debug, InputHandling) {
 
   var undoHistory = [];
   var redoHistory = [];
@@ -14,15 +14,13 @@ Basic3D.loadModule("History", function(Debug, Geometry, InputHandling) {
               var move = undoHistory.pop();
               move.undo();
               redoHistory.push(move);
-              console.log(undoHistory);
-              console.log(redoHistory);
+              console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
             } else if(input.actions["HIST_REDO"]) {
               if(redoHistory.length === 0) return;
               var move = redoHistory.pop();
               move.redo();
               undoHistory.push(move);
-              console.log(undoHistory);
-              console.log(redoHistory);
+              console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
             }
           }
         }
@@ -39,6 +37,7 @@ Basic3D.loadModule("History", function(Debug, Geometry, InputHandling) {
       }
       redoHistory.length = 0;
       undoHistory.push(move);
+      console.log("[ " + undoHistory.length + " | " + redoHistory.length + " ]");
     }
   };
 
