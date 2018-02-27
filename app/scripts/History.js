@@ -54,6 +54,14 @@ Basic3D.loadModule("History", function(Debug, InputHandling) {
           s.current.copy(s.previous);
           s.previous = temp;
         });
+        vertices.forEach(function(v) {
+          v.edges.forEach(function (e) {
+            e.obj.geometry.verticesNeedUpdate = true;
+          });
+          v.faces.forEach(function (f) {
+            f.obj.geometry.verticesNeedUpdate = true;
+          });
+        });
       };
       return {
         confirm: function () {
