@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandling, AxisHelper) {
+Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, InputHandling, AxisHelper) {
 
   var initialized = false;
 
@@ -46,7 +46,7 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
       InputHandling.register({
         onmousedown: function (input) {
           if (active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
-            Debug.log("TRANSLATION CONFIRMED");
+            History.confirmMove(Geometry.getSelected());
             InputHandling.mode("EDIT");
           }
         },
@@ -76,14 +76,14 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, InputHandli
         onkeydown: function (input) {
           if (input.actions["TOGGLE_TRANSLATE_MODE"]) {
             if (!active(input.mode)) {
-              InputHandling.mode("TRANSLATE_MODE");
               if (Geometry.getSelected().length === 0) {
-                Debug.log("NO SELECTION");
                 InputHandling.mode("EDIT");
+              } else {
+                History.startMove(Geometry.getSelected());
+                InputHandling.mode("TRANSLATE_MODE");
               }
             } else {
-              // To do: Reset geometry
-              Debug.log("TRANSLATION CANCELLED");
+              History.cancelMove(Geometry.getSelected());
               InputHandling.mode("EDIT");
             }
           } else if (active(input.mode)) {
