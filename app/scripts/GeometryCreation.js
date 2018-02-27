@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling, AxisHelper) {
+Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, History, InputHandling, AxisHelper) {
 
   var initialized = false;
 
@@ -61,7 +61,13 @@ Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling,
           if (input.mode === "VERTEX_XZ" && input.actions["PLACE_VERTEX"]) {
             InputHandling.mode("VERTEX_Y");
           } else if (input.mode === "VERTEX_Y" && input.actions["PLACE_VERTEX"]) {
-            Geometry.addVertex(marker.position);
+            var pos = new THREE.Vector3().copy(marker.position);
+            var vert = new Geometry.Vertex(pos);
+            Geometry.addVertex(vert);
+            History.addMove({
+              undo: function () { Geometry.removeVertex(vert); },
+              redo: function () { Geometry.addVertex(vert); }
+            });
             InputHandling.mode("EDIT");
           }
         },
@@ -77,7 +83,12 @@ Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling,
             if (selected.length === 2) {
               var v1 = selected[0];
               var v2 = selected[1];
-              Geometry.addEdge(v1, v2);
+              var edge = Geometry.Edge(v1, v2);
+              Geometry.addEdge(edge);
+              History.addMove({
+                undo: function () { Geometry.removeEdge(edge); },
+                redo: function () { Geometry.addEdge(edge); }
+              });
             }
           } else if (input.mode === "EDIT" && input.actions["PLACE_FACE"]) {
             var selected = Geometry.getSelected();
@@ -85,10 +96,28 @@ Basic3D.loadModule("GeometryCreation", function (Debug, Geometry, InputHandling,
               var v1 = selected[0];
               var v2 = selected[1];
               var v3 = selected[2];
-              Geometry.addFace(v1, v2, v3);
-              Geometry.addEdge(v1, v2);
-              Geometry.addEdge(v2, v3);
-              Geometry.addEdge(v1, v3);
+              var edge1 = Geometry.Edge(v1, v2);
+              var edge2 = Geometry.Edge(v2, v3);
+              var edge3 = Geometry.Edge(v1, v3);
+              var face = Geometry.Face(v1, v2, v3);
+              Geometry.addFace(face);
+              Geometry.addEdge(edge1);
+              Geometry.addEdge(edge2);
+              Geometry.addEdge(edge3);
+              History.addMove({
+                undo: function () {
+                  Geometry.removeFace(face);
+                  Geometry.removeEdge(edge1);
+                  Geometry.removeEdge(edge2);
+                  Geometry.removeEdge(edge3);
+                },
+                redo: function () {
+                  Geometry.addFace(face);
+                  Geometry.addEdge(edge1);
+                  Geometry.addEdge(edge2);
+                  Geometry.addEdge(edge3);
+                }
+              });
             }
           }
         },

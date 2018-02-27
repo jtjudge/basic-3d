@@ -17,7 +17,7 @@ Basic3D.loadModule("Geometry", function (Debug) {
 
   var scene;
 
-  function addVertex(position) {
+  function Vertex(position) {
     var geometry = new THREE.Geometry();
     geometry.vertices.push(new THREE.Vector3(0, 0, 0));
     var material = new THREE.PointsMaterial({
@@ -31,12 +31,10 @@ Basic3D.loadModule("Geometry", function (Debug) {
       selected: true
     };
     vertex.obj.position.copy(position);
-    vertices.push(vertex);
-    scene.add(vertex.obj);
+    return vertex;
   }
 
-  function addEdge(v1, v2) {
-    if(hasEdge(v1, v2)) return;
+  function Edge(v1, v2) {
     var geometry = new THREE.Geometry();
     geometry.vertices.push(v1.obj.position);
     geometry.vertices.push(v2.obj.position);
@@ -48,14 +46,10 @@ Basic3D.loadModule("Geometry", function (Debug) {
       selected: true,
       v1: v1, v2: v2
     };
-    v1.edges.push(edge);
-    v2.edges.push(edge);
-    edges.push(edge);
-    scene.add(edge.obj);
+    return edge;
   }
 
-  function addFace(v1, v2, v3) {
-    if(hasFace(v1, v2, v3)) return;
+  function Face(v1, v2, v3) {
     var geometry = new THREE.Geometry();
     geometry.vertices.push(v1.obj.position);
     geometry.vertices.push(v2.obj.position);
@@ -72,39 +66,106 @@ Basic3D.loadModule("Geometry", function (Debug) {
       selected: true,
       v1: v1, v2: v2, v3: v3
     };
-    v1.faces.push(face);
-    v2.faces.push(face);
-    v3.faces.push(face);
+    return face;
+  }
+
+
+  function addVertex(vertex) {
+    var exists = vertices.some(function(v) {
+      return v.obj.id === vertex.obj.id;
+    });
+    if(exists) return;
+    vertices.push(vertex);
+    scene.add(vertex.obj);
+    console.log("Added vertex " + vertex.obj.id);
+  }
+
+  function addEdge(edge) {
+    var exists = edges.some(function(e) {
+      return e.obj.id === edge.obj.id;
+    });
+    if(exists) return;
+    edge.v1.edges.push(edge);
+    edge.v2.edges.push(edge);
+    edges.push(edge);
+    scene.add(edge.obj);
+    console.log("Added edge " + edge.obj.id);
+  }
+
+  function addFace(face) {
+    var exists = faces.some(function(f) {
+      return f.obj.id === face.obj.id;
+    });
+    if(exists) return;
+    face.v1.faces.push(face);
+    face.v2.faces.push(face);
+    face.v3.faces.push(face);
     faces.push(face);
     scene.add(face.obj);
+    console.log("Added face " + face.obj.id);
   }
 
-  function hasEdge(v1, v2) {
-    var ids = [v1.obj.id, v2.obj.id];
-    var exists = v1.edges.some(function(e) {
-      return ids.includes(e.v1.obj.id) && 
-        ids.includes(e.v2.obj.id);
+  function removeVertex(vertex) {
+    var index = vertices.findIndex(function(v) {
+      return v.obj.id === vertex.obj.id;
     });
-    return exists;
+    if(index > -1) {
+      // Remove vertex from model and scene
+      var target = vertices.splice(index, 1)[0];
+      scene.remove(target.obj);
+      // Remove associated edges and faces
+      target.edges.forEach(removeEdge);
+      target.faces.forEach(removeFace);
+      console.log("Removed vertex " + vertex.obj.id);
+    }
   }
 
-  function hasFace(v1, v2, v3) {
-    var ids = [v1.obj.id, v2.obj.id, v3.obj.id];
-    var exists = v1.faces.some(function(f) {
-      return ids.includes(f.v1.obj.id) && 
-        ids.includes(f.v2.obj.id) &&
-        ids.includes(f.v3.obj.id);
+  function removeEdge(edge) {
+    var index = edges.findIndex(function(e) {
+      return e.obj.id === edge.obj.id;
     });
-    return exists;
+    if(index > -1) {
+      // Remove edge from model and scene
+      var target = edges.splice(index, 1)[0];
+      scene.remove(target.obj);
+      // Remove edge from the vertex edge lists
+      var getInd = function(e) { return e.obj.id === target.obj.id; };
+      target.v1.edges.splice(target.v1.edges.findIndex(getInd), 1);
+      target.v2.edges.splice(target.v2.edges.findIndex(getInd), 1);
+      console.log("Removed edge " + edge.obj.id);
+    }
+  }
+
+  function removeFace(face) {
+    var index = faces.findIndex(function(f) {
+      return f.obj.id === face.obj.id;
+    });
+    if(index > -1) {
+      // Remove face from model and scene
+      var target = faces.splice(index, 1)[0];
+      scene.remove(target.obj);
+      // Remove face from vertex face lists
+      var getInd = function(f) { return f.obj.id === target.obj.id; };
+      target.v1.faces.splice(target.v1.faces.findIndex(getInd), 1);
+      target.v2.faces.splice(target.v2.faces.findIndex(getInd), 1);
+      target.v3.faces.splice(target.v3.faces.findIndex(getInd), 1);
+      console.log("Removed face " + face.obj.id);
+    }
   }
 
   var interface = {
-    init: function (_scene, colors) {
+    init: function (_scene) {
       scene = _scene;
     },
+    Vertex: Vertex,
+    Edge: Edge,
+    Face: Face,
     addVertex: addVertex,
     addEdge: addEdge,
     addFace: addFace,
+    removeVertex: removeVertex,
+    removeEdge: removeEdge,
+    removeFace: removeFace,
     getVertices: function () {
       return vertices;
     },

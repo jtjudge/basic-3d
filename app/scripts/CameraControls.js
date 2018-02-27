@@ -83,7 +83,7 @@ Basic3D.loadModule("CameraControls", function (Debug, InputHandling) {
       InputHandling.addKeyBinding("KeyA", "CAM_TRUCK_LEFT");
       InputHandling.addKeyBinding("KeyD", "CAM_TRUCK_RIGHT");
       InputHandling.addKeyBinding("KeyQ", "CAM_PEDESTAL_UP");
-      InputHandling.addKeyBinding("KeyZ", "CAM_PEDESTAL_DOWN");
+      //InputHandling.addKeyBinding("KeyZ", "CAM_PEDESTAL_DOWN");
 
       InputHandling.addKeyBinding("KeyO", "CAM_RESET");
 

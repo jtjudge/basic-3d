@@ -26,13 +26,10 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, In
   }
 
   function translateVertex(v, diff) {
-    // Update vertex position
     v.obj.position.add(diff);
-    // Update any connected edges
     v.edges.forEach(function (e) {
       e.obj.geometry.verticesNeedUpdate = true;
     });
-    // Update any connected faces
     v.faces.forEach(function (f) {
       f.obj.geometry.verticesNeedUpdate = true;
     });
@@ -46,7 +43,6 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, In
       InputHandling.register({
         onmousedown: function (input) {
           if (active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
-            History.confirmMove(Geometry.getSelected());
             InputHandling.mode("EDIT");
           }
         },
@@ -79,11 +75,9 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, In
               if (Geometry.getSelected().length === 0) {
                 InputHandling.mode("EDIT");
               } else {
-                History.startMove(Geometry.getSelected());
                 InputHandling.mode("TRANSLATE_MODE");
               }
             } else {
-              History.cancelMove(Geometry.getSelected());
               InputHandling.mode("EDIT");
             }
           } else if (active(input.mode)) {
