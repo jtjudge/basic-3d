@@ -11,21 +11,16 @@
 
   <script>
     var Basic3D = (function () {
-
-      function getDependencies(loader) {
-        var args = loader.toString().match(/function\s.*?\(([^)]*)\)/)[1];
-        return args.split(',').map(function (arg) {
-          return arg.replace(/\/\*.*\*\//, '').trim();
-        }).filter(function (arg) {
-          return arg;
-        });
-      }
-
-      var modules = {
+      var modules = {};
+      return {
         loadModule: function (name, loader) {
-          var dependencies = getDependencies(loader);
+          var args = loader.toString().match(/function\s.*?\(([^)]*)\)/)[1];
+          var dependencies = args.split(',').map(function (arg) {
+            return arg.replace(/\/\*.*\*\//, '').trim();
+          }).filter(function (arg) {
+            return arg;
+          });
           var missing = dependencies.filter(function (dep) {
-
             return modules[dep] === undefined;
           });
           if (missing.length > 0) {
@@ -38,22 +33,30 @@
           }
         }
       };
-
-      return modules;
-
     })();
   </script>
 
-  <script src="scripts/Debug.js"></script>
   <script src="scripts/InputHandling.js"></script>
-  <script src="scripts/AxisHelper.js"></script>
+  <script src="scripts/Scene.js"></script>
   <script src="scripts/CameraControls.js"></script>
+  <script src="scripts/Overlay.js"></script>
+  <script src="scripts/Colors.js"></script>
   <script src="scripts/Geometry.js"></script>
   <script src="scripts/History.js"></script>
   <script src="scripts/GeometryCreation.js"></script>
   <script src="scripts/GeometrySelection.js"></script>
   <script src="scripts/GeometryTranslation.js"></script>
-  <script src="scripts/AppStart.js"></script>
+
+  <script>
+    Basic3D.loadModule("Start", function (InputHandling) {
+      // Begin update loop
+      function update() {
+        InputHandling.update();
+        requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    });
+  </script>
 
 </body>
 

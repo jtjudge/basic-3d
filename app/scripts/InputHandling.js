@@ -1,7 +1,5 @@
 
-Basic3D.loadModule("InputHandling", function (Debug) {
-
-  var initialized = false;
+Basic3D.loadModule("InputHandling", function () {
 
   // Mechanism to delay mode swap until 
   // all keydown/mousedown handlers are fired
@@ -38,27 +36,19 @@ Basic3D.loadModule("InputHandling", function (Debug) {
     3: "RMB"
   };
 
-  function hasBinding(code) {
-    if (bindings.keys[code] === undefined) {
-      Debug.log("[InputHandling] No binding for " + code);
-      return false;
-    }
-    return true;
-  }
+  document.onkeydown = keydown;
+  document.onkeyup = keyup;
+  document.onmousedown = mousedown;
+  document.onmouseup = mouseup;
+  document.onmousemove = mousemove;
+  window.onresize = resize;
 
-  function assertInit(val) {
-    if (initialized && !val) {
-      Debug.log("[InputHandling] ERROR: Module already initialized");
-      return false;
-    } else if (!initialized && val) {
-      Debug.log("[InputHandling] ERROR: Module not initialized");
-      return false;
-    }
-    return true;
+  function noBinding(code) {
+    return bindings.keys[code] === undefined;
   }
 
   function keydown(event) {
-    if (!hasBinding(event.code)) return;
+    if (noBinding(event.code)) return;
     bindings.keys[event.code].forEach(function (action) {
       input.actions[action] = true;
     });
@@ -69,7 +59,7 @@ Basic3D.loadModule("InputHandling", function (Debug) {
   }
 
   function keyup(event) {
-    if (!hasBinding(event.code)) return;
+    if (noBinding(event.code)) return;
     bindings.keys[event.code].forEach(function (action) {
       input.actions[action] = false;
     });
@@ -81,7 +71,7 @@ Basic3D.loadModule("InputHandling", function (Debug) {
   function mousedown(event) {
     event.preventDefault();
     var code = mouseEvents[event.which];
-    if (!hasBinding(code)) return;
+    if (noBinding(code)) return;
     bindings.keys[code].forEach(function (action) {
       input.actions[action] = true;
     });
@@ -94,7 +84,7 @@ Basic3D.loadModule("InputHandling", function (Debug) {
   function mouseup(event) {
     event.preventDefault();
     var code = mouseEvents[event.which];
-    if (!hasBinding(code)) return;
+    if (noBinding(code)) return;
     bindings.keys[code].forEach(function (action) {
       input.actions[action] = false;
     });
@@ -120,19 +110,8 @@ Basic3D.loadModule("InputHandling", function (Debug) {
     });
   }
 
-  var interface = {
-    init: function () {
-      if (!assertInit(false)) return;
-      initialized = true;
-      document.onkeydown = keydown;
-      document.onkeyup = keyup;
-      document.onmousedown = mousedown;
-      document.onmouseup = mouseup;
-      document.onmousemove = mousemove;
-      window.onresize = resize;
-    },
+  return {
     register: function (items) {
-      if (!assertInit(true)) return;
       if (items.onkeydown) handlers.onkeydown.push(items.onkeydown);
       if (items.onkeyup) handlers.onkeyup.push(items.onkeyup);
       if (items.onmousedown) handlers.onmousedown.push(items.onmousedown);
@@ -143,13 +122,11 @@ Basic3D.loadModule("InputHandling", function (Debug) {
       if (items.onmode) handlers.onmode.push(items.onmode);
     },
     update: function () {
-      if (!assertInit(true)) return;
       handlers.onupdate.forEach(function (handler) {
         handler(input);
       });
     },
     mode: function (name) {
-      if (!assertInit(true)) return;
       swapMode = function() {
         // Perform queued mode change
         input.mode = name;
@@ -173,36 +150,20 @@ Basic3D.loadModule("InputHandling", function (Debug) {
       var index = bindings.keys[key].findIndex(function (a) {
         return a === action;
       });
-      if (index > -1) {
-        Debug.log("[KeyBindings] Duplicate key binding '" +
-          key + " --> " + action + "' attempted");
-        return false;
-      }
+      if (index > -1) return false;
       bindings.keys[key].push(action);
       return true;
     },
     removeKeyBinding: function (key, action) {
-      if (!bindings.keys[key] === undefined) {
-        Debug.log("[KeyBindings] Key '" + key + "' not registered");
-        return false;
-      }
-      if (bindings.actions[action] === undefined) {
-        Debug.log("[KeyBindings] Action '" + action + "' not registered");
-        return false;
-      }
+      if (!bindings.keys[key] === undefined) return false;
+      if (bindings.actions[action] === undefined) return false;
       var index = bindings.keys[key].findIndex(function (a) {
         return a === action;
       });
-      if (index === -1) {
-        Debug.log("[KeyBindings] Key binding '" +
-          key + " --> " + action + "' not registered");
-        return false;
-      }
+      if (index === -1) return false;
       bindings.keys[key].splice(index, 1);
       return true;
     }
   };
-
-  return interface;
 
 });

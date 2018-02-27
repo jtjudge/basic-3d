@@ -1,21 +1,9 @@
 
-Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, InputHandling, AxisHelper) {
+Basic3D.loadModule("GeometryTranslation", function (InputHandling, Scene, Geometry, History) {
 
-  var initialized = false;
-  var scene, move;
+  var SPEED = 0.05;
 
-  const SPEED = 0.05;
-
-  function assertInit(val) {
-    if (initialized && !val) {
-      Debug.log("[GeometryTranslation] ERROR: Module already initialized");
-      return false;
-    } else if (!initialized && val) {
-      Debug.log("[GeometryTranslation] ERROR: Module not initialized");
-      return false;
-    }
-    return true;
-  }
+  var move;
 
   function active(mode) {
     return (mode === "TRANSLATE_MODE" ||
@@ -34,86 +22,80 @@ Basic3D.loadModule("GeometryTranslation", function (Debug, Geometry, History, In
     });
   }
 
-  var interface = {
-    init: function (camera, renderer, scene_) {
-      if (!assertInit(false)) return;
-      initialized = true;
-      scene = scene_;
-      InputHandling.register({
-        onmousedown: function (input) {
-          if (active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
-            move.confirm();
+  InputHandling.register({
+    onmousedown: function (input) {
+      if (active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
+        move.confirm();
+        InputHandling.mode("EDIT");
+      }
+    },
+    onmousemove: function (input) {
+      if (input.mode === "TRANSLATE_X") {
+        Geometry.getSelected().forEach(function (v) {
+          translateVertex(v, new THREE.Vector3(
+            SPEED * (input.coords.y2 - input.coords.y1), 0, 0
+          ));
+        });
+      }
+      if (input.mode === "TRANSLATE_Y") {
+        Geometry.getSelected().forEach(function (v) {
+          translateVertex(v, new THREE.Vector3(
+            0, SPEED * (input.coords.y1 - input.coords.y2), 0
+          ));
+        });
+      }
+      if (input.mode === "TRANSLATE_Z") {
+        Geometry.getSelected().forEach(function (v) {
+          translateVertex(v, new THREE.Vector3(
+            0, 0, SPEED * (input.coords.y2 - input.coords.y1)
+          ));
+        });
+      }
+    },
+    onkeydown: function (input) {
+      if (input.actions["TOGGLE_TRANSLATE_MODE"]) {
+        if (!active(input.mode)) {
+          if (Geometry.getSelected().length === 0) {
             InputHandling.mode("EDIT");
+          } else {
+            move = History.startMove(Geometry.getSelected());
+            InputHandling.mode("TRANSLATE_MODE");
           }
-        },
-        onmousemove: function (input) {
-          if (input.mode === "TRANSLATE_X") {
-            Geometry.getSelected().forEach(function (v) {
-              translateVertex(v, new THREE.Vector3(
-                SPEED * (input.coords.y2 - input.coords.y1), 0, 0
-              ));
-            });
-          }
-          if (input.mode === "TRANSLATE_Y") {
-            Geometry.getSelected().forEach(function (v) {
-              translateVertex(v, new THREE.Vector3(
-                0, SPEED * (input.coords.y1 - input.coords.y2), 0
-              ));
-            });
-          }
-          if (input.mode === "TRANSLATE_Z") {
-            Geometry.getSelected().forEach(function (v) {
-              translateVertex(v, new THREE.Vector3(
-                0, 0, SPEED * (input.coords.y2 - input.coords.y1)
-              ));
-            });
-          }
-        },
-        onkeydown: function (input) {
-          if (input.actions["TOGGLE_TRANSLATE_MODE"]) {
-            if (!active(input.mode)) {
-              if (Geometry.getSelected().length === 0) {
-                InputHandling.mode("EDIT");
-              } else {
-                move = History.startMove(Geometry.getSelected());
-                InputHandling.mode("TRANSLATE_MODE");
-              }
-            } else {
-              move.cancel();
-              InputHandling.mode("EDIT");
-            }
-          } else if (active(input.mode)) {
-            if (input.actions["TOGGLE_TRANSLATE_X"]) {
-              InputHandling.mode("TRANSLATE_X");
-            }
-            if (input.actions["TOGGLE_TRANSLATE_Y"]) {
-              InputHandling.mode("TRANSLATE_Y");
-            }
-            if (input.actions["TOGGLE_TRANSLATE_Z"]) {
-              InputHandling.mode("TRANSLATE_Z");
-            }
-          }
-        },
-        onmode: function (input) {
-          if (input.mode === "TRANSLATE_X") {
-            AxisHelper.setX(Geometry.getCenter());
-          }
-          if (input.mode === "TRANSLATE_Y") {
-            AxisHelper.setY(Geometry.getCenter());
-          }
-          if (input.mode === "TRANSLATE_Z") {
-            AxisHelper.setZ(Geometry.getCenter());
-          }
+        } else {
+          move.cancel();
+          InputHandling.mode("EDIT");
         }
-      });
-
-      InputHandling.addKeyBinding("KeyT", "TOGGLE_TRANSLATE_MODE");
-      InputHandling.addKeyBinding("KeyX", "TOGGLE_TRANSLATE_X");
-      InputHandling.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y");
-      InputHandling.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z");
-      InputHandling.addKeyBinding("LMB", "TRANSLATE_CONFIRM");
+      } else if (active(input.mode)) {
+        if (input.actions["TOGGLE_TRANSLATE_X"]) {
+          InputHandling.mode("TRANSLATE_X");
+        }
+        if (input.actions["TOGGLE_TRANSLATE_Y"]) {
+          InputHandling.mode("TRANSLATE_Y");
+        }
+        if (input.actions["TOGGLE_TRANSLATE_Z"]) {
+          InputHandling.mode("TRANSLATE_Z");
+        }
+      }
+    },
+    onmode: function (input) {
+      if (input.mode === "TRANSLATE_X") {
+        Scene.showX(Geometry.getCenter());
+      }
+      if (input.mode === "TRANSLATE_Y") {
+        Scene.showY(Geometry.getCenter());
+      }
+      if (input.mode === "TRANSLATE_Z") {
+        Scene.showZ(Geometry.getCenter());
+      }
     }
-  };
+  });
 
-  return interface;
+  InputHandling.addKeyBinding("KeyT", "TOGGLE_TRANSLATE_MODE");
+  InputHandling.addKeyBinding("KeyX", "TOGGLE_TRANSLATE_X");
+  InputHandling.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y");
+  InputHandling.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z");
+  InputHandling.addKeyBinding("LMB", "TRANSLATE_CONFIRM");
+
+  return {};
+
 });
