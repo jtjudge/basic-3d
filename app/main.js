@@ -90,12 +90,73 @@ app.on("ready", function() {
               click: () => {changeKeyBind()}
             },
             {
-              label: 'Pan Left',
+              label: 'Pan Left (Press and Hold)',
               click: () => {changeKeyBind()}
             },
             {
-              label: 'Pan Right',
+              label: 'Pan Right (Press and Hold)',
               click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Alt Pan Left',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Alt Pan Right',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Tilt Up (Press and Hold)',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Tilt Down (Press and Hold)',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Alt Tilt Up',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Alt Tilt Down',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Orbit (Press and Hold)',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Alt Orbit',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Speed Modifier (Press and Hold)',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Reset Camera',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Create Vertex',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Select Vertices',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Create Edge',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Create Face',
+              click: () => {changeKeyBind()}
+            },
+            {
+              label: 'Reset To Default',
+              //Create resetKeyBinds()
+              click: () => {resetKeyBinds()}
             },
           ]
         }
