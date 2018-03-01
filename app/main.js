@@ -46,19 +46,58 @@ app.on("ready", function () {
       label: 'Preferences',
       submenu: [
         {
-          label: 'Change Window Color',
+          label: 'Change Default colors',
           submenu: [
             {
-              label: 'Red',
-              click: () => { changeWindowColor('red') }
+              label: 'vertices',
+              submenu: [
+                {
+                label: 'red',
+                click: () => { setColorForEnt('vertices', '#ff0000') }
+                },
+                {
+                  label: 'blue',
+                  click: () => { setColorForEnt('vertices', '#00ff00') }
+                },
+                {
+                  label: 'green',
+                  click: () => { setColorForEnt('vertices', '#0000ff') }
+                },
+              ]
             },
             {
-              label: 'Blue',
-              click: () => { changeWindowColor('blue') }
+              label: 'edges',
+              submenu: [
+                {
+                label: 'red',
+                click: () => { setColorForEnt('edges', '#ff0000') }
+                },
+                {
+                  label: 'blue',
+                  click: () => { setColorForEnt('edges', '#00ff00') }
+                },
+                {
+                  label: 'green',
+                  click: () => { setColorForEnt('edges', '#0000ff') }
+                },
+              ]
             },
             {
-              label: 'Green',
-              click: () => { changeWindowColor('green') }
+              label: 'faces',
+              submenu: [
+                {
+                  label: 'red',
+                  click: () => { setColorForEnt('faces', '#ff0000') }
+                  },
+                  {
+                    label: 'blue',
+                    click: () => { setColorForEnt('faces', '#00ff00') }
+                  },
+                  {
+                    label: 'green',
+                    click: () => { setColorForEnt('faces', '#0000ff') }
+                  },
+              ]
             },
           ]
         }
@@ -68,16 +107,17 @@ app.on("ready", function () {
   Menu.setApplicationMenu(menuSettings);
 });
 //TODO: change this so that it actually does something
-function changeWindowColor(color) {
-  switch (color) {
-    case 'red':
-      console.log('red');
+function setColorForEnt(type, color) {
+  console.log(`${type} ${color}`);
+  switch (type) {
+    case 'vertices':
+      
       break;
-    case 'blue':
-      console.log('blue');
+    case 'edges':
+      
       break;
-    case 'green':
-      console.log('greens');
+    case 'faces':
+      
       break;
   }
 } 
