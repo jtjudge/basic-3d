@@ -2,8 +2,7 @@ const electron = require("electron");
 const url = require("url");
 const path = require("path");
 
-const ipcMain = require('electron').ipcMain;
-const {app, BrowserWindow} = electron;
+const {app, BrowserWindow, ipcMain} = electron;
 const Menu = electron.Menu;
 // Set environment
 process.env.NODE_ENV = "development";
@@ -182,20 +181,23 @@ function changeWindowColor(color) {
     });
 
     //InputHandling not working
-    var bindings;
+    
+
+    console.log("main: " + action);
+
+    mainWindow.webContents.send('get_bindings');
+  }
+
+  ipcMain.on('get_bindings_recieved', (event, arg) => {
+    console.log("main: " + arg)
+
+    var bindings = arg;
     var index = 0;
     var found = false;
-
-    ipcMain.send('get_bindings');
-
-    ipcMain.on('get_bindings_recieved', (event, arg) => {
-      bindings = arg;
-    });
-
     while(index < bindings.actions.length)
     {
       if(bindings.actions[index] === action){
-        ipcMain.send('remove_key_binding', bindings.keys[index], action);
+        mainWindow.webContents.send('remove_key_binding', bindings.keys[index], action);
         //InputHandling.removeKeyBinding(action, bindings.keys[index]);
       }
       else{
@@ -203,23 +205,24 @@ function changeWindowColor(color) {
       }
     }
 
-      function mousedown(event) {
-        event.preventDefault();
-        var code = mouseEvents[event.which];
-        ipcMain.send('add_key_binding', action, code);
-        //InputHandling.addKeyBinding(action, input);
-        child.close();
-      }
+    function mousedown(event) {
+      event.preventDefault();
+      var code = mouseEvents[event.which];
+      mainWindow.webContents.send('add_key_binding', action, code);
+      //InputHandling.addKeyBinding(action, input);
+      child.close();
+    }
 
-      function keydown(event) {
-        ipcMain.send('add_key_binding', action, event.code);
-        //InputHandling.addKeyBinding(action, input);
-        child.close();
-      }
-}
+    function keydown(event) {
+      console.log("main: " + action)
+      mainWindow.webContents.send('add_key_binding', action, event.code);
+      //InputHandling.addKeyBinding(action, input);
+      child.close();
+    }
+  });
 
-  function resetKeyBinds(){
-    var binding;
+    function resetKeyBinds(){
+      var binding;
 
     ipcMain.send('get_bindings');
 
