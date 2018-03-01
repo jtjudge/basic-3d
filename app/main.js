@@ -187,7 +187,7 @@ function changeWindowColor(color){
 
     ipcMain.send('get_bindings');
 
-    ipcMain.on('get_bindings_recieved', function (event, arg) => {
+    ipcMain.on('get_bindings_recieved', (event, arg) => {
       bindings = arg;
     });
 
@@ -222,7 +222,7 @@ function changeWindowColor(color){
 
     ipcMain.send('get_bindings');
 
-    ipcMain.on('get_bindings_recieved', function(event, arg) => {
+    ipcMain.on('get_bindings_recieved', (event, arg) => {
       bindings = arg;
     });
 

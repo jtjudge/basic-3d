@@ -23,17 +23,17 @@ Basic3D.loadModule("Keymap", function(Debug, InputHandling){
     }
   };
 
-  ipcRenderer.on('get_bindings', function(event, arg) => {
+  ipcRenderer.on('get_bindings', (event, arg) => {
     ipcRenderer.send('get_bindings_recieved', InputHandling.getKeyBindings());
   });
 
-  ipcRenderer.on('remove_key_binding', function(event, arg1, arg2) => {
+  ipcRenderer.on('remove_key_binding', (event, arg1, arg2) => {
     InputHandling.removeKeyBinding(arg1, arg2);
   });
 
-  ipcRenderer.on('add_key_binding', function(event, arg1, arg2) => {
+  ipcRenderer.on('add_key_binding', (event, arg1, arg2) => {
     InputHandling.addKeyBinding(arg1, arg2);
   });
-  
+
   return interface;
 });
