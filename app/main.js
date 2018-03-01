@@ -60,8 +60,9 @@ app.on("ready", function() {
               label: 'Green',
               click:  () => {changeWindowColor('green')}
             },
-          ],
-
+          ]
+        },
+        {
           label: 'Change Keybinds',
           submenu: [
             {
@@ -142,8 +143,7 @@ app.on("ready", function() {
             },
           ]
         }
-      ]
-    },
+      ]}
   ]);
   Menu.setApplicationMenu(menuSettings);
 });
@@ -181,7 +181,7 @@ function changeWindowColor(color){
     });
 
     //InputHandling not working
-    var bindings = InputHandling.getKeyBindings;
+    var bindings = InputHandling.getKeyBindings();
     var index = 0;
     var found = false;
 
