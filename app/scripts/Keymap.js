@@ -1,7 +1,7 @@
 //The basic idea behind this js file is to act as a mediator between main.js and InputHandling.js
 Basic3D.loadModule("Keymap", function(Debug, InputHandling){
 
-  var {ipcRenderer} = require('electron');
+  const ipcRenderer = require('electron').ipcRenderer;
 
   var initialized = false;
 
@@ -24,7 +24,7 @@ Basic3D.loadModule("Keymap", function(Debug, InputHandling){
   };
 
   ipcRenderer.on('get_bindings', (event, arg) => {
-    ipcRenderer.send('get_bindings_recieved', InputHandling.getKeyBindings());
+    event.sender.send('get_bindings_recieved', InputHandling.getKeyBindings());
   });
 
   ipcRenderer.on('remove_key_binding', (event, arg1, arg2) => {

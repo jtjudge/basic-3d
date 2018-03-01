@@ -2,7 +2,8 @@ const electron = require("electron");
 const url = require("url");
 const path = require("path");
 
-const {app, BrowserWindow, ipcMain} = electron;
+const ipcMain = require('electron').ipcMain;
+const {app, BrowserWindow} = electron;
 const Menu = electron.Menu;
 // Set environment
 process.env.NODE_ENV = "development";
