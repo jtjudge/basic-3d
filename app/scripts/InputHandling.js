@@ -58,9 +58,9 @@ Basic3D.loadModule("InputHandling", function () {
     swapMode();
   }
 
-  function keyup(event) {
-    if (noBinding(event.code)) return;
-    bindings.keys[event.code].forEach(function (action) {
+  function keyup(event){
+    if(!hasBinding(event.code)) return;
+    bindings.keys[event.code].forEach(function(action) {
       input.actions[action] = false;
     });
     handlers.onkeyup.forEach(function (handler) {
@@ -150,7 +150,11 @@ Basic3D.loadModule("InputHandling", function () {
       var index = bindings.keys[key].findIndex(function (a) {
         return a === action;
       });
-      if (index > -1) return false;
+      if(index > -1) {
+        Debug.log("[KeyBindings] Duplicate key binding '" +
+          key + " --> " + action + "' attempted");
+        return false;
+      }
       bindings.keys[key].push(action);
       return true;
     },
@@ -160,7 +164,11 @@ Basic3D.loadModule("InputHandling", function () {
       var index = bindings.keys[key].findIndex(function (a) {
         return a === action;
       });
-      if (index === -1) return false;
+      if(index === -1) {
+        Debug.log("[KeyBindings] Key binding '" +
+          key + " --> " + action + "' not registered");
+        return false;
+      }
       bindings.keys[key].splice(index, 1);
       return true;
     }
