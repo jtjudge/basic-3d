@@ -99,6 +99,23 @@ app.on("ready", function () {
                   },
               ]
             },
+            {
+              label: 'grid lines',
+              submenu: [
+                {
+                  label: 'red',
+                  click: () => { setColorForEnt('grid lines', '#ff0000') }
+                  },
+                  {
+                    label: 'blue',
+                    click: () => { setColorForEnt('grid lines', '#00ff00') }
+                  },
+                  {
+                    label: 'green',
+                    click: () => { setColorForEnt('grid lines', '#0000ff') }
+                  },
+              ]
+            },
           ]
         }
       ]
@@ -118,6 +135,9 @@ function setColorForEnt(type, color) {
       break;
     case 'faces':
       
+      break;
+    case 'grid lines':
+
       break;
   }
 } 
