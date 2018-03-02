@@ -12,7 +12,8 @@
   "author": "Thomas Judge",
   "license": "ISC",
   "dependencies": {
-    "electron": "^1.8.2"
+    "electron": "^1.8.2",
+    "npm": "^5.7.1"
   },
   "devDependencies": {
     "electron-packager": "^11.0.1"

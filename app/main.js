@@ -181,12 +181,11 @@ function changeWindowColor(color) {
     });
 
     //InputHandling not working
-    
+
 
     console.log("main: " + action);
 
     mainWindow.webContents.send('get_bindings');
-  }
 
   ipcMain.on('get_bindings_recieved', (event, arg) => {
     console.log("main: " + arg)
@@ -205,96 +204,98 @@ function changeWindowColor(color) {
       }
     }
 
-    function mousedown(event) {
-      event.preventDefault();
-      var code = mouseEvents[event.which];
-      mainWindow.webContents.send('add_key_binding', action, code);
+    function onmousedown(input) {
+      console.log("main: " + input);
+      //event.preventDefault();
+      //var code = mouseEvents[event.which];
+      mainWindow.webContents.send('add_key_binding', action, input);
       //InputHandling.addKeyBinding(action, input);
       child.close();
     }
 
-    function keydown(event) {
-      console.log("main: " + action)
-      mainWindow.webContents.send('add_key_binding', action, event.code);
+    function onkeydown(input) {
+      console.log("main: " + input);
+      mainWindow.webContents.send('add_key_binding', action, input);
       //InputHandling.addKeyBinding(action, input);
       child.close();
     }
   });
+}
 
     function resetKeyBinds(){
-      var binding;
+      //var binding;
 
-    ipcMain.send('get_bindings');
+    mainWindow.webContents.send('get_bindings');
 
     ipcMain.on('get_bindings_recieved', (event, arg) => {
-      bindings = arg;
-    });
+      var bindings = arg;
 
       while(bindings.keys.length != 0)
       {
-        ipcMain.send('remove_key_binding', bindings.keys[0], bindings.actions[0]);
+        mainWindow.webContents.send('remove_key_binding', bindings.keys[0], bindings.actions[0]);
         //InputHandling.removeKeyBinding(InputHandling.bindings.keys[0], InputHandling.bindings.actions[0]);
       }
 
-      ipcMain.send('add_key_binding', "KeyW", "CAM_DOLLY_IN");
+      mainWindow.webContents.send('add_key_binding', "KeyW", "CAM_DOLLY_IN");
       //InputHandling.addKeyBinding("KeyW", "CAM_DOLLY_IN");
-      ipcMain.send('add_key_binding', "KeyS", "CAM_DOLLY_OUT");
+      mainWindow.webContents.send('add_key_binding', "KeyS", "CAM_DOLLY_OUT");
       //InputHandling.addKeyBinding("KeyS", "CAM_DOLLY_OUT");
-      ipcMain.send('add_key_binding', "KeyA", "CAM_TRUCK_LEFT");
+      mainWindow.webContents.send('add_key_binding', "KeyA", "CAM_TRUCK_LEFT");
       //InputHandling.addKeyBinding("KeyA", "CAM_TRUCK_LEFT");
-      ipcMain.send('add_key_binding', "KeyD", "CAM_TRUCK_RIGHT");
+      mainWindow.webContents.send('add_key_binding', "KeyD", "CAM_TRUCK_RIGHT");
       //InputHandling.addKeyBinding("KeyD", "CAM_TRUCK_RIGHT");
-      ipcMain.send('add_key_binding', "KeyQ", "CAM_PEDESTAL_UP");
+      mainWindow.webContents.send('add_key_binding', "KeyQ", "CAM_PEDESTAL_UP");
       //InputHandling.addKeyBinding("KeyQ", "CAM_PEDESTAL_UP");
-      ipcMain.send('add_key_binding', "KeyZ", "CAM_PEDESTAL_DOWN");
+      mainwindow.webContents.send('add_key_binding', "KeyZ", "CAM_PEDESTAL_DOWN");
       //InputHandling.addKeyBinding("KeyZ", "CAM_PEDESTAL_DOWN");
 
-      ipcMain.send('add_key_binding', "KeyO", "CAM_RESET");
+      mainWindow.webContents.send('add_key_binding', "KeyO", "CAM_RESET");
       //InputHandling.addKeyBinding("KeyO", "CAM_RESET");
 
-      ipcMain.send('add_key_binding', "LMB", "CAM_TILT_FREE");
+      mainWindow.webContents.send('add_key_binding', "LMB", "CAM_TILT_FREE");
       //InputHandling.addKeyBinding("LMB", "CAM_TILT_FREE");
-      ipcMain.send('add_key_binding', "LMB", "CAM_ORBIT_MOD");
+      mainWindow.webContents.send('add_key_binding', "LMB", "CAM_ORBIT_MOD");
       //InputHandling.addKeyBinding("LMB", "CAM_ORBIT_MOD");
 
-      ipcMain.send('add_key_binding', "MMB", "CAM_TILT_FREE");
+      mainWindow.webContents.send('add_key_binding', "MMB", "CAM_TILT_FREE");
       //InputHandling.addKeyBinding("MMB", "CAM_TILT_FREE");
-      ipcMain.send('add_key_binding', "MMB", "CAM_ORBIT_MOD");
+      mainWindow.webContents.send('add_key_binding', "MMB", "CAM_ORBIT_MOD");
       //InputHandling.addKeyBinding("MMB", "CAM_ORBIT_MOD");
 
-      ipcMain.send('add_key_binding', "RMB", "CAM_TILT_FREE");
+      mainWindow.webContents.send('add_key_binding', "RMB", "CAM_TILT_FREE");
       //InputHandling.addKeyBinding("RMB", "CAM_TILT_FREE");
 
-      ipcMain.send('add_key_binding', "ShiftLeft", "CAM_SPEED_MOD");
+      mainWindow.webContents.send('add_key_binding', "ShiftLeft", "CAM_SPEED_MOD");
       //InputHandling.addKeyBinding("ShiftLeft", "CAM_SPEED_MOD");
-      ipcMain.send('add_key_binding', "ShiftRight", "CAM_SPEED_MOD");
+      mainWindow.webContents.send('add_key_binding', "ShiftRight", "CAM_SPEED_MOD");
       //InputHandling.addKeyBinding("ShiftRight", "CAM_SPEED_MOD");
 
-      ipcMain.send('add_key_binding', "KeyI", "CAM_TILT_UP");
+      mainWindow.webContents.send('add_key_binding', "KeyI", "CAM_TILT_UP");
       //InputHandling.addKeyBinding("KeyI", "CAM_TILT_UP");
-      ipcMain.send('add_key_binding', "KeyK", "CAM_TILT_DOWN");
+      mainWindow.webContents.send('add_key_binding', "KeyK", "CAM_TILT_DOWN");
       //InputHandling.addKeyBinding("KeyK", "CAM_TILT_DOWN");
-      ipcMain.send('add_key_binding', "KeyJ", "CAM_TILT_LEFT");
+      mainWindow.webContents.send('add_key_binding', "KeyJ", "CAM_TILT_LEFT");
       //InputHandling.addKeyBinding("KeyJ", "CAM_TILT_LEFT");
-      ipcMain.send('add_key_binding', "KeyL", "CAM_TILT_RIGHT");
+      mainWindow.webContents.send('add_key_binding', "KeyL", "CAM_TILT_RIGHT");
       //InputHandling.addKeyBinding("KeyL", "CAM_TILT_RIGHT");
 
-      ipcMain.send('add_key_binding', "Space", "CAM_ORBIT_MOD");
+      mainWindow.webContents.send('add_key_binding', "Space", "CAM_ORBIT_MOD");
       //InputHandling.addKeyBinding("Space", "CAM_ORBIT_MOD");
 
-      ipcMain.send('add_key_binding', "KeyV", "TOGGLE_VERTEX_MODE");
+      mainWindow.webContents.send('add_key_binding', "KeyV", "TOGGLE_VERTEX_MODE");
       //InputHandling.addKeyBinding("KeyV", "TOGGLE_VERTEX_MODE");
-      ipcMain.send('add_key_binding', "LMB", "PLACE_VERTEX");
+      mainWindow.webContents.send('add_key_binding', "LMB", "PLACE_VERTEX");
       //InputHandling.addKeyBinding("LMB", "PLACE_VERTEX");
-      ipcMain.send('add_key_binding', "KeyE", "PLACE_EDGE");
+      mainWindow.webContents.send('add_key_binding', "KeyE", "PLACE_EDGE");
       //InputHandling.addKeyBinding("KeyE", "PLACE_EDGE");
-      ipcMain.send('add_key_binding', "KeyF", "PLACE_FACE");
+      mainWindow.webContents.send('add_key_binding', "KeyF", "PLACE_FACE");
       //InputHandling.addKeyBinding("KeyF", "PLACE_FACE");
 
-      ipcMain.send('add_key_binding', "LMB", "SELECT_GEOM");
+      mainWindow.webContents.send('add_key_binding', "LMB", "SELECT_GEOM");
       //InputHandling.addKeyBinding("LMB", "SELECT_GEOM");
-      ipcMain.send('add_key_binding', "ShiftLeft", "MULT_SELECT_MOD");
+      mainWindow.webContents.send('add_key_binding', "ShiftLeft", "MULT_SELECT_MOD");
       //InputHandling.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
-      ipcMain.send('add_key_binding', "ShiftRight", "MULT_SELECT_MOD");
+      mainWindow.webContents.send('add_key_binding', "ShiftRight", "MULT_SELECT_MOD");
       //InputHandling.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
+    });
 }
