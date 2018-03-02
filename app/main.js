@@ -182,10 +182,10 @@ function changeWindowColor(color) {
 
     //InputHandling not working
 
-
     console.log("main: " + action);
 
     mainWindow.webContents.send('get_bindings');
+  }
 
   ipcMain.on('get_bindings_recieved', (event, arg) => {
     console.log("main: " + arg)
@@ -220,7 +220,6 @@ function changeWindowColor(color) {
       child.close();
     }
   });
-}
 
     function resetKeyBinds(){
       //var binding;
