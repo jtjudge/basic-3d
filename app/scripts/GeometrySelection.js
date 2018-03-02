@@ -15,7 +15,7 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
 
   function selectFace(face) {
     face.selected = true;
-    face.obj.material.color.setHex(Colors.EDGE_SELECT);
+    face.obj.material.color.setHex(Colors.FACE_SELECT);
     selectEdge(face.edge1);
     selectEdge(face.edge2);
     selectEdge(face.edge3);
@@ -109,36 +109,36 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
       face.obj.material.color.setHex(Colors.FACE);
     });
   }
-
+  
   InputHandling.register({
     onmousedown: function (input) {
       if (input.mode === "EDIT" && input.actions["SELECT_GEOM"]) {
-        var targets = Geometry.getVertices().map(function (v) {
+        var vtargets = Geometry.getVertices().map(function (v) {
           return v.obj;
         });
-        var eTargets = Geometry.getEdges().map(function (v) {
-          return v.obj;
+        var eTargets = Geometry.getEdges().map(function (e) {
+          return e.obj;
         });
-        var fTargets = Geometry.getFaces().map(function (v) {
-          return v.obj;
+        var fTargets = Geometry.getFaces().map(function (f) {
+          return f.obj;
         });
-        var hits = Scene.intersectObjects(input, targets);
+        var vhits = Scene.intersectObjects(input, vtargets);
         var eHits = Scene.intersectObjects(input, eTargets);
         var fHits = Scene.intersectObjects(input, fTargets);
 
-        if (hits.length === 0 && eHits.length === 0 && fHits.length === 0) {
+        if (vhits.length === 0 && eHits.length === 0 && fHits.length === 0) {
             if (!input.actions["MULT_SELECT_MOD"]) {
             deselectAll();
           }
-        } else if(hits.length !== 0) {
+        } else if(vhits.length !== 0) {
           if (Geometry.getSelected().length === 0) {
-            toggleVertexSelect(hits[0].object);
+            toggleVertexSelect(vhits[0].object);
           } else {
             if (input.actions["MULT_SELECT_MOD"]) {
-              toggleVertexSelect(hits[0].object);
+              toggleVertexSelect(vhits[0].object);
             } else {
               deselectAll();
-              toggleVertexSelect(hits[0].object);
+              toggleVertexSelect(vhits[0].object);
             }
           }
         } else if(eHits.length !== 0) {
