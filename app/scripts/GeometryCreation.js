@@ -50,18 +50,18 @@ Basic3D.loadModule("GeometryCreation", function (InputHandling, Scene, Colors, G
         if (input.actions["DELETE_VERTEX"]) {
           var selected = Geometry.getSelected();
           var move = {
-            undo: function () { 
+            undo: function () {
               selected.forEach(function (v) {
                 Geometry.addVertex(v);
                 v.edges.forEach(Geometry.addEdge);
-                v.faces.forEach(Geometry.addFace); 
+                v.faces.forEach(Geometry.addFace);
               });
             },
             redo: function () {
               selected.forEach(function (v) {
                 Geometry.removeVertex(v);
                 v.edges.forEach(Geometry.removeEdge);
-                v.faces.forEach(Geometry.removeFace); 
+                v.faces.forEach(Geometry.removeFace);
               });
             }
           };
@@ -89,7 +89,7 @@ Basic3D.loadModule("GeometryCreation", function (InputHandling, Scene, Colors, G
             var edge1 = Geometry.Edge(v1, v2);
             var edge2 = Geometry.Edge(v2, v3);
             var edge3 = Geometry.Edge(v1, v3);
-            var face = Geometry.Face(v1, v2, v3);
+            var face = Geometry.Face(v1, v2, v3, edge1, edge2, edge3);
             var move = {
               undo: function () {
                 Geometry.removeFace(face);
@@ -139,7 +139,7 @@ Basic3D.loadModule("GeometryCreation", function (InputHandling, Scene, Colors, G
       }
     }
   });
-  
+
   InputHandling.addKeyBinding("KeyV", "TOGGLE_VERTEX_MODE");
   InputHandling.addKeyBinding("LMB", "PLACE_VERTEX");
   InputHandling.addKeyBinding("KeyE", "PLACE_EDGE");

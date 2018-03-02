@@ -16,12 +16,9 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
   function selectFace(face) {
     face.selected = true;
     face.obj.material.color.setHex(Colors.EDGE_SELECT);
-    selectEdge(face.v1.edges[0]);
-    selectEdge(face.v1.edges[1]);
-    selectEdge(face.v2.edges[0]);
-    selectEdge(face.v2.edges[1]);
-    selectEdge(face.v3.edges[0]);
-    selectEdge(face.v3.edges[1]);
+    selectEdge(face.e1);
+    selectEdge(face.e2);
+    selectEdge(face.e3);
   }
 
   function checkEdge(edges) {
@@ -38,9 +35,7 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
 
   function checkFace(faces) {
     faces.forEach(function (face) {
-      if (face.v1.edges[0].selected && face.v1.edges[1].selected
-        && face.v2.edges[0].selected && face.v2.edges[1].selected
-        && face.v3.edges[0].selected && face.v3.edges[1].selected) {
+      if (face.e1.selected && face.e2.selected && face.e3.selected) {
         face.selected = true;
         face.obj.material.color.setHex(Colors.FACE_SELECT);
       } else {
