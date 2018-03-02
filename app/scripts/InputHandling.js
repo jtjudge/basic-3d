@@ -141,7 +141,6 @@ Basic3D.loadModule("InputHandling", function () {
       return bindings;
     },
     addKeyBinding: function (key, action) {
-      console.log(key + " " + action);
       if (!bindings.keys[key]) {
         bindings.keys[key] = [];
       }
@@ -152,25 +151,31 @@ Basic3D.loadModule("InputHandling", function () {
         return a === action;
       });
       if(index > -1) {
-        console.log("[KeyBindings] Duplicate key binding '" +
-          key + " --> " + action + "' attempted");
+        console.log("ERROR: Duplicate binding '" + key + " --> " + action + "' attempted");
         return false;
       }
       bindings.keys[key].push(action);
+      console.log("Added binding '" + key + " --> " + action + "'");
       return true;
     },
     removeKeyBinding: function (key, action) {
-      if (!bindings.keys[key] === undefined) return false;
-      if (bindings.actions[action] === undefined) return false;
+      if (!bindings.keys[key] === undefined) {
+        console.log("ERROR: Key '" + key + "' not registered");
+        return false;
+      }
+      if (bindings.actions[action] === undefined) {
+        console.log("ERROR: Action '" + action + "'not registered");
+        return false;
+      }
       var index = bindings.keys[key].findIndex(function (a) {
         return a === action;
       });
       if(index === -1) {
-        Debug.log("[KeyBindings] Key binding '" +
-          key + " --> " + action + "' not registered");
+        console.log("ERROR: Binding '" + key + " --> " + action + "' not registered");
         return false;
       }
       bindings.keys[key].splice(index, 1);
+      console.log("Removed binding '" + key + " --> " + action + "'");
       return true;
     }
   };
