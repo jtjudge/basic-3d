@@ -39,7 +39,7 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       return edge;
     },
 
-    Face: function (v1, v2, v3) {
+    Face: function (v1, v2, v3, edge1, edge2, edge3) {
       var geometry = new THREE.Geometry();
       geometry.vertices.push(v1.obj.position);
       geometry.vertices.push(v2.obj.position);
@@ -54,7 +54,8 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       var face = {
         obj: new THREE.Mesh(geometry, material),
         selected: false,
-        v1: v1, v2: v2, v3: v3
+        v1: v1, v2: v2, v3: v3,
+        edge1: edge1, edge2: edge2, edge3: edge3
       };
       return face;
     },
@@ -73,7 +74,7 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
 
     addEdge: function (edge) {
       var exists = edges.some(function (e) {
-        return e.obj.id === edge.obj.id;
+        return e.v1 === edge.v1 && e.v2 === edge.v2;
       });
       if (exists) return;
       edge.v1.edges.push(edge);

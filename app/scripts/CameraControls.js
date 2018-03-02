@@ -20,8 +20,8 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     if (input.actions["CAM_TILT_RIGHT"]) yAngle -= baseAngle * 10;
     if (input.actions["CAM_ORBIT_MOD"]) {
       cam.translateZ(-distance);
-      cam.rotateOnWorldAxis(yAxis, yAngle * 3);
-      cam.rotateX(xAngle * 3);
+      cam.rotateOnWorldAxis(yAxis, -yAngle * 3);
+      cam.rotateX(-xAngle * 3);
       cam.translateZ(distance);
     } else {
       cam.rotateOnWorldAxis(yAxis, yAngle);

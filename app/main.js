@@ -4,10 +4,10 @@ const path = require("path");
 
 const { app, BrowserWindow, ipcMain} = electron;
 const Menu = electron.Menu;
-// Set environment
+
 process.env.NODE_ENV = "development";
 
-let mainWindow;
+var mainWindow;
 
 app.on("ready", function () {
   mainWindow = new BrowserWindow();
@@ -16,97 +16,28 @@ app.on("ready", function () {
     protocol: "file:",
     slashes: true
   }));
-  let menuSettings = Menu.buildFromTemplate([
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'Quit',
-          click: () => { app.quit() }
-        }
-      ]
-    },
-    {
-      label: 'Edit'
-    },
-    {
-      label: 'View',
-      submenu: [
-        {
-          label: 'Dev Tools',
-          click: () => { mainWindow.toggleDevTools() },
-        },
-        {
-          label: 'Reload',
-          click: () => { mainWindow.reload() },
-        }
-      ]
-    },
-    {
-      label: 'Preferences',
-      submenu: [
-        {
-          label: 'Change Default colors',
-          submenu: [
-            {
-              label: 'vertices',
-              submenu: [
-                {
-                label: 'white',
-                click: () => { changeColor('VERTEX', 0xffffff) }
-                },
-                {
-                  label: 'green',
-                  click: () => { changeColor('VERTEX', 0x00ff00) }
-                },
-                {
-                  label: 'blue',
-                  click: () => { changeColor('VERTEX', 0x0000ff) }
-                },
-              ]
-            },
-            {
-              label: 'edges',
-              submenu: [
-                {
-                label: 'white',
-                click: () => { changeColor('EDGE', 0xffffff) }
-                },
-                {
-                  label: 'green',
-                  click: () => { changeColor('EDGE', 0x00ff00) }
-                },
-                {
-                  label: 'blue',
-                  click: () => { changeColor('EDGE', 0x0000ff) }
-                },
-              ]
-            },
-            {
-              label: 'faces',
-              submenu: [
-                {
-                  label: 'white',
-                  click: () => { changeColor('FACE', 0xffffff) }
-                  },
-                  {
-                    label: 'green',
-                    click: () => { changeColor('FACE', 0x00ff00) }
-                  },
-                  {
-                    label: 'blue',
-                    click: () => { changeColor('FACE', 0x0000ff) }
-                  },
-              ]
-            },
-          ]
-        }
-      ]
-    },
-  ]);
-  Menu.setApplicationMenu(menuSettings);
+  var fileMenu = { label: "File", submenu: [] };
+  var editMenu = { label: "Edit", submenu: [] };
+  var viewMenu = { label: "View", submenu: [] };
+  fileMenu.submenu.push({
+    label: "Quit", 
+    click: function() { app.quit(); }
+  });
+  editMenu.submenu.push({
+    label: "Key Bindings", 
+    click: function() { 
+      mainWindow.webContents.send("run", "KeyBindingsMenu"); 
+    }
+  });
+  viewMenu.submenu.push({
+    label: "Dev Tools", 
+    click: function() { mainWindow.toggleDevTools(); }
+  });
+  viewMenu.submenu.push({
+    label: "Reload", 
+    click: function() { mainWindow.reload(); }
+  });
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate([ fileMenu, editMenu, viewMenu ])
+  );
 });
-
-function changeColor(type, value){
-  mainWindow.webContents.send('set_color', type, value);
-}

@@ -1,8 +1,9 @@
 Basic3D.loadModule("Colors", function () {
 
-  const{ipcRenderer} = require('electron');
-
-  let template = {
+  var interface = {
+    apply: function (change) {
+      interface[change.name] = change.color;
+    },
     VERTEX: 0xffffff,
     EDGE: 0xffffff,
     FACE: 0xffffff,
@@ -10,13 +11,8 @@ Basic3D.loadModule("Colors", function () {
     EDGE_SELECT: 0xff0000,
     FACE_SELECT: 0xff0000,
     VERTEX_MARKER: 0x00ff00
-  }
-  function setColor(type, value){
-    template[type] = value;
-  }
+  };
+
+  return interface;
   
-  ipcRenderer.on('set_color', (event, arg1, arg2) => {
-    setColor(arg1, arg2);
-  });
-  return template;
 });

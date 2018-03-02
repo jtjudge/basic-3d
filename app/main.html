@@ -13,26 +13,47 @@
     var Basic3D = (function () {
 
       var modules = {};
+      var scripts = {};
+
+      function getDependencies (func) {
+        var deps = func.toString()
+        .match(/function\s.*?\(([^)]*)\)/)[1].split(',')
+        .map(function (arg) { return arg.replace(/\/\*.*\*\//, '').trim(); })
+        .filter(function (arg) { return arg; });
+        return {
+          loaded: deps.filter(function(d) { return modules[d] !== undefined }),
+          missing: deps.filter(function(d) { return modules[d] === undefined; })
+        };
+      }
+
+      function getParameters (name, func) {
+        var deps = getDependencies(func);
+        if (deps.missing.length > 0) {
+          console.log("ERROR: '" + name + "' missing '" + deps.missing + "'.");
+          return null;
+        }
+        return deps.loaded.map(function(d) { return modules[d]; });
+      }
 
       return {
         loadModule: function (name, loader) {
-          var args = loader.toString().match(/function\s.*?\(([^)]*)\)/)[1];
-          var dependencies = args.split(',').map(function (arg) {
-            return arg.replace(/\/\*.*\*\//, '').trim();
-          }).filter(function (arg) {
-            return arg;
-          });
-          var missing = dependencies.filter(function (dep) {
-            return modules[dep] === undefined;
-          });
-          if (missing.length > 0) {
-            console.log("ERROR: Module '" + name + "' missing dependencies.");
-          } else {
-            var params = dependencies.map(function (dep) {
-              return modules[dep];
-            });
-            modules[name] = loader.apply(null, params);
+          var params = getParameters(name, loader);
+          if (params) modules[name] = loader.apply(null, params);
+        },
+        loadScript: function (name, runner) {
+          var params = getParameters(name, runner);
+          if (params) scripts[name] = function() {
+            runner.apply(null, params);
+          };
+        },
+        runScript: function (name) {
+          if (scripts[name] === undefined) {
+            console.log("ERROR: Script '" + name + "' not loaded.");
+            return;
           }
+          console.log("Running script '" + name + "'.");
+          scripts[name]();
+          console.log("Finished script '" + name + "'.");
         }
       };
       
@@ -49,20 +70,24 @@
   <script src="scripts/GeometryCreation.js"></script>
   <script src="scripts/GeometrySelection.js"></script>
   <script src="scripts/GeometryTranslation.js"></script>
+  <script src="scripts/GeometryRotation.js"></script>
 
   <script>
-    Basic3D.loadModule("Start", function (InputHandling) {
+    // Set up communications
+    require("electron").ipcRenderer
+    .on("run", function (event, arg) {
+      Basic3D.runScript(arg);
+    });
 
-      // Begin update loop
+    // Begin update loop
+    Basic3D.loadScript("Start", function (InputHandling) {
       function update() {
         InputHandling.update();
         requestAnimationFrame(update);
       }
       requestAnimationFrame(update);
-
-      return {};
-
     });
+    Basic3D.runScript("Start");
   </script>
 
 </body>
