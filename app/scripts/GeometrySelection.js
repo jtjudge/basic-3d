@@ -1,7 +1,54 @@
 
 Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, Geometry) {
 
-  function toggleSelect(target) {
+  function selectVertex(vertex) {
+    vertex.selected = true;
+    vertex.obj.material.color.setHex(Colors.VERTEX_SELECT);
+  }
+
+  function selectEdge(edge) {
+    edge.selected = true;
+    edge.obj.material.color.setHex(Colors.EDGE_SELECT);
+    selectVertex(edge.v1);
+    selectVertex(edge.v2);
+  }
+
+  function selectFace(face) {
+    face.selected = true;
+    face.obj.material.color.setHex(Colors.FACE_SELECT);
+    selectEdge(face.edge1);
+    selectEdge(face.edge2);
+    selectEdge(face.edge3);
+  }
+
+  function checkEdge(edges) {
+    edges.forEach(function (edge) {
+      if (edge.v1.selected && edge.v2.selected) {
+        edge.selected = true;
+        edge.obj.material.color.setHex(Colors.EDGE_SELECT);
+      } else {
+        edge.selected = false;
+        edge.obj.material.color.setHex(Colors.EDGE);
+      }
+    });
+  }
+
+  function checkFace(faces) {
+    faces.forEach(function (face) {
+      if (face.edge1.selected && face.edge2.selected && face.edge3.selected) {
+        face.selected = true;
+        face.obj.material.color.setHex(Colors.FACE_SELECT);
+      } else {
+        face.selected = false;
+        face.obj.material.color.setHex(Colors.FACE);
+      }
+    });
+  }
+
+  function toggleVertexSelect(target) {
+    if(target === null) {
+      return;
+    }
     var vertex = Geometry.getVertices().find(function (v) {
       return v.obj.id === target.id;
     });
@@ -11,24 +58,41 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
     } else {
       vertex.obj.material.color.setHex(Colors.VERTEX);
     }
-    vertex.edges.forEach(function (edge) {
-      if (edge.v1.selected && edge.v2.selected) {
-        edge.selected = true;
-        edge.obj.material.color.setHex(Colors.EDGE_SELECT);
-      } else {
-        edge.selected = false;
-        edge.obj.material.color.setHex(Colors.EDGE);
-      }
+    checkEdge(vertex.edges);
+    checkFace(vertex.faces);
+  }
+
+  function toggleEdgeSelect(target) {
+    if(target === null) {
+      return;
+    }
+    var edge = Geometry.getEdges().find(function (v) {
+      return v.obj.id == target.id;
     });
-    vertex.faces.forEach(function (face) {
-      if (face.v1.selected && face.v2.selected && face.v3.selected) {
-        face.selected = true;
-        face.obj.material.color.setHex(Colors.FACE_SELECT);
-      } else {
-        face.selected = false;
-        face.obj.material.color.setHex(Colors.FACE);
-      }
+    edge.selected = !edge.selected;
+    if(edge.selected){
+      edge.obj.material.color.setHex(Colors.EDGE_SELECT);
+    } else {
+      edge.obj.material.color.setHex(Colors.EDGE);
+    }
+    selectEdge(edge);
+    checkFace(edge.v1.faces);
+  }
+
+  function toggleFaceSelect(target) {
+    if(target === null) {
+      return;
+    }
+    var face = Geometry.getFaces().find(function (v) {
+      return v.obj.id == target.id;
     });
+    face.selected = !face.selected;
+    if(face.selected){
+      face.obj.material.color.setHex(Colors.EDGE_SELECT);
+    } else {
+      face.obj.material.color.setHex(Colors.EDGE);
+    }
+    selectFace(face);
   }
 
   function deselectAll() {
@@ -45,27 +109,58 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
       face.obj.material.color.setHex(Colors.FACE);
     });
   }
-
+  
   InputHandling.register({
     onmousedown: function (input) {
       if (input.mode === "EDIT" && input.actions["SELECT_GEOM"]) {
-        var targets = Geometry.getVertices().map(function (v) {
+        var vtargets = Geometry.getVertices().map(function (v) {
           return v.obj;
         });
-        var hits = Scene.intersectObjects(input, targets);
-        if (hits.length === 0) {
-          if (!input.actions["MULT_SELECT_MOD"]) {
+        var eTargets = Geometry.getEdges().map(function (e) {
+          return e.obj;
+        });
+        var fTargets = Geometry.getFaces().map(function (f) {
+          return f.obj;
+        });
+        var vhits = Scene.intersectObjects(input, vtargets);
+        var eHits = Scene.intersectObjects(input, eTargets);
+        var fHits = Scene.intersectObjects(input, fTargets);
+
+        if (vhits.length === 0 && eHits.length === 0 && fHits.length === 0) {
+            if (!input.actions["MULT_SELECT_MOD"]) {
             deselectAll();
           }
-        } else {
+        } else if(vhits.length !== 0) {
           if (Geometry.getSelected().length === 0) {
-            toggleSelect(hits[0].object);
+            toggleVertexSelect(vhits[0].object);
           } else {
             if (input.actions["MULT_SELECT_MOD"]) {
-              toggleSelect(hits[0].object);
+              toggleVertexSelect(vhits[0].object);
             } else {
               deselectAll();
-              toggleSelect(hits[0].object);
+              toggleVertexSelect(vhits[0].object);
+            }
+          }
+        } else if(eHits.length !== 0) {
+          if (Geometry.getSelected().length === 0) {
+            toggleEdgeSelect(eHits[0].object);
+          } else {
+            if (input.actions["MULT_SELECT_MOD"]) {
+              toggleEdgeSelect(eHits[0].object);
+            } else {
+              deselectAll();
+              toggleEdgeSelect(eHits[0].object);
+            }
+          }
+        } else if(fHits.length !== 0) {
+          if (Geometry.getSelected().length === 0) {
+            toggleFaceSelect(fHits[0].object);
+          } else {
+            if (input.actions["MULT_SELECT_MOD"]) {
+              toggleFaceSelect(fHits[0].object);
+            } else {
+              deselectAll();
+              toggleFaceSelect(fHits[0].object);
             }
           }
         }
