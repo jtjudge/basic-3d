@@ -5,6 +5,8 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
 
   var move;
 
+  var center;
+
   function active(mode){
     return (mode === "ROTATE_MODE" ||
       mode === "ROTATE_X" ||
@@ -55,7 +57,6 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
     },
     onmousemove: function (input){
       if (input.mode === "ROTATE_X") {
-        var center = Geometry.getCenter();
         var dx = SPEED * Scene.getMovementOnXZ(input).diff.x;
         Geometry.getSelected().forEach(function (v) {
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.sub(center);
@@ -68,7 +69,6 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
         });
       }
       if (input.mode === "ROTATE_Y") {
-        var center = Geometry.getCenter();
         var dy = SPEED * Scene.getMovementOnY(input);
         Geometry.getSelected().forEach(function (v) {
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.sub(center);
@@ -81,7 +81,6 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
         });
       }
       if (input.mode === "ROTATE_Z") {
-        var center = Geometry.getCenter();
         var dz = SPEED * Scene.getMovementOnXZ(input).diff.z;
         Geometry.getSelected().forEach(function (v) {
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.sub(center);
@@ -109,12 +108,21 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
         }
       } else if (active(input.mode)) {
         if (input.actions["TOGGLE_ROTATE_X"]) {
+          if(!(input.mode === "ROTATE_X")){
+            center = Geometry.getCenter();
+          }
           InputHandling.mode("ROTATE_X");
         }
         if (input.actions["TOGGLE_ROTATE_Y"]) {
+          if(!(input.mode === "ROTATE_Y")){
+            center = Geometry.getCenter();
+          }
           InputHandling.mode("ROTATE_Y");
         }
         if (input.actions["TOGGLE_ROTATE_Z"]) {
+          if(!(input.mode === "ROTATE_Z")){
+            center = Geometry.getCenter();
+          }
           InputHandling.mode("ROTATE_Z");
         }
         setAxis(input);
