@@ -1,7 +1,7 @@
 
 Basic3D.loadModule("InputHandling", function () {
 
-  // Mechanism to delay mode swap until 
+  // Mechanism to delay mode swap until
   // all keydown/mousedown handlers are fired
   var swapMode = function() {};
 
@@ -58,9 +58,9 @@ Basic3D.loadModule("InputHandling", function () {
     swapMode();
   }
 
-  function keyup(event) {
-    if (noBinding(event.code)) return;
-    bindings.keys[event.code].forEach(function (action) {
+  function keyup(event){
+    if(noBinding(event.code)) return;
+    bindings.keys[event.code].forEach(function(action) {
       input.actions[action] = false;
     });
     handlers.onkeyup.forEach(function (handler) {
@@ -150,18 +150,32 @@ Basic3D.loadModule("InputHandling", function () {
       var index = bindings.keys[key].findIndex(function (a) {
         return a === action;
       });
-      if (index > -1) return false;
+      if(index > -1) {
+        console.log("ERROR: Duplicate binding '" + key + " --> " + action + "' attempted");
+        return false;
+      }
       bindings.keys[key].push(action);
+      console.log("Added binding '" + key + " --> " + action + "'");
       return true;
     },
     removeKeyBinding: function (key, action) {
-      if (!bindings.keys[key] === undefined) return false;
-      if (bindings.actions[action] === undefined) return false;
+      if (!bindings.keys[key] === undefined) {
+        console.log("ERROR: Key '" + key + "' not registered");
+        return false;
+      }
+      if (bindings.actions[action] === undefined) {
+        console.log("ERROR: Action '" + action + "'not registered");
+        return false;
+      }
       var index = bindings.keys[key].findIndex(function (a) {
         return a === action;
       });
-      if (index === -1) return false;
+      if(index === -1) {
+        console.log("ERROR: Binding '" + key + " --> " + action + "' not registered");
+        return false;
+      }
       bindings.keys[key].splice(index, 1);
+      console.log("Removed binding '" + key + " --> " + action + "'");
       return true;
     }
   };
