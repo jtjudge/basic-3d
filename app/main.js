@@ -86,6 +86,14 @@ app.on("ready", function () {
 
   prefMenu.submenu.push(keyPrefs);
   prefMenu.submenu.push(colorPrefs);
+  prefMenu.submenu.push({
+    label: "Toggle Axis Helper",
+    click: function() {
+      mainWindow.webContents.send("run", {
+        name: "ToggleAxisHelper", data: {}
+      }); 
+    }
+  })
 
   function changeColor(change) {
     mainWindow.webContents.send("run", {

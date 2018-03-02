@@ -41,6 +41,18 @@ Basic3D.loadModule("Overlay", function (InputHandling, Scene) {
     }
   });
 
-  return {};
+  return {
+    toggle: function() {
+      if(hudRenderer.domElement.style.visibility === "hidden") {
+        hudRenderer.domElement.style.visibility = "visible";
+      } else {
+        hudRenderer.domElement.style.visibility = "hidden";
+      }
+    }
+  };
 
+});
+
+Basic3D.loadScript("ToggleAxisHelper", function(Overlay) {
+  return Overlay.toggle;
 });
