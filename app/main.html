@@ -40,19 +40,17 @@
           var params = getParameters(name, loader);
           if (params) modules[name] = loader.apply(null, params);
         },
-        loadScript: function (name, runner) {
-          var params = getParameters(name, runner);
-          if (params) scripts[name] = function() {
-            runner.apply(null, params);
-          };
+        loadScript: function (name, loader) {
+          var params = getParameters(name, loader);
+          if (params) scripts[name] = loader.apply(null, params);
         },
-        runScript: function (name) {
+        runScript: function (name, data) {
           if (scripts[name] === undefined) {
             console.log("ERROR: Script '" + name + "' not loaded.");
             return;
           }
           console.log("Running script '" + name + "'.");
-          scripts[name]();
+          scripts[name](data);
           console.log("Finished script '" + name + "'.");
         }
       };
@@ -76,18 +74,18 @@
     // Set up communications
     require("electron").ipcRenderer
     .on("run", function (event, arg) {
-      Basic3D.runScript(arg);
+      Basic3D.runScript(arg.name, arg.data);
     });
 
     // Begin update loop
     Basic3D.loadScript("Start", function (InputHandling) {
-      function update() {
+      var update = function () {
         InputHandling.update();
         requestAnimationFrame(update);
       }
-      requestAnimationFrame(update);
+      return update;
     });
-    Basic3D.runScript("Start");
+    Basic3D.runScript("Start", {});
   </script>
 
 </body>

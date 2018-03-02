@@ -1,3 +1,4 @@
+
 Basic3D.loadModule("Colors", function () {
 
   var interface = {
@@ -14,5 +15,12 @@ Basic3D.loadModule("Colors", function () {
   };
 
   return interface;
-  
+
+});
+
+Basic3D.loadScript("ColorChange", function(Colors) {
+  var script = function(data) {
+    Colors.apply(data);
+  };
+  return script;
 });
