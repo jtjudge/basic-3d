@@ -121,7 +121,7 @@ Basic3D.loadModule("GeometryCreation", function (InputHandling, Scene, Colors, G
       if (input.mode === "VERTEX_XZ") {
         moveMarker(input);
       } else if (input.mode === "VERTEX_Y") {
-        marker.position.y += -0.15 * (input.coords.y2 - input.coords.y1);
+        marker.position.y -= 0.15 * (input.coords.y2 - input.coords.y1);
         if (marker.position.y > MAX_HEIGHT) marker.position.y = MAX_HEIGHT;
         if (marker.position.y < -MAX_HEIGHT) marker.position.y = -MAX_HEIGHT;
       }

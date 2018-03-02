@@ -16,9 +16,9 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
   function selectFace(face) {
     face.selected = true;
     face.obj.material.color.setHex(Colors.EDGE_SELECT);
-    selectEdge(face.e1);
-    selectEdge(face.e2);
-    selectEdge(face.e3);
+    selectEdge(face.edge1);
+    selectEdge(face.edge2);
+    selectEdge(face.edge3);
   }
 
   function checkEdge(edges) {
@@ -35,7 +35,7 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
 
   function checkFace(faces) {
     faces.forEach(function (face) {
-      if (face.e1.selected && face.e2.selected && face.e3.selected) {
+      if (face.edge1.selected && face.edge2.selected && face.edge3.selected) {
         face.selected = true;
         face.obj.material.color.setHex(Colors.FACE_SELECT);
       } else {
@@ -130,7 +130,7 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
             if (!input.actions["MULT_SELECT_MOD"]) {
             deselectAll();
           }
-        } else if(hits.length !== 0){
+        } else if(hits.length !== 0) {
           if (Geometry.getSelected().length === 0) {
             toggleVertexSelect(hits[0].object);
           } else {
@@ -141,7 +141,7 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
               toggleVertexSelect(hits[0].object);
             }
           }
-        } else if(eHits.length !== 0){
+        } else if(eHits.length !== 0) {
           if (Geometry.getSelected().length === 0) {
             toggleEdgeSelect(eHits[0].object);
           } else {
@@ -152,7 +152,7 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
               toggleEdgeSelect(eHits[0].object);
             }
           }
-        } else if(fHits.length !== 0){
+        } else if(fHits.length !== 0) {
           if (Geometry.getSelected().length === 0) {
             toggleFaceSelect(fHits[0].object);
           } else {
