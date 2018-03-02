@@ -86,7 +86,7 @@ Basic3D.loadModule("GeometryTranslation", function (InputHandling, Scene, Geomet
       }
       if (input.mode === "TRANSLATE_Z") {
         Scene.showZ(Geometry.getCenter());
-      }
+      } 
     }
   });
 
