@@ -21,6 +21,7 @@
         if (input.mode === "ROTATE_X") {
           var center = Geometry.getCenter();
           Geometry.getSelected().forEach(function (v) {
+            if(!input.actions["WORLD_AXES"]) v.obj.position.sub(center);
             var newV = new THREE.Vector3(v.obj.position.x,0,0);
             var dist = Math.sqrt(Math.pow((v.obj.position.y), 2) + Math.pow((v.obj.position.z), 2));
             var theta = Math.asin((v.obj.position.y) / dist);
@@ -29,6 +30,7 @@
             newV.z = dist * Math.cos(theta + SPEED * (input.coords.y2 - input.coords.y1));
             v.obj.position.sub(v.obj.position);
             v.obj.position.add(newV);
+            if(!input.actions["WORLD_AXES"]) v.obj.position.add(center);
             v.obj.geometry.verticesNeedUpdate = true;
             v.edges.forEach(function (e) {
               e.obj.geometry.verticesNeedUpdate = true;
@@ -41,6 +43,7 @@
         if (input.mode === "ROTATE_Y") {
           var center = Geometry.getCenter();
           Geometry.getSelected().forEach(function (v) {
+            if(!input.actions["WORLD_AXES"]) v.obj.position.sub(center);
             var newV = new THREE.Vector3(0,v.obj.position.y,0);
             var dist = Math.sqrt(Math.pow((v.obj.position.z), 2) + Math.pow((v.obj.position.x), 2));
             var theta = Math.asin((v.obj.position.z) / dist);
@@ -49,6 +52,7 @@
             newV.x = dist * Math.cos(theta + SPEED * (input.coords.y2 - input.coords.y1));
             v.obj.position.sub(v.obj.position);
             v.obj.position.add(newV);
+            if(!input.actions["WORLD_AXES"]) v.obj.position.add(center);
             v.obj.geometry.verticesNeedUpdate = true;
             v.edges.forEach(function (e) {
               e.obj.geometry.verticesNeedUpdate = true;
@@ -61,6 +65,7 @@
         if (input.mode === "ROTATE_Z") {
           var center = Geometry.getCenter();
           Geometry.getSelected().forEach(function (v) {
+            if(!input.actions["WORLD_AXES"]) v.obj.position.sub(center);
             var newV = new THREE.Vector3(0, 0, v.obj.position.z);
             var dist = Math.sqrt(Math.pow((v.obj.position.y), 2) + Math.pow((v.obj.position.x), 2));
             var theta = Math.asin((v.obj.position.x) / dist);
@@ -69,6 +74,7 @@
             newV.y = dist * Math.cos(theta + SPEED * (input.coords.y2 - input.coords.y1));
             v.obj.position.sub(v.obj.position);
             v.obj.position.add(newV);
+            if(!input.actions["WORLD_AXES"]) v.obj.position.add(center);
             v.obj.geometry.verticesNeedUpdate = true;
             v.edges.forEach(function (e) {
               e.obj.geometry.verticesNeedUpdate = true;
@@ -82,7 +88,7 @@
       onkeydown: function (input){
         if (input.actions["TOGGLE_ROTATE_MODE"]) {
           if (!active(input.mode)) {
-            if (Geometry.getSelected().length === 0) {
+            if (Geometry.getSelected().length === 0 || Geometry.getSelected().length === 1) {
               InputHandling.mode("EDIT");
             } else {
               move = History.startMove(Geometry.getSelected());
@@ -118,6 +124,7 @@
     });
 
     InputHandling.addKeyBinding("KeyR", "TOGGLE_ROTATE_MODE");
+    InputHandling.addKeyBinding("Space", "WORLD_AXES");
     InputHandling.addKeyBinding("KeyX", "TOGGLE_ROTATE_X");
     InputHandling.addKeyBinding("KeyY", "TOGGLE_ROTATE_Y");
     InputHandling.addKeyBinding("KeyZ", "TOGGLE_ROTATE_Z");
