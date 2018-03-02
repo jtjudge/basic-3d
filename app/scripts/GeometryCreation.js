@@ -21,8 +21,7 @@ Basic3D.loadModule("GeometryCreation", function (InputHandling, Scene, Colors, G
   }
 
   function moveMarker(input) {
-    var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-    var intersection = Scene.intersectPlane(input, plane);
+    var intersection = Scene.getMovementOnXZ(input).current;
     if (intersection) {
       marker.position.copy(intersection);
       marker.position.clampLength(0, MAX_DIST);

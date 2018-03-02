@@ -99,15 +99,6 @@ Basic3D.loadModule("Scene", function (InputHandling) {
       caster.setFromCamera(mouse, camera);
       return caster.intersectObjects(objects);
     },
-    intersectPlane: function (input, plane) {
-      var mouse = new THREE.Vector2(
-        (input.coords.x2 / renderer.getSize().width) * 2 - 1,
-        -(input.coords.y2 / renderer.getSize().height) * 2 + 1
-      );
-      var caster = new THREE.Raycaster();
-      caster.setFromCamera(mouse, camera);
-      return caster.ray.intersectPlane(plane);
-    },
     showX: function (pos) {
       scene.remove(xAxis, yAxis, zAxis);
       xAxis.position.copy(pos);
@@ -122,6 +113,30 @@ Basic3D.loadModule("Scene", function (InputHandling) {
       scene.remove(xAxis, yAxis, zAxis);
       zAxis.position.copy(pos);
       scene.add(zAxis);
+    },
+    getMovementOnXZ: function (input) {
+      var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 1);
+      var mouse1 = new THREE.Vector2(
+        (input.coords.x1 / renderer.getSize().width) * 2 - 1,
+        -(input.coords.y1 / renderer.getSize().height) * 2 + 1
+      );
+      var mouse2 = new THREE.Vector2(
+        (input.coords.x2 / renderer.getSize().width) * 2 - 1,
+        -(input.coords.y2 / renderer.getSize().height) * 2 + 1
+      );
+      var caster = new THREE.Raycaster();
+      caster.setFromCamera(mouse1, camera);
+      var p1 = caster.ray.intersectPlane(plane);
+      caster.setFromCamera(mouse2, camera);
+      var p2 = caster.ray.intersectPlane(plane);
+      return { 
+        current: p2, 
+        previous: p1,
+        diff: new THREE.Vector3().copy(p2).sub(p1)
+      };
+    },
+    getMovementOnY: function (input) {
+      return 0.2 * (input.coords.y1 - input.coords.y2);
     }
   };
 

@@ -31,24 +31,21 @@ Basic3D.loadModule("GeometryTranslation", function (InputHandling, Scene, Geomet
     },
     onmousemove: function (input) {
       if (input.mode === "TRANSLATE_X") {
+        var dx = Scene.getMovementOnXZ(input).diff.x;
         Geometry.getSelected().forEach(function (v) {
-          translateVertex(v, new THREE.Vector3(
-            SPEED * (input.coords.y2 - input.coords.y1), 0, 0
-          ));
+          translateVertex(v, new THREE.Vector3(dx, 0, 0));
         });
       }
       if (input.mode === "TRANSLATE_Y") {
+        var dy = Scene.getMovementOnY(input);
         Geometry.getSelected().forEach(function (v) {
-          translateVertex(v, new THREE.Vector3(
-            0, SPEED * (input.coords.y1 - input.coords.y2), 0
-          ));
+          translateVertex(v, new THREE.Vector3(0, dy, 0));
         });
       }
       if (input.mode === "TRANSLATE_Z") {
+        var dz = Scene.getMovementOnXZ(input).diff.z;
         Geometry.getSelected().forEach(function (v) {
-          translateVertex(v, new THREE.Vector3(
-            0, 0, SPEED * (input.coords.y2 - input.coords.y1)
-          ));
+          translateVertex(v, new THREE.Vector3(0, 0, dz));
         });
       }
     },
