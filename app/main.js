@@ -27,6 +27,24 @@ app.on("ready", function () {
     click: function() { app.quit(); }
   });
 
+  editMenu.submenu.push({
+    label: "Undo",
+    click: function() {
+      mainWindow.webContents.send("run", {
+        name: "Undo", data: {}
+      }); 
+    }
+  });
+
+  editMenu.submenu.push({
+    label: "Redo",
+    click: function() {
+      mainWindow.webContents.send("run", {
+        name: "Redo", data: {}
+      }); 
+    }
+  });
+
   viewMenu.submenu.push({
     label: "Dev Tools", 
     click: function() { mainWindow.toggleDevTools(); }

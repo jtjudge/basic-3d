@@ -4,22 +4,35 @@ Basic3D.loadModule("History", function(InputHandling) {
   var undoHistory = [];
   var redoHistory = [];
 
+  function undo() {
+    if(undoHistory.length === 0) return;
+    var move = undoHistory.pop();
+    move.undo();
+    redoHistory.push(move);
+  }
+
+  function redo() {
+    if(redoHistory.length === 0) return;
+    var move = redoHistory.pop();
+    move.redo();
+    undoHistory.push(move);
+  }
+
   InputHandling.register({
     onkeydown: function(input) {
       if(input.actions["HIST_MOD"]) {
-        if(input.actions["HIST_UNDO"]) {
-          if(undoHistory.length === 0) return;
-          var move = undoHistory.pop();
-          move.undo();
-          redoHistory.push(move);
-        } else if(input.actions["HIST_REDO"]) {
-          if(redoHistory.length === 0) return;
-          var move = redoHistory.pop();
-          move.redo();
-          undoHistory.push(move);
-        }
+        if(input.actions["HIST_UNDO"]) undo();
+        if(input.actions["HIST_REDO"]) redo();
       }
     }
+  });
+
+  Basic3D.loadScript("Undo", function() {
+    return undo;
+  });
+
+  Basic3D.loadScript("Redo", function() {
+    return redo;
   });
 
   InputHandling.addKeyBinding("ControlLeft", "HIST_MOD");
