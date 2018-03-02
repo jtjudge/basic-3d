@@ -12,14 +12,52 @@
 
    InputHandling.register({
       onmousedown: function (input){
-
+        if (active(input.mode) && input.actions["ROTATE_CONFIRM"]) {
+          move.confirm();
+          InputHandling.mode("EDIT");
+        }
       },
       onmousemove: function (input){
         if (input.mode === "ROTATE_X") {
+          var center = Geometry.getCenter();
           Geometry.getSelected().forEach(function (v) {
-            v.obj.rotateOnWorldAxis(new THREE.Vector3(1,0,0).normalize(), Math.PI / input.coords.y1);
+            var newV = new THREE.Vector3(v.obj.position.x,0,0);
+            var dist = Math.sqrt(Math.pow((v.obj.position.y), 2) + Math.pow((v.obj.position.z), 2));
+            var theta = Math.asin((v.obj.position.y) / dist);
+            newV.y = dist * Math.sin(theta + SPEED * (input.coords.y2 - input.coords.y1));
+            newV.z = dist * Math.cos(theta + SPEED * (input.coords.y2 - input.coords.y1));
+            v.obj.position.sub(v.obj.position);
+            v.obj.position.add(newV);
             v.obj.geometry.verticesNeedUpdate = true;
-            console.log(v.obj.position.x + " " + v.obj.position.y + " " + v.obj.position.z + " " + (input.coords.y2));
+            console.log(newV.y + " " + theta + " " + dist + " " + newV.z);
+          });
+        }
+        if (input.mode === "ROTATE_Y") {
+          var center = Geometry.getCenter();
+          Geometry.getSelected().forEach(function (v) {
+            var newV = new THREE.Vector3(0,v.obj.position.y,0);
+            var dist = Math.sqrt(Math.pow((v.obj.position.z), 2) + Math.pow((v.obj.position.x), 2));
+            var theta = Math.asin((v.obj.position.z) / dist);
+            newV.z = dist * Math.sin(theta + SPEED * (input.coords.y2 - input.coords.y1));
+            newV.x = dist * Math.cos(theta + SPEED * (input.coords.y2 - input.coords.y1));
+            v.obj.position.sub(v.obj.position);
+            v.obj.position.add(newV);
+            v.obj.geometry.verticesNeedUpdate = true;
+            console.log(newV.y + " " + theta + " " + dist + " " + newV.z);
+          });
+        }
+        if (input.mode === "ROTATE_Z") {
+          var center = Geometry.getCenter();
+          Geometry.getSelected().forEach(function (v) {
+            var newV = new THREE.Vector3(0, 0, v.obj.position.z);
+            var dist = Math.sqrt(Math.pow((v.obj.position.y), 2) + Math.pow((v.obj.position.x), 2));
+            var theta = Math.asin((v.obj.position.x) / dist);
+            newV.y = dist * Math.sin(theta + SPEED * (input.coords.y2 - input.coords.y1));
+            newV.x = dist * Math.cos(theta + SPEED * (input.coords.y2 - input.coords.y1));
+            v.obj.position.sub(v.obj.position);
+            v.obj.position.add(newV);
+            v.obj.geometry.verticesNeedUpdate = true;
+            console.log(newV.y + " " + theta + " " + dist + " " + newV.z);
           });
         }
       },
