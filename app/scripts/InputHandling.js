@@ -1,7 +1,7 @@
 
 Basic3D.loadModule("InputHandling", function () {
 
-  // Mechanism to delay mode swap until 
+  // Mechanism to delay mode swap until
   // all keydown/mousedown handlers are fired
   var swapMode = function() {};
 

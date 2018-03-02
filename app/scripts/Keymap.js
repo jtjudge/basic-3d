@@ -15,18 +15,21 @@ Basic3D.loadModule("Keymap", function(InputHandling){
     return true;
   }
 
-  ipcRenderer.on('get_bindings', (event, arg) => {
-    console.log("ipcRenderer");
-    event.sender.send('get_bindings_recieved', this.InputHandling.getKeyBindings());
-  });
+  // ipcRenderer.on('get_bindings', (event, arg) => {
+  //   console.log("ipcRenderer");
+  //   var bindings = InputHandling.getKeyBindings();
+  //
+  //   event.sender.send('get_bindings_recieved', InputHandling.getKeyBindings());
+  // });
 
-  ipcRenderer.on('remove_key_binding', (event, arg1, arg2) => {
+  ipcRenderer.on('remove_key_binding', (event, arg) => {
     console.log("remove key bindings");
-    this.InputHandling.removeKeyBinding(arg1, arg2);
+
+    InputHandling.removeKeyBinding(arg[0], arg[1]);
   });
 
   ipcRenderer.on('add_key_binding', (event, arg1, arg2) => {
-    this.InputHandling.addKeyBinding(arg1, arg2);
+    InputHandling.addKeyBinding(arg2, arg1);
   });
 
   var interface = {
