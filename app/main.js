@@ -2,7 +2,7 @@ const electron = require("electron");
 const url = require("url");
 const path = require("path");
 
-const { app, BrowserWindow } = electron;
+const { app, BrowserWindow, ipcMain} = electron;
 const Menu = electron.Menu;
 // Set environment
 process.env.NODE_ENV = "development";
@@ -52,16 +52,16 @@ app.on("ready", function () {
               label: 'vertices',
               submenu: [
                 {
-                label: 'red',
-                click: () => { setColorForEnt('vertices', '#ff0000') }
-                },
-                {
-                  label: 'blue',
-                  click: () => { setColorForEnt('vertices', '#00ff00') }
+                label: 'white',
+                click: () => { changeColor('VERTEX', 0xffffff) }
                 },
                 {
                   label: 'green',
-                  click: () => { setColorForEnt('vertices', '#0000ff') }
+                  click: () => { changeColor('VERTEX', 0x00ff00) }
+                },
+                {
+                  label: 'blue',
+                  click: () => { changeColor('VERTEX', 0x0000ff) }
                 },
               ]
             },
@@ -69,16 +69,16 @@ app.on("ready", function () {
               label: 'edges',
               submenu: [
                 {
-                label: 'red',
-                click: () => { setColorForEnt('edges', '#ff0000') }
-                },
-                {
-                  label: 'blue',
-                  click: () => { setColorForEnt('edges', '#00ff00') }
+                label: 'white',
+                click: () => { changeColor('EDGE', 0xffffff) }
                 },
                 {
                   label: 'green',
-                  click: () => { setColorForEnt('edges', '#0000ff') }
+                  click: () => { changeColor('EDGE', 0x00ff00) }
+                },
+                {
+                  label: 'blue',
+                  click: () => { changeColor('EDGE', 0x0000ff) }
                 },
               ]
             },
@@ -86,33 +86,16 @@ app.on("ready", function () {
               label: 'faces',
               submenu: [
                 {
-                  label: 'red',
-                  click: () => { setColorForEnt('faces', '#ff0000') }
-                  },
-                  {
-                    label: 'blue',
-                    click: () => { setColorForEnt('faces', '#00ff00') }
+                  label: 'white',
+                  click: () => { changeColor('FACE', 0xffffff) }
                   },
                   {
                     label: 'green',
-                    click: () => { setColorForEnt('faces', '#0000ff') }
-                  },
-              ]
-            },
-            {
-              label: 'grid lines',
-              submenu: [
-                {
-                  label: 'red',
-                  click: () => { setColorForEnt('grid lines', '#ff0000') }
+                    click: () => { changeColor('FACE', 0x00ff00) }
                   },
                   {
                     label: 'blue',
-                    click: () => { setColorForEnt('grid lines', '#00ff00') }
-                  },
-                  {
-                    label: 'green',
-                    click: () => { setColorForEnt('grid lines', '#0000ff') }
+                    click: () => { changeColor('FACE', 0x0000ff) }
                   },
               ]
             },
@@ -123,21 +106,7 @@ app.on("ready", function () {
   ]);
   Menu.setApplicationMenu(menuSettings);
 });
-//TODO: change this so that it actually does something
-function setColorForEnt(type, color) {
-  console.log(`${type} ${color}`);
-  switch (type) {
-    case 'vertices':
-      
-      break;
-    case 'edges':
-      
-      break;
-    case 'faces':
-      
-      break;
-    case 'grid lines':
 
-      break;
-  }
-} 
+function changeColor(type, value){
+  mainWindow.webContents.send('set_color', type, value);
+}
