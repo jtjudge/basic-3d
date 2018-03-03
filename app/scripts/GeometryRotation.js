@@ -99,8 +99,10 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
           if (Geometry.getSelected().length <= 1) {
             InputHandling.mode("EDIT");
           } else {
-            move = History.startMove(Geometry.getSelected());
-            InputHandling.mode("ROTATE_MODE");
+            if(input.mode === "EDIT"){
+              move = History.startMove(Geometry.getSelected());
+              InputHandling.mode("ROTATE_MODE");
+            }
           }
         } else {
           move.cancel();

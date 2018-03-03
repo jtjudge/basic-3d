@@ -55,8 +55,10 @@ Basic3D.loadModule("GeometryTranslation", function (InputHandling, Scene, Geomet
           if (Geometry.getSelected().length === 0) {
             InputHandling.mode("EDIT");
           } else {
-            move = History.startMove(Geometry.getSelected());
-            InputHandling.mode("TRANSLATE_MODE");
+            if(input.mode === "EDIT"){
+              move = History.startMove(Geometry.getSelected());
+              InputHandling.mode("TRANSLATE_MODE");
+            }
           }
         } else {
           move.cancel();
