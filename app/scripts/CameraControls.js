@@ -55,6 +55,9 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       if(input.actions["CAM_SHIFT"]) {
         shiftCam(input);
       }
+    },
+    onmousewheel: function(input) {
+      cam.translateZ(input.scroll);
     }
   });
 

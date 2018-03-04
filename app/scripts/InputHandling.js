@@ -14,7 +14,8 @@ Basic3D.loadModule("InputHandling", function () {
     coords: {
       x1: 0, x2: 0,
       y1: 0, y2: 0
-    }
+    },
+    scroll: 0
   };
 
   var handlers = {
@@ -23,6 +24,7 @@ Basic3D.loadModule("InputHandling", function () {
     onmousedown: [],
     onmouseup: [],
     onmousemove: [],
+    onmousewheel: [],
     onresize: [],
     onupdate: [],
     onmode: []
@@ -39,17 +41,18 @@ Basic3D.loadModule("InputHandling", function () {
   document.onmousedown = mousedown;
   document.onmouseup = mouseup;
   document.onmousemove = mousemove;
+  document.onmousewheel = mousewheel;
   window.onresize = resize;
 
-  function handle(list, code, up) {
+  function handle(list, code, down) {
     if (bindings[code] !== undefined) {
       bindings[code].forEach(function (action) {
-        input.actions[action] = up;
+        input.actions[action] = down;
       });
     }
     if (inverts[code] !== undefined) {
       inverts[code].forEach(function (action) {
-        input.actions[action] = !up;
+        input.actions[action] = !down;
       });
     }
     handlers[list].forEach(function (handler) {
@@ -85,6 +88,14 @@ Basic3D.loadModule("InputHandling", function () {
     });
   }
 
+  function mousewheel(event) {
+    event.preventDefault();
+    input.scroll = event.deltaY;
+    handlers.onmousewheel.forEach(function (handler) {
+      handler(input);
+    });
+  }
+
   function resize() {
     handlers.onresize.forEach(function (handler) {
       handler(input);
@@ -103,6 +114,7 @@ Basic3D.loadModule("InputHandling", function () {
       });
       input.coords.x1 = input.coords.x2;
       input.coords.y1 = input.coords.y2;
+      input.scroll = 0;
     },
     mode: function (name) {
       swapMode = function() {
