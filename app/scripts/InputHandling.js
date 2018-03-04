@@ -5,14 +5,12 @@ Basic3D.loadModule("InputHandling", function () {
   // all keydown/mousedown handlers are fired
   var swapMode = function() {};
 
-  var bindings = {
-    keys: {},
-    actions: {}
-  };
+  var bindings = {};
+  var inverts = {};
 
   var input = {
     mode: "EDIT",
-    actions: bindings.actions,
+    actions: [],
     coords: {
       x1: 0, x2: 0,
       y1: 0, y2: 0
@@ -43,60 +41,43 @@ Basic3D.loadModule("InputHandling", function () {
   document.onmousemove = mousemove;
   window.onresize = resize;
 
-  function noBinding(code) {
-    return bindings.keys[code] === undefined;
-  }
-
-  function keydown(event) {
-    if (noBinding(event.code)) return;
-    bindings.keys[event.code].forEach(function (action) {
-      input.actions[action] = true;
-    });
-    handlers.onkeydown.forEach(function (handler) {
+  function handle(list, code, up) {
+    if (bindings[code] !== undefined) {
+      bindings[code].forEach(function (action) {
+        input.actions[action] = up;
+      });
+    }
+    if (inverts[code] !== undefined) {
+      inverts[code].forEach(function (action) {
+        input.actions[action] = !up;
+      });
+    }
+    handlers[list].forEach(function (handler) {
       handler(input);
     });
     swapMode();
   }
 
+  function keydown(event) {
+    handle("onkeydown", event.code, true);
+  }
+
   function keyup(event){
-    if(noBinding(event.code)) return;
-    bindings.keys[event.code].forEach(function(action) {
-      input.actions[action] = false;
-    });
-    handlers.onkeyup.forEach(function (handler) {
-      handler(input);
-    });
+    handle("onkeyup", event.code, false);
   }
 
   function mousedown(event) {
     event.preventDefault();
-    var code = mouseEvents[event.which];
-    if (noBinding(code)) return;
-    bindings.keys[code].forEach(function (action) {
-      input.actions[action] = true;
-    });
-    handlers.onmousedown.forEach(function (handler) {
-      handler(input);
-    });
-    swapMode();
+    handle("onmousedown", mouseEvents[event.which], true); 
   }
 
   function mouseup(event) {
     event.preventDefault();
-    var code = mouseEvents[event.which];
-    if (noBinding(code)) return;
-    bindings.keys[code].forEach(function (action) {
-      input.actions[action] = false;
-    });
-    handlers.onmouseup.forEach(function (handler) {
-      handler(input);
-    });
+    handle("onmouseup", mouseEvents[event.which], false); 
   }
 
   function mousemove(event) {
     var rect = container.getBoundingClientRect();
-    input.coords.x1 = input.coords.x2;
-    input.coords.y1 = input.coords.y2;
     input.coords.x2 = event.clientX - rect.left;
     input.coords.y2 = event.clientY - rect.top;
     handlers.onmousemove.forEach(function (handler) {
@@ -112,19 +93,16 @@ Basic3D.loadModule("InputHandling", function () {
 
   return {
     register: function (items) {
-      if (items.onkeydown) handlers.onkeydown.push(items.onkeydown);
-      if (items.onkeyup) handlers.onkeyup.push(items.onkeyup);
-      if (items.onmousedown) handlers.onmousedown.push(items.onmousedown);
-      if (items.onmouseup) handlers.onmouseup.push(items.onmouseup);
-      if (items.onmousemove) handlers.onmousemove.push(items.onmousemove);
-      if (items.onresize) handlers.onresize.push(items.onresize);
-      if (items.onupdate) handlers.onupdate.push(items.onupdate);
-      if (items.onmode) handlers.onmode.push(items.onmode);
+      for(var i in items) {
+        if(handlers[i] !== undefined) handlers[i].push(items[i]);
+      }
     },
     update: function () {
       handlers.onupdate.forEach(function (handler) {
         handler(input);
       });
+      input.coords.x1 = input.coords.x2;
+      input.coords.y1 = input.coords.y2;
     },
     mode: function (name) {
       swapMode = function() {
@@ -137,45 +115,80 @@ Basic3D.loadModule("InputHandling", function () {
         swapMode = function() {};
       };
     },
-    getKeyBindings: function () {
-      return bindings;
-    },
     addKeyBinding: function (key, action) {
-      if (!bindings.keys[key]) {
-        bindings.keys[key] = [];
+      var index;
+      if(inverts[key] !== undefined) {
+        index = inverts[key].findIndex(function (a) {
+          return a === action;
+        });
+        if(index > -1) {
+          throw ("ERROR: Binding for existing invert '" + key + " --> " + action + "' attempted");
+          return false;
+        }
       }
-      if (!bindings.actions[action]) {
-        bindings.actions[action] = false;
+      if (bindings[key] === undefined) {
+        bindings[key] = [];
       }
-      var index = bindings.keys[key].findIndex(function (a) {
+      if (input.actions[action] === undefined) {
+        input.actions[action] = false;
+      }
+      index = bindings[key].findIndex(function (a) {
         return a === action;
       });
       if(index > -1) {
-        console.log("ERROR: Duplicate binding '" + key + " --> " + action + "' attempted");
+        throw ("ERROR: Duplicate binding '" + key + " --> " + action + "' attempted");
         return false;
       }
-      bindings.keys[key].push(action);
+      bindings[key].push(action);
       console.log("Added binding '" + key + " --> " + action + "'");
       return true;
     },
     removeKeyBinding: function (key, action) {
-      if (!bindings.keys[key] === undefined) {
-        console.log("ERROR: Key '" + key + "' not registered");
+      if (bindings[key] === undefined) {
+        throw ("ERROR: Key '" + key + "' not registered");
         return false;
       }
-      if (bindings.actions[action] === undefined) {
-        console.log("ERROR: Action '" + action + "'not registered");
+      if (input.actions[action] === undefined) {
+        throw ("ERROR: Action '" + action + "'not registered");
         return false;
       }
-      var index = bindings.keys[key].findIndex(function (a) {
+      var index = bindings[key].findIndex(function (a) {
         return a === action;
       });
       if(index === -1) {
-        console.log("ERROR: Binding '" + key + " --> " + action + "' not registered");
+        throw ("ERROR: Binding '" + key + " --> " + action + "' not registered");
         return false;
       }
-      bindings.keys[key].splice(index, 1);
+      bindings[key].splice(index, 1);
       console.log("Removed binding '" + key + " --> " + action + "'");
+      return true;
+    },
+    addInvertBinding: function(key, action) {
+      var index;
+      if(bindings[key] !== undefined) {
+        index = bindings[key].findIndex(function (a) {
+          return a === action;
+        });
+        if(index > -1) {
+          throw ("ERROR: Invert for existing binding '" + key + " --> " + action + "' attempted");
+          return false;
+        }
+      }
+      if (inverts[key] === undefined) {
+        inverts[key] = [];
+      }
+      if (input.actions[action] === undefined) {
+        input.actions[action] = true;
+      }
+      index = inverts[key].findIndex(function (a) {
+        return a === action;
+      });
+      if(index > -1) {
+        throw ("ERROR: Duplicate invert '" + key + " --> " + action + "' attempted");
+        return false;
+      }
+      inverts[key].push(action);
+      console.log("Added invert '" + key + " --> " + action + "'");
       return true;
     }
   };
