@@ -112,7 +112,9 @@ Basic3D.loadModule("GeometryCreation", function (InputHandling, Scene, Colors, G
         if (input.mode === "VERTEX_XZ" || input.mode === "VERTEX_Y") {
           InputHandling.mode("EDIT");
         } else if (Geometry.getVertices().length < MAX_VERTS) {
-          InputHandling.mode("VERTEX_XZ");
+          if(input.mode === "EDIT"){
+            InputHandling.mode("VERTEX_XZ");
+          }
         }
       }
     },

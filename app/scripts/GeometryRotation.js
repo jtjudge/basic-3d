@@ -5,6 +5,8 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
 
   var move;
 
+  var center;
+
   function active(mode){
     return (mode === "ROTATE_MODE" ||
       mode === "ROTATE_X" ||
@@ -26,6 +28,26 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
     }
   }
 
+  function getNewCoords(x, y, d){
+    var coords = [0, 0];
+    var dist = Math.sqrt(Math.pow((x), 2) + Math.pow((y), 2));
+    var theta = Math.asin((x) / dist);
+    if(y < 0) theta = Math.PI - theta;
+    coords[0] = dist * Math.sin(theta + d);
+    coords[1] = dist * Math.cos(theta + d);
+    return coords;
+  }
+
+  function updateVertex(v){
+    v.obj.geometry.verticesNeedUpdate = true;
+    v.edges.forEach(function (e) {
+      e.obj.geometry.verticesNeedUpdate = true;
+    });
+    v.faces.forEach(function (f) {
+      f.obj.geometry.verticesNeedUpdate = true;
+    });
+  }
+
   InputHandling.register({
     onmousedown: function (input){
       if (active(input.mode) && input.actions["ROTATE_CONFIRM"]) {
@@ -35,72 +57,39 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
     },
     onmousemove: function (input){
       if (input.mode === "ROTATE_X") {
-        var center = Geometry.getCenter();
         var dx = SPEED * Scene.getMovementOnXZ(input).diff.x;
         Geometry.getSelected().forEach(function (v) {
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.sub(center);
-          var newV = new THREE.Vector3(v.obj.position.x,0,0);
-          var dist = Math.sqrt(Math.pow((v.obj.position.y), 2) + Math.pow((v.obj.position.z), 2));
-          var theta = Math.asin((v.obj.position.y) / dist);
-          if(v.obj.position.z < 0) theta = Math.PI - theta;
-          newV.y = dist * Math.sin(theta + dx);
-          newV.z = dist * Math.cos(theta + dx);
+          var coords = getNewCoords(v.obj.position.y, v.obj.position.z, dx);
+          var newV = new THREE.Vector3(v.obj.position.x,coords[0], coords[1]);
           v.obj.position.sub(v.obj.position);
           v.obj.position.add(newV);
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.add(center);
-          v.obj.geometry.verticesNeedUpdate = true;
-          v.edges.forEach(function (e) {
-            e.obj.geometry.verticesNeedUpdate = true;
-          });
-          v.faces.forEach(function (f) {
-            f.obj.geometry.verticesNeedUpdate = true;
-          });
+          updateVertex(v);
         });
       }
       if (input.mode === "ROTATE_Y") {
-        var center = Geometry.getCenter();
         var dy = SPEED * Scene.getMovementOnY(input);
         Geometry.getSelected().forEach(function (v) {
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.sub(center);
-          var newV = new THREE.Vector3(0,v.obj.position.y,0);
-          var dist = Math.sqrt(Math.pow((v.obj.position.z), 2) + Math.pow((v.obj.position.x), 2));
-          var theta = Math.asin((v.obj.position.z) / dist);
-          if(v.obj.position.x < 0) theta = Math.PI - theta;
-          newV.x = dist * Math.cos(theta + dy);
-          newV.z = dist * Math.sin(theta + dy);
+          var coords = getNewCoords(v.obj.position.z, v.obj.position.x, dy);
+          var newV = new THREE.Vector3(coords[1],v.obj.position.y,coords[0]);
           v.obj.position.sub(v.obj.position);
           v.obj.position.add(newV);
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.add(center);
-          v.obj.geometry.verticesNeedUpdate = true;
-          v.edges.forEach(function (e) {
-            e.obj.geometry.verticesNeedUpdate = true;
-          });
-          v.faces.forEach(function (f) {
-            f.obj.geometry.verticesNeedUpdate = true;
-          });
+          updateVertex(v);
         });
       }
       if (input.mode === "ROTATE_Z") {
-        var center = Geometry.getCenter();
         var dz = SPEED * Scene.getMovementOnXZ(input).diff.z;
         Geometry.getSelected().forEach(function (v) {
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.sub(center);
-          var newV = new THREE.Vector3(0, 0, v.obj.position.z);
-          var dist = Math.sqrt(Math.pow((v.obj.position.y), 2) + Math.pow((v.obj.position.x), 2));
-          var theta = Math.asin((v.obj.position.x) / dist);
-          if(v.obj.position.y < 0) theta = Math.PI - theta;
-          newV.x = dist * Math.sin(theta + dz);
-          newV.y = dist * Math.cos(theta + dz);
+          var coords = getNewCoords(v.obj.position.x, v.obj.position.y, dz);
+          var newV = new THREE.Vector3(coords[0], coords[1], v.obj.position.z);
           v.obj.position.sub(v.obj.position);
           v.obj.position.add(newV);
           if(!input.actions["ROTATE_WORLD_MOD"]) v.obj.position.add(center);
-          v.obj.geometry.verticesNeedUpdate = true;
-          v.edges.forEach(function (e) {
-            e.obj.geometry.verticesNeedUpdate = true;
-          });
-          v.faces.forEach(function (f) {
-            f.obj.geometry.verticesNeedUpdate = true;
-          });
+          updateVertex(v);
         });
       }
     },
@@ -110,8 +99,10 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
           if (Geometry.getSelected().length <= 1) {
             InputHandling.mode("EDIT");
           } else {
-            move = History.startMove(Geometry.getSelected());
-            InputHandling.mode("ROTATE_MODE");
+            if(input.mode === "EDIT"){
+              move = History.startMove(Geometry.getSelected());
+              InputHandling.mode("ROTATE_MODE");
+            }
           }
         } else {
           move.cancel();
@@ -119,12 +110,21 @@ Basic3D.loadModule("GeometryRotation", function (InputHandling, Scene, Geometry,
         }
       } else if (active(input.mode)) {
         if (input.actions["TOGGLE_ROTATE_X"]) {
+          if(!(input.mode === "ROTATE_X")){
+            center = Geometry.getCenter();
+          }
           InputHandling.mode("ROTATE_X");
         }
         if (input.actions["TOGGLE_ROTATE_Y"]) {
+          if(!(input.mode === "ROTATE_Y")){
+            center = Geometry.getCenter();
+          }
           InputHandling.mode("ROTATE_Y");
         }
         if (input.actions["TOGGLE_ROTATE_Z"]) {
+          if(!(input.mode === "ROTATE_Z")){
+            center = Geometry.getCenter();
+          }
           InputHandling.mode("ROTATE_Z");
         }
         setAxis(input);
