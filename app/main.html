@@ -29,8 +29,7 @@
       function getParameters (name, func) {
         var deps = getDependencies(func);
         if (deps.missing.length > 0) {
-          console.log("ERROR: '" + name + "' missing '" + deps.missing + "'.");
-          return null;
+          throw ("ERROR: '" + name + "' missing '" + deps.missing + "'.");
         }
         return deps.loaded.map(function(d) { return modules[d]; });
       }
@@ -38,16 +37,15 @@
       return {
         loadModule: function (name, loader) {
           var params = getParameters(name, loader);
-          if (params) modules[name] = loader.apply(null, params);
+          modules[name] = loader.apply(null, params);
         },
         loadScript: function (name, loader) {
           var params = getParameters(name, loader);
-          if (params) scripts[name] = loader.apply(null, params);
+          scripts[name] = loader.apply(null, params);
         },
         runScript: function (name, data) {
           if (scripts[name] === undefined) {
-            console.log("ERROR: Script '" + name + "' not loaded.");
-            return;
+            throw ("ERROR: Script '" + name + "' not loaded.");
           }
           console.log("Running script '" + name + "'.");
           scripts[name](data);

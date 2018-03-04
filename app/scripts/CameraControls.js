@@ -2,14 +2,14 @@
 Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
 
   var cam = Scene.camera();
+  var invertOrbit = 1;
 
   function shiftCam(input) {
     var xDist = 0, yDist = 0, zDist = 0;
-    var invert = (input.actions["CAM_INVERT"]) ? -1 : 1;
     var speed = (input.actions["CAM_SPEED_MOD"]) ?  6 : 2;
     if(input.actions["CAM_SHIFT_FREE"]) {
-      xDist += (input.coords.x1 - input.coords.x2) * invert * 0.25;
-      yDist += (input.coords.y2 - input.coords.y1) * invert * 0.25;
+      xDist += (input.coords.x1 - input.coords.x2) * 0.25;
+      yDist += (input.coords.y2 - input.coords.y1) * 0.25;
     } else {
       if (input.actions["CAM_LEFT"]) xDist -= speed;
       if (input.actions["CAM_RIGHT"]) xDist += speed;
@@ -28,13 +28,13 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     var baseAngle = (input.actions["CAM_SPEED_MOD"]) ? 0.003 :  0.001;
     var yAxis = new THREE.Vector3(0, 1, 0);
     if(input.actions["CAM_ORBIT_FREE"]) {
-      xAngle += baseAngle * (input.coords.y1 - input.coords.y2);
-      yAngle += baseAngle * (input.coords.x1 - input.coords.x2);
+      xAngle += baseAngle * (input.coords.y1 - input.coords.y2) * invertOrbit;
+      yAngle += baseAngle * (input.coords.x1 - input.coords.x2) * invertOrbit;
     } else {
-      if (input.actions["CAM_UP"]) xAngle += baseAngle * 10;
-      if (input.actions["CAM_DOWN"]) xAngle -= baseAngle * 10;
-      if (input.actions["CAM_LEFT"]) yAngle += baseAngle * 10;
-      if (input.actions["CAM_RIGHT"]) yAngle -= baseAngle * 10;
+      if (input.actions["CAM_UP"]) xAngle += baseAngle * 10 * invertOrbit;
+      if (input.actions["CAM_DOWN"]) xAngle += baseAngle * -10 * invertOrbit;
+      if (input.actions["CAM_LEFT"]) yAngle += baseAngle * 10 * invertOrbit;
+      if (input.actions["CAM_RIGHT"]) yAngle += baseAngle * -10 * invertOrbit;
     }
     cam.translateZ(-distance);
     cam.rotateOnWorldAxis(yAxis, -yAngle * 3);
@@ -79,6 +79,18 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
   InputHandling.addKeyBinding("ShiftLeft", "CAM_SPEED_MOD");
   InputHandling.addKeyBinding("ShiftRight", "CAM_SPEED_MOD");
 
-  return {};
+  return {
+    invertOrbit: function () {
+      invertOrbit = -invertOrbit;
+    }
+  };
+
+});
+
+Basic3D.loadScript("InvertOrbit", function(CameraControls) {
+  
+  return function() {
+    CameraControls.invertOrbit();
+  };
 
 });

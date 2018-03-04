@@ -98,9 +98,9 @@ app.on("ready", function () {
       }
     });
     menu.submenu.push({
-      label: "Invert Mouse Controls",
+      label: "Invert Orbit Controls",
       click: function() {
-        run("InvertMouseControls");
+        run("InvertOrbit");
       }
     });
     menu.submenu.push({
