@@ -1,3 +1,4 @@
+
 # [A3] Basic3D
 
 ### Overview
@@ -18,3 +19,43 @@ The project is an elementary 3D modeling application titled “Basic3D.” The a
 ### Links
  * Trello: https://trello.com/b/qzJdoVNa
  * Slack: https://coms319.slack.com
+
+# Design
+
+### Modules
+ * [CameraControls](###CameraControls)
+ * [Colors](###Colors)
+ * [Geometry](###Geometry)
+ * [GeometryCreation](###GeometryCreation)
+ * [GeometryRotation](###GeometryRotation)
+ * [GeometryScale](###GeometryScale)
+ * [GeometrySelection](###GeometrySelection)
+ * [GeometryTranslation](###GeometryTranslation)
+ * [History](###History)
+ * [InputHandling](###InputHandling)
+ * [Overlay](###Overlay)
+ * [Scene](###Scene)
+
+### CameraControls
+
+### Colors
+
+### Geometry
+
+### GeometryCreation
+
+### GeometryRotation
+
+### GeometryScale
+
+### GeometrySelection
+
+### GeometryTranslation
+
+### History
+
+### InputHandling
+
+### Overlay
+
+### Scene
