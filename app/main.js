@@ -10,118 +10,141 @@ process.env.NODE_ENV = "development";
 var mainWindow;
 
 app.on("ready", function () {
+
   mainWindow = new BrowserWindow();
+
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, "main.html"),
     protocol: "file:",
     slashes: true
   }));
 
-  var fileMenu = { label: "File", submenu: [] };
-  var editMenu = { label: "Edit", submenu: [] };
-  var viewMenu = { label: "View", submenu: [] };
-  var prefMenu = { label: "Preferences", submenu: [] };
-
-  fileMenu.submenu.push({
-    label: "Quit", 
-    click: function() { app.quit(); }
-  });
-
-  editMenu.submenu.push({
-    label: "Undo",
-    click: function() {
-      mainWindow.webContents.send("run", {
-        name: "Undo", data: {}
-      }); 
-    }
-  });
-
-  editMenu.submenu.push({
-    label: "Redo",
-    click: function() {
-      mainWindow.webContents.send("run", {
-        name: "Redo", data: {}
-      }); 
-    }
-  });
-
-  viewMenu.submenu.push({
-    label: "Dev Tools", 
-    click: function() { mainWindow.toggleDevTools(); }
-  });
-
-  viewMenu.submenu.push({
-    label: "Reload", 
-    click: function() { mainWindow.reload(); }
-  });
-
-  var keyPrefs = {
-    label: "Key Bindings", 
-    click: function() { 
-      mainWindow.webContents.send("run", {
-        name: "KeyBindingsMenu", data: {}
-      }); 
-    }
-  };
-
-  var colorPrefs = {
-    label: "Change Default Colors",
-    submenu: []
-  };
-
-  colorPrefs.submenu.push({
-    label: "Vertices",
-    submenu: getColorChanges("VERTEX")
-  });
-
-  colorPrefs.submenu.push({
-    label: "Edges",
-    submenu: getColorChanges("EDGE")
-  });
-
-  colorPrefs.submenu.push({
-    label: "Faces",
-    submenu: getColorChanges("FACE")
-  });
-
-  prefMenu.submenu.push(keyPrefs);
-  prefMenu.submenu.push(colorPrefs);
-  prefMenu.submenu.push({
-    label: "Toggle Axis Helper",
-    click: function() {
-      mainWindow.webContents.send("run", {
-        name: "ToggleAxisHelper", data: {}
-      }); 
-    }
-  })
-
-  function changeColor(change) {
+  var run = function(name, data) {
+    if (data === undefined) data = {};
     mainWindow.webContents.send("run", {
-      name: "ColorChange", data: change });
-  }
+      name: name, data: data
+    });
+  };
 
-  function getColorChanges(name) {
-    var items = [];
-    items.push({
-      label: "Red", click: function() {
-        changeColor({ name: name, color: 0xff0000 });
+  var file = (function() {
+    var menu = { 
+      label: "File", 
+      submenu: [] 
+    };
+    menu.submenu.push({
+      label: "Quit", 
+      click: function() { 
+        app.quit(); 
       }
     });
-    items.push({
-      label: "Green", click: function() {
-        changeColor({ name: name, color: 0x00ff00 });
+    return menu;
+  })();
+
+  var edit = (function() {
+    var menu = { 
+      label: "Edit", 
+      submenu: [] 
+    };
+    menu.submenu.push({
+      label: "Undo",
+      click: function() { 
+        run("Undo"); 
       }
     });
-    items.push({
-      label: "Blue", click: function() {
-        changeColor({ name: name, color: 0x0000ff });
+    menu.submenu.push({
+      label: "Redo",
+      click: function() { 
+        run("Redo"); 
       }
     });
-    return items;
-  }
+    return menu;
+  })();
+
+  var view = (function() {
+    var menu = { 
+      label: "View", 
+      submenu: [] 
+    };
+    menu.submenu.push({
+      label: "Dev Tools", 
+      click: function() { 
+        mainWindow.toggleDevTools(); 
+      }
+    });
+    menu.submenu.push({
+      label: "Reload", 
+      click: function() { 
+        mainWindow.reload();
+      }
+    });
+    return menu;
+  })();
+
+  var prefs = (function() {
+    var menu = { 
+      label: "Preferences", 
+      submenu: [] 
+    };
+    menu.submenu.push({
+      label: "Key Bindings", 
+      click: function() { 
+        run("KeyBindingsMenu"); 
+      }
+    });
+    menu.submenu.push({
+      label: "Toggle Axis Helper",
+      click: function() { 
+        run("ToggleAxisHelper"); 
+      }
+    });
+    menu.submenu.push({
+      label: "Invert Mouse Controls",
+      click: function() {
+        run("InvertMouseControls");
+      }
+    });
+    menu.submenu.push({
+      label: "Change Colors",
+      submenu: getColorSubmenu()
+    });
+    return menu;
+  })();
 
   Menu.setApplicationMenu(
-    Menu.buildFromTemplate([ fileMenu, editMenu, viewMenu, prefMenu ])
+    Menu.buildFromTemplate([ file, edit, view, prefs ])
   );
+
+  function getColorSubmenu() {
+    function getColorChanges(name) {
+      function getColorChange(label, color) {
+        return {
+          label: label, 
+          click: function() {
+            run("ColorChange", { name: name, color: color });
+          }
+        };
+      }
+      return [
+        getColorChange("Red", 0xff0000),
+        getColorChange("Green", 0x00ff00),
+        getColorChange("Blue", 0x0000ff)
+      ];
+    }
+
+    var submenu = [];
+    submenu.push({
+      label: "Vertices",
+      submenu: getColorChanges("VERTEX")
+    });
+    submenu.push({
+      label: "Edges",
+      submenu: getColorChanges("EDGE")
+    });
+    submenu.push({
+      label: "Faces",
+      submenu: getColorChanges("FACE")
+    });
+    return submenu;
+  }
 
 });
