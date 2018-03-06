@@ -4,35 +4,27 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
   var cam = Scene.camera();
   var invertOrbit = 1;
   var snapVert = true;
+  var scroll = 0;
 
   var smooth = (function () {
-    // Lock other movements
-    var lock = false, t;
-    var dest = new THREE.Object3D();
-    var origin = new THREE.Object3D();
+    var dest, orig, lock, t;
+    dest = new THREE.Object3D(),
+    orig = new THREE.Object3D(); 
+    lock = false;
     return {
       start: function () {
-        origin.copy(cam, false);
+        orig.copy(cam, false);
         lock = true;
         t = 0;
       },
       move: function () {
-        t += 0.1;
-        
-        var pos = new THREE.Vector3(
-          origin.position.x + t * (dest.position.x - origin.position.x),
-          origin.position.y + t * (dest.position.y - origin.position.y),
-          origin.position.z + t * (dest.position.z - origin.position.z)
-        );
+        t += 0.05;
+        var pos = new THREE.Vector3().copy(orig.position);
+        pos.lerp(dest.position, t);
         cam.position.copy(pos);
-        
-        var rot = new THREE.Vector3(
-          origin.rotation.x + t * (dest.rotation.x - origin.rotation.x),
-          origin.rotation.y + t * (dest.rotation.y - origin.rotation.y),
-          origin.rotation.z + t * (dest.rotation.z - origin.rotation.z)
-        );
-        cam.rotation.setFromVector3(rot);
-        
+        var q0 = new THREE.Quaternion().copy(orig.quaternion);
+        q0.slerp(dest.quaternion, t);
+        cam.rotation.setFromQuaternion(q0);
         if(t > 1) {
           cam.position.copy(dest.position);
           cam.rotation.copy(dest.rotation);
@@ -143,6 +135,11 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       if(input.actions["CAM_SHIFT"]) {
         shiftCam(input);
       }
+      if(scroll !== 0) {
+        var diff = (scroll > 0) ? -10 : 10;
+        scroll += diff;
+        cam.translateZ(-diff);
+      }
     },
     onkeydown: function (input) {
       if (input.mode !== "EDIT") return;
@@ -179,15 +176,9 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     },
     onmousewheel: function (input) {
       if (input.mode !== "EDIT") return;
-      if (smooth.locked()) {
-        smooth.move();
-        return;
-      }
-      var dest = smooth.dest();
-      dest.position.copy(cam.position);
-      dest.rotation.copy(cam.rotation);
-      dest.translateZ(input.scroll);
-      smooth.start();
+      scroll += input.scroll;
+      if(scroll > 200) scroll = 200;
+      if(scroll < -200) scroll = -200;
     }
   });
 
