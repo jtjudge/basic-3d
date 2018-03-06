@@ -5,6 +5,49 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
   var invertOrbit = 1;
   var snapVert = true;
 
+  var smooth = (function () {
+    // Lock other movements
+    var lock = false, t;
+    var dest = new THREE.Object3D();
+    var origin = new THREE.Object3D();
+    return {
+      start: function () {
+        origin.copy(cam, false);
+        lock = true;
+        t = 0;
+      },
+      move: function () {
+        t += 0.1;
+        
+        var pos = new THREE.Vector3(
+          origin.position.x + t * (dest.position.x - origin.position.x),
+          origin.position.y + t * (dest.position.y - origin.position.y),
+          origin.position.z + t * (dest.position.z - origin.position.z)
+        );
+        cam.position.copy(pos);
+        
+        var rot = new THREE.Vector3(
+          origin.rotation.x + t * (dest.rotation.x - origin.rotation.x),
+          origin.rotation.y + t * (dest.rotation.y - origin.rotation.y),
+          origin.rotation.z + t * (dest.rotation.z - origin.rotation.z)
+        );
+        cam.rotation.setFromVector3(rot);
+        
+        if(t > 1) {
+          cam.position.copy(dest.position);
+          cam.rotation.copy(dest.rotation);
+          lock = false;
+        }
+      },
+      dest: function() {
+        return dest;
+      },
+      locked: function() {
+        return lock;
+      }
+    };
+  })();
+
   function shiftCam(input) {
     var xDist = 0, yDist = 0, zDist = 0;
     var speed = (input.actions["CAM_SPEED_MOD"]) ?  6 : 2;
@@ -24,16 +67,13 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     cam.translateZ(zDist);
   }
 
-  function orbitCam(input, axis, angle) {
+  function orbitCam(input) {
     var xAngle = 0, yAngle = 0, distance = cam.position.length();
     var baseAngle = (input.actions["CAM_SPEED_MOD"]) ? 0.003 :  0.001;
     var yAxis = new THREE.Vector3(0, 1, 0);
     if(input.actions["CAM_ORBIT_FREE"]) {
       xAngle += baseAngle * (input.coords.y1 - input.coords.y2) * invertOrbit;
       yAngle += baseAngle * (input.coords.x1 - input.coords.x2) * invertOrbit;
-    } else if(axis !== undefined && angle !== undefined) {
-      if(axis === "x") xAngle += angle;
-      if(axis === "y") yAngle += angle;
     } else {
       if (input.actions["CAM_UP"]) xAngle += baseAngle * 10 * invertOrbit;
       if (input.actions["CAM_DOWN"]) xAngle += baseAngle * -10 * invertOrbit;
@@ -47,30 +87,42 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
   }
 
   function snapCam(angle) {
+    console.log("Snapping to angle " + angle);
     var axis = new THREE.Vector3(0, 1, 0);
     var origin = new THREE.Vector3(0, 0, 0);
     var distance = 150;
+    var dest = smooth.dest();
     if(snapVert) {
-      cam.position.set(0, distance, 0);
-      cam.lookAt(origin);
-      cam.rotateOnWorldAxis(axis, angle);
+      dest.position.set(0, distance, 0);
+      dest.rotation.set(0, 0, 0);
+      dest.rotateX(-Math.PI / 2);
+      dest.rotateOnWorldAxis(axis, angle);
     } else {
-      cam.position.set(0, 0, distance);
-      cam.lookAt(origin);
-      cam.translateZ(-150);
-      cam.rotateOnWorldAxis(axis, angle);
-      cam.translateZ(150);
+      dest.position.set(0, 0, distance);
+      dest.rotation.set(0, 0, 0);
+      dest.translateZ(-150);
+      dest.rotateOnWorldAxis(axis, angle);
+      dest.translateZ(150);
     }
+    smooth.start();
   }
 
   function resetCam() {
-    cam.position.set(150, 100, 150);
-    cam.lookAt(new THREE.Vector3(0, 0, 0));
+    var dest = smooth.dest();
+    dest.position.set(150, 100, 150);
+    dest.rotation.set(0, 0, 0);
+    dest.rotateX(-Math.PI / 8);
+    dest.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.PI / 4);
+    smooth.start();
   }
 
   InputHandling.register({
     onupdate: function (input) {
       if (input.mode !== "EDIT") return;
+      if (smooth.locked()) {
+        smooth.move();
+        return;
+      }
       if (input.actions["CAM_ORBIT"]) {
         orbitCam(input);
       }
@@ -79,6 +131,11 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       }
     },
     onkeydown: function (input) {
+      if (input.mode !== "EDIT") return;
+      if (smooth.locked()) {
+        smooth.move();
+        return;
+      }
       if (input.actions["CAM_RESET"]) resetCam();
       if (input.actions["CAM_SWAP_AXIS"]) snapVert = !snapVert;
       if (input.actions["CAM_SNAP_BOTTOM_LEFT"]) {
@@ -93,6 +150,7 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       if (input.actions["CAM_SNAP_TOP_RIGHT"]) {
         snapCam(Math.PI / 2);
       }
+      if(false) {
       if (input.actions["CAM_ORBIT_LEFT"]) {
         orbitCam(input, "y", invertOrbit * Math.PI / 6);
       }
@@ -105,8 +163,14 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       if (input.actions["CAM_ORBIT_DOWN"]) {
         orbitCam(input, "x", invertOrbit * -Math.PI / 6);
       }
+      }
     },
     onmousewheel: function (input) {
+      if (input.mode !== "EDIT") return;
+      if (smooth.locked()) {
+        smooth.move();
+        return;
+      }
       cam.translateZ(input.scroll);
     }
   });
