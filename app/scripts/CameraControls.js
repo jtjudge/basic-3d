@@ -87,7 +87,6 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
   }
 
   function snapCam(angle) {
-    console.log("Snapping to angle " + angle);
     var axis = new THREE.Vector3(0, 1, 0);
     var origin = new THREE.Vector3(0, 0, 0);
     var distance = 150;
@@ -104,6 +103,21 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       dest.rotateOnWorldAxis(axis, angle);
       dest.translateZ(150);
     }
+    smooth.start();
+  }
+
+  function snapOrbit(angle, vert) {
+    var dest = smooth.dest(), distance;
+    dest.position.copy(cam.position);
+    dest.rotation.copy(cam.rotation);
+    distance = dest.position.length();
+    dest.translateZ(-distance);
+    if(vert) {
+      dest.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), angle);
+    } else {
+      dest.rotateX(angle);
+    }
+    dest.translateZ(distance);
     smooth.start();
   }
 
@@ -150,19 +164,17 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       if (input.actions["CAM_SNAP_TOP_RIGHT"]) {
         snapCam(Math.PI / 2);
       }
-      if(false) {
       if (input.actions["CAM_ORBIT_LEFT"]) {
-        orbitCam(input, "y", invertOrbit * Math.PI / 6);
+        snapOrbit(invertOrbit * Math.PI / 4, true);
       }
       if (input.actions["CAM_ORBIT_RIGHT"]) {
-        orbitCam(input, "y", invertOrbit * -Math.PI / 6);
+        snapOrbit(-invertOrbit * Math.PI / 4, true);
       }
       if (input.actions["CAM_ORBIT_UP"]) {
-        orbitCam(input, "x", invertOrbit * Math.PI / 6);
+        snapOrbit(-invertOrbit * Math.PI / 4, false);
       }
       if (input.actions["CAM_ORBIT_DOWN"]) {
-        orbitCam(input, "x", invertOrbit * -Math.PI / 6);
-      }
+        snapOrbit(invertOrbit * Math.PI / 4, false);
       }
     },
     onmousewheel: function (input) {
@@ -171,7 +183,11 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
         smooth.move();
         return;
       }
-      cam.translateZ(input.scroll);
+      var dest = smooth.dest();
+      dest.position.copy(cam.position);
+      dest.rotation.copy(cam.rotation);
+      dest.translateZ(input.scroll);
+      smooth.start();
     }
   });
 
