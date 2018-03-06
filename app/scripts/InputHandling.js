@@ -49,6 +49,8 @@ Basic3D.loadModule("InputHandling", function () {
       bindings[code].forEach(function (action) {
         input.actions[action] = down;
       });
+    } else {
+      console.log("No binding for code '" + code + "'");
     }
     if (inverts[code] !== undefined) {
       inverts[code].forEach(function (action) {
