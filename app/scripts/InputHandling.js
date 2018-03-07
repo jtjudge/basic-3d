@@ -200,14 +200,10 @@ Basic3D.loadModule("InputHandling", function () {
       }
       inverts[key].push(action);
       return true;
+    },
+    getBindings: function() {
+      return bindings;
     }
   };
 
-});
-
-Basic3D.loadScript("KeyBindingsMenu", function(InputHandling) {
-  var script = function() {
-    console.log("A Key bindings menu appears!");
-  };
-  return script;
 });

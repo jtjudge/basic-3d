@@ -6,6 +6,8 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
   var snapVert = true;
   var scroll = 0;
 
+  var locked = false;
+
   var smooth = (function () {
     var dest, orig, lock, t;
     dest = new THREE.Object3D(),
@@ -124,7 +126,7 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
 
   InputHandling.register({
     onupdate: function (input) {
-      if (input.mode !== "EDIT") return;
+      if (input.mode !== "EDIT" || locked) return;
       if (smooth.locked()) {
         smooth.move();
         return;
@@ -142,7 +144,7 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       }
     },
     onkeydown: function (input) {
-      if (input.mode !== "EDIT") return;
+      if (input.mode !== "EDIT" || locked) return;
       if (smooth.locked()) {
         smooth.move();
         return;
@@ -175,7 +177,7 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
       }
     },
     onmousewheel: function (input) {
-      if (input.mode !== "EDIT") return;
+      if (input.mode !== "EDIT" || locked) return;
       scroll += input.scroll;
       if(scroll > 200) scroll = 200;
       if(scroll < -200) scroll = -200;
@@ -221,6 +223,12 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
   return {
     invertOrbit: function () {
       invertOrbit = -invertOrbit;
+    },
+    enable: function () {
+      locked = false;
+    },
+    disable: function() {
+      locked = true;
     }
   };
 
