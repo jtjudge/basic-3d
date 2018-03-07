@@ -53,20 +53,27 @@ Basic3D.loadModule("History", function(InputHandling) {
           previous: new THREE.Vector3().copy(v.obj.position)
         };
       });
+      var updateVerts = function() {
+        vertices.forEach(function(v) {
+          v.edges.forEach(function (e) {
+            e.obj.geometry.verticesNeedUpdate = true;
+            e.obj.geometry.boundingSphere = null;
+            e.obj.geometry.boundingBox = null;
+          });
+          v.faces.forEach(function (f) {
+            f.obj.geometry.verticesNeedUpdate = true;
+            f.obj.geometry.boundingSphere = null;
+            f.obj.geometry.boundingBox = null;
+          });
+        });
+      };
       var flipStates = function() {
         states.forEach(function(s) {
           var temp = new THREE.Vector3().copy(s.current);
           s.current.copy(s.previous);
           s.previous = temp;
         });
-        vertices.forEach(function(v) {
-          v.edges.forEach(function (e) {
-            e.obj.geometry.verticesNeedUpdate = true;
-          });
-          v.faces.forEach(function (f) {
-            f.obj.geometry.verticesNeedUpdate = true;
-          });
-        });
+        updateVerts();
       };
       return {
         confirm: function () {
@@ -77,6 +84,7 @@ Basic3D.loadModule("History", function(InputHandling) {
             undo: flipStates,
             redo: flipStates
           });
+          updateVerts();
         },
         cancel: function() {
           if(!moving) return;
