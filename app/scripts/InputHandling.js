@@ -49,8 +49,6 @@ Basic3D.loadModule("InputHandling", function () {
       bindings[code].forEach(function (action) {
         input.actions[action] = down;
       });
-    } else {
-      console.log("No binding for code '" + code + "'");
     }
     if (inverts[code] !== undefined) {
       inverts[code].forEach(function (action) {
@@ -122,6 +120,7 @@ Basic3D.loadModule("InputHandling", function () {
       swapMode = function() {
         // Perform queued mode change
         input.mode = name;
+        console.log(input.mode);
         handlers.onmode.forEach(function (handler) {
           handler(input);
         });
@@ -154,7 +153,6 @@ Basic3D.loadModule("InputHandling", function () {
         return false;
       }
       bindings[key].push(action);
-      console.log("Added binding '" + key + " --> " + action + "'");
       return true;
     },
     removeKeyBinding: function (key, action) {
@@ -174,7 +172,6 @@ Basic3D.loadModule("InputHandling", function () {
         return false;
       }
       bindings[key].splice(index, 1);
-      console.log("Removed binding '" + key + " --> " + action + "'");
       return true;
     },
     addInvertBinding: function(key, action) {
@@ -202,7 +199,6 @@ Basic3D.loadModule("InputHandling", function () {
         return false;
       }
       inverts[key].push(action);
-      console.log("Added invert '" + key + " --> " + action + "'");
       return true;
     }
   };

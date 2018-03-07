@@ -71,9 +71,9 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       Scene.add(vertex.obj);
       console.log("Adding vertex " + 
         vertex.obj.id + " at (" + 
-        vertex.obj.position.x + ", " +
-        vertex.obj.position.y + ", " + 
-        vertex.obj.position.z + ")");
+        vertex.obj.position.x.toFixed(1) + ", " +
+        vertex.obj.position.y.toFixed(1) + ", " + 
+        vertex.obj.position.z.toFixed(1) + ")");
     },
 
     addEdge: function (edge) {
