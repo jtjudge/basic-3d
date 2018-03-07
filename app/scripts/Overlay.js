@@ -1,52 +1,51 @@
 
 Basic3D.loadModule("Overlay", function (InputHandling, Scene) {
 
-  var WIDTH = window.innerWidth - 20;
-  var HEIGHT = window.innerHeight - 20;
+  var renderer, width, height, camera, scene, axis, axisVisible;
 
-  // Camera attributes
-  var VIEW_ANGLE = 45;
-  var ASPECT = WIDTH / HEIGHT;
-  var NEAR = 0.1;
-  var FAR = 10000;
+  function setup() {
+    width = window.innerHeight / 8;
+    height = window.innerHeight / 8;
+    // Create HUD scene
+    renderer = new THREE.WebGLRenderer({ alpha: true });
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    scene = new THREE.Scene();
+    scene.add(camera);
+    renderer.setSize(width, height);
+    // Add to DOM
+    Scene.addLayer(renderer.domElement, { bottom: 10, left: 10 });
+    // Set up HUD camera
+    camera.position.set(0, 0, 1);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    // Create axis helper
+    axis = new THREE.AxesHelper(0.35);
+    scene.add(axis);
+    axisVisible = true;
+  }
 
-  // Create HUD scene
-  var hudRenderer = new THREE.WebGLRenderer({ alpha: true });
-  var hudCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-  var hudScene = new THREE.Scene();
-
-  hudScene.add(hudCamera);
-  hudRenderer.setSize(WIDTH / 8, HEIGHT / 8);
-
-  hudRenderer.domElement.style.position = "absolute";
-  hudRenderer.domElement.style.bottom = "0";
-  hudRenderer.domElement.style.left = "0";
-
-  var container = document.getElementById("container");
-  container.style.position = "relative";
-  container.appendChild(hudRenderer.domElement);
-
-  // Set up HUD camera
-  hudCamera.position.set(0, 0, 1);
-  hudCamera.lookAt(new THREE.Vector3(0, 0, 0));
-
-  // Create axis in HUD
-  var axis = new THREE.AxesHelper(0.35);
-  hudScene.add(axis);
+  setup();
 
   InputHandling.register({
     onupdate: function (input) {
       axis.setRotationFromMatrix(Scene.camera().matrixWorldInverse);
-      hudRenderer.render(hudScene, hudCamera);
+      renderer.render(scene, camera);
+    },
+    onresize: function () {
+      width = window.innerHeight / 8;
+      height = window.innerHeight / 8;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
     }
   });
 
   return {
     toggle: function() {
-      if(hudRenderer.domElement.style.visibility === "hidden") {
-        hudRenderer.domElement.style.visibility = "visible";
+      axisVisible = !axisVisible;
+      if(axisVisible) {
+        scene.add(axis);
       } else {
-        hudRenderer.domElement.style.visibility = "hidden";
+        scene.remove(axis);
       }
     }
   };

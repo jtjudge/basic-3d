@@ -1,0 +1,12 @@
+
+body {
+  margin: 0;
+}
+
+.main-container {
+  position: relative;
+}
+
+.sub-container {
+  position: fixed;
+}
