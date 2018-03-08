@@ -58,6 +58,11 @@ Basic3D.loadModule("Menu", function (Scene) {
           inputBox.focus();
         };
 
+        inputBox.onkeydown = function(event) {
+          event.preventDefault();
+          inputBox.value = event.code;
+        };
+
         inputBox.className = "input-box";
 
         lines.push(line);
@@ -99,6 +104,7 @@ Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu, Input) {
         var newKey = line.children[2].value;
         if(newKey.length > 0)
         {
+          Input.removeKeyBinding(line.children[1].innerHTML, line.children[0].innerHTML);
           Input.addKeyBinding(newKey, line.children[0].innerHTML);
         }
       });
