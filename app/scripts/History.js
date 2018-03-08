@@ -77,7 +77,9 @@ Basic3D.loadModule("History", function (Input) {
       };
       return {
         confirm: function () {
-          if (!moving) return;
+          if (!moving) {
+            throw ("ERROR: No current move to confirm.");
+          }
           moving = false;
           redoHistory.length = 0;
           undoHistory.push({
@@ -87,7 +89,9 @@ Basic3D.loadModule("History", function (Input) {
           updateVerts();
         },
         cancel: function () {
-          if (!moving) return;
+          if (!moving) {
+            throw ("ERROR: No current move to cancel.");
+          }
           moving = false;
           flipStates();
         },

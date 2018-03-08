@@ -1,14 +1,12 @@
 
 Basic3D.loadModule("Input", function () {
 
-  // Mechanism to delay mode swap until
-  // all keydown/mousedown handlers are fired
   var swapMode = function () { };
 
   var bindings = {};
   var inverts = {};
 
-  var modes = ["EDIT"];
+  var mode = "EDIT";
   var actions = [];
   var coords = {
     x1: 0, x2: 0,
@@ -101,12 +99,11 @@ Basic3D.loadModule("Input", function () {
   }
 
   return {
+    bindings: function () {
+      return bindings;
+    },
     mode: function (name) {
-      if (name === undefined) {
-        return modes[modes.length - 1];
-      } else {
-        return name === modes[modes.length - 1];
-      }
+      return (name === undefined) ? mode : name === mode;
     },
     action: function (name) {
       return actions[name];
@@ -119,7 +116,11 @@ Basic3D.loadModule("Input", function () {
     },
     register: function (items) {
       for (var i in items) {
-        if (handlers[i] !== undefined) handlers[i].push(items[i]);
+        if (handlers[i] !== undefined) {
+          handlers[i].push(items[i]);
+        } else {
+          throw ("ERROR: Unrecognized listener '" + i + "'");
+        }
       }
     },
     update: function () {
@@ -130,33 +131,15 @@ Basic3D.loadModule("Input", function () {
       coords.y1 = coords.y2;
       scroll = 0;
     },
-    nextMode: function (name) {
+    setMode: function (name) {
       swapMode = function () {
-        // Perform queued mode change
-        modes.pop();
-        modes.push(name);
-        console.log(modes);
+        console.log(mode + " --> " + name);
+        mode = name;
         handlers.onmode.forEach(function (handler) {
           handler();
         });
-        // After performing change, dequeue
         swapMode = function () { };
       };
-    },
-    prevMode: function () {
-      swapMode = function () {
-        // Perform queued mode change
-        modes.pop();
-        console.log(modes);
-        handlers.onmode.forEach(function (handler) {
-          handler();
-        });
-        // After performing change, dequeue
-        swapMode = function () { };
-      };
-    },
-    bindings: function () {
-      return bindings;
     },
     addKeyBinding: function (key, action) {
       var index;

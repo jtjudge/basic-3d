@@ -31,7 +31,7 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, History
   Input.register({
     onmousedown: function () {
       if (Input.mode("VERTEX_XZ") && Input.action("PLACE_VERTEX")) {
-        Input.nextMode("VERTEX_Y");
+        Input.setMode("VERTEX_Y");
       } else if (Input.mode("VERTEX_Y") && Input.action("PLACE_VERTEX")) {
         var pos = new THREE.Vector3().copy(marker.position);
         var vert = new Geometry.Vertex(pos);
@@ -41,15 +41,15 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, History
         };
         move.redo();
         History.addMove(move);
-        Input.nextMode("EDIT");
+        Input.setMode("EDIT");
       }
     },
     onkeydown: function () {
       if (Input.action("TOGGLE_VERTEX_MODE")) {
         if (Input.mode("VERTEX_XZ") || Input.mode("VERTEX_Y")) {
-          Input.nextMode("EDIT");
+          Input.setMode("EDIT");
         } else if (Input.mode("EDIT") && Geometry.getVertices().length < MAX_VERTS) {
-          Input.nextMode("VERTEX_XZ");
+          Input.setMode("VERTEX_XZ");
         }
       }
       if (!Input.mode("EDIT")) return;

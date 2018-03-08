@@ -55,7 +55,7 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History) {
     onmousedown: function () {
       if (active(Input.mode()) && Input.action("ROTATE_CONFIRM")) {
         move.confirm();
-        Input.nextMode("EDIT");
+        Input.setMode("EDIT");
       }
     },
     onmousemove: function () {
@@ -86,35 +86,35 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History) {
         if (Input.action("TOGGLE_ROTATE_MODE")) {
           if (Geometry.getSelected().length > 0) {
             move = History.startMove(Geometry.getSelected());
-            Input.nextMode("ROTATE_X");
+            Input.setMode("ROTATE_X");
             setAxis();
           }
         }
       } else if (active(Input.mode())) {
         if (Input.action("TOGGLE_ROTATE_MODE")) {
           move.cancel();
-          Input.nextMode("EDIT");
+          Input.setMode("EDIT");
         }
         if (Input.action("TOGGLE_TRANSLATE_MODE")) {
           move.confirm();
-          if(Input.mode("ROTATE_X")) Input.nextMode("TRANSLATE_X");
-          if(Input.mode("ROTATE_Y")) Input.nextMode("TRANSLATE_Y");
-          if(Input.mode("ROTATE_Z")) Input.nextMode("TRANSLATE_Z");
+          if(Input.mode("ROTATE_X")) Input.setMode("TRANSLATE_X");
+          if(Input.mode("ROTATE_Y")) Input.setMode("TRANSLATE_Y");
+          if(Input.mode("ROTATE_Z")) Input.setMode("TRANSLATE_Z");
         }
         if (Input.action("TOGGLE_SCALE_MODE")) {
           move.confirm();
-          if(Input.mode("ROTATE_X")) Input.nextMode("SCALE_X");
-          if(Input.mode("ROTATE_Y")) Input.nextMode("SCALE_Y");
-          if(Input.mode("ROTATE_Z")) Input.nextMode("SCALE_Z");
+          if(Input.mode("ROTATE_X")) Input.setMode("SCALE_X");
+          if(Input.mode("ROTATE_Y")) Input.setMode("SCALE_Y");
+          if(Input.mode("ROTATE_Z")) Input.setMode("SCALE_Z");
         }
         if (Input.action("TOGGLE_ROTATE_X")) {
-          Input.nextMode("ROTATE_X");
+          Input.setMode("ROTATE_X");
         }
         if (Input.action("TOGGLE_ROTATE_Y")) {
-          Input.nextMode("ROTATE_Y");
+          Input.setMode("ROTATE_Y");
         }
         if (Input.action("TOGGLE_ROTATE_Z")) {
-          Input.nextMode("ROTATE_Z");
+          Input.setMode("ROTATE_Z");
         }
         setAxis();
       }
