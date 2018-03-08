@@ -120,6 +120,24 @@ Basic3D.loadModule("Scene", function (Input) {
     },
     getMovementOnY: function () {
       return 0.2 * (Input.coords().y1 - Input.coords().y2);
+    },
+    toScreenPosition: function(obj) {
+      var vector = new THREE.Vector3();
+
+      var halfWidth = .5 * renderer.context.canvas.width;
+      var halfHeight = .5 * renderer.context.canvas.height;
+
+      obj.matrixWorldNeedsUpdate = true;
+      vector.setFromMatrixPosition(obj.matrixWorld);
+      vector.project(camera);
+
+      vector.x = (vector.x * halfWidth) + halfWidth;
+      vector.y = - (vector.y * halfHeight) + halfHeight;
+
+      return {
+        x: vector.x,
+        y: vector.y
+      }
     }
   };
 
