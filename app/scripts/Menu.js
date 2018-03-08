@@ -7,10 +7,12 @@ Basic3D.loadModule("Menu", function (Scene) {
     var menu = document.createElement("div");
     menu.style.color = "white";
     menu.style.backgroundColor = "gray";
-    menu.style.height = "100px";
-    menu.style.width = "200px";
+    //menu.style.height = "100px";
+    //menu.style.width = "200px";
     menu.style.padding = "5px";
     menu.innerHTML = "Menu";
+
+    var lines = [];
 
     // Interface
     return {
@@ -35,6 +37,40 @@ Basic3D.loadModule("Menu", function (Scene) {
           cb();
         };
         menu.appendChild(button);
+      },
+      addLineItem: function(action, key){
+        var line = document.createElement("div");
+
+        line.className = "line-item";
+        var keyLabel = document.createElement("span");
+        keyLabel.innerHTML = key;
+
+        keyLabel.className = "key-label";
+
+        var actionLabel = document.createElement("span");
+        actionLabel.innerHTML = action;
+
+        actionLabel.className = "action-label";
+
+        var inputBox = document.createElement("input");
+
+        inputBox.onclick = function() {
+          inputBox.focus();
+        };
+
+        inputBox.className = "input-box";
+
+        lines.push(line);
+
+        line.appendChild(actionLabel);
+        line.appendChild(keyLabel);
+        line.appendChild(inputBox);
+
+        menu.appendChild(line);
+      },
+
+      lineItems: function() {
+        return lines;
       }
     };
   };
@@ -42,7 +78,7 @@ Basic3D.loadModule("Menu", function (Scene) {
 });
 
 
-Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu) {
+Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu, Input) {
   var script = function () {
 
     var menu = new Menu();
@@ -58,8 +94,23 @@ Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu) {
     });
 
     menu.addCloseButton(function () {
+      menu.lineItems().forEach( function (line) {
+        //console.log(line.children[2].value);
+        var newKey = line.children[2].value;
+        if(newKey.length > 0)
+        {
+          Input.addKeyBinding(newKey, line.children[0].innerHTML);
+        }
+      });
       Controls.enable();
     });
+
+    var inputs = Input.bindings();
+
+    for(var i in inputs)
+    {
+      menu.addLineItem(inputs[i][0], i);
+    }
 
   };
   return script;

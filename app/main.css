@@ -9,4 +9,26 @@ body {
 
 .sub-container {
   position: fixed;
+  overflow-y: scroll;
+}
+
+.key-label {
+  width: 40%;
+  word-wrap: break-word;
+  display: inline-block;
+}
+
+.action-label {
+  width: 40%;
+  word-wrap: break-word;
+  display: inline-block;
+}
+
+.input-box {
+  width: 30%;
+  display: inline-block;
+}
+.line-item{
+  display: flex;
+  justify-content: space-between;
 }
