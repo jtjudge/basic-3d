@@ -8,15 +8,13 @@ Basic3D.loadModule("InputHandling", function () {
   var bindings = {};
   var inverts = {};
 
-  var input = {
-    mode: "EDIT",
-    actions: [],
-    coords: {
-      x1: 0, x2: 0,
-      y1: 0, y2: 0
-    },
-    scroll: 0
+  var modes = ["EDIT"];
+  var actions = [];
+  var coords = {
+    x1: 0, x2: 0,
+    y1: 0, y2: 0
   };
+  var scroll = 0;
 
   var handlers = {
     onkeydown: [],
@@ -47,16 +45,16 @@ Basic3D.loadModule("InputHandling", function () {
   function handle(list, code, down) {
     if (bindings[code] !== undefined) {
       bindings[code].forEach(function (action) {
-        input.actions[action] = down;
+        actions[action] = down;
       });
     }
     if (inverts[code] !== undefined) {
       inverts[code].forEach(function (action) {
-        input.actions[action] = !down;
+        actions[action] = !down;
       });
     }
     handlers[list].forEach(function (handler) {
-      handler(input);
+      handler();
     });
     swapMode();
   }
@@ -81,28 +79,40 @@ Basic3D.loadModule("InputHandling", function () {
 
   function mousemove(event) {
     var rect = container.getBoundingClientRect();
-    input.coords.x2 = event.clientX - rect.left;
-    input.coords.y2 = event.clientY - rect.top;
+    coords.x2 = event.clientX - rect.left;
+    coords.y2 = event.clientY - rect.top;
     handlers.onmousemove.forEach(function (handler) {
-      handler(input);
+      handler();
     });
   }
 
   function mousewheel(event) {
     event.preventDefault();
-    input.scroll = event.deltaY;
+    scroll = event.deltaY;
     handlers.onmousewheel.forEach(function (handler) {
-      handler(input);
+      handler();
     });
   }
 
   function resize() {
     handlers.onresize.forEach(function (handler) {
-      handler(input);
+      handler();
     });
   }
 
   return {
+    mode: function () {
+      return modes.peek();
+    },
+    actions: function () {
+      return actions;
+    },
+    coords: function () {
+      return coords;
+    },
+    scroll: function () {
+      return scroll;
+    },
     register: function (items) {
       for(var i in items) {
         if(handlers[i] !== undefined) handlers[i].push(items[i]);
@@ -110,19 +120,31 @@ Basic3D.loadModule("InputHandling", function () {
     },
     update: function () {
       handlers.onupdate.forEach(function (handler) {
-        handler(input);
+        handler();
       });
-      input.coords.x1 = input.coords.x2;
-      input.coords.y1 = input.coords.y2;
-      input.scroll = 0;
+      coords.x1 = coords.x2;
+      coords.y1 = coords.y2;
+      scroll = 0;
     },
-    mode: function (name) {
+    nextMode: function (name) {
       swapMode = function() {
         // Perform queued mode change
-        input.mode = name;
-        console.log(input.mode);
+        modes.push(name);
+        console.log(modes);
         handlers.onmode.forEach(function (handler) {
-          handler(input);
+          handler();
+        });
+        // After performing change, dequeue
+        swapMode = function() {};
+      };
+    },
+    prevMode: function() {
+      swapMode = function() {
+        // Perform queued mode change
+        modes.pop();
+        console.log(modes);
+        handlers.onmode.forEach(function (handler) {
+          handler();
         });
         // After performing change, dequeue
         swapMode = function() {};
@@ -142,8 +164,8 @@ Basic3D.loadModule("InputHandling", function () {
       if (bindings[key] === undefined) {
         bindings[key] = [];
       }
-      if (input.actions[action] === undefined) {
-        input.actions[action] = false;
+      if (actions[action] === undefined) {
+        actions[action] = false;
       }
       index = bindings[key].findIndex(function (a) {
         return a === action;
@@ -160,7 +182,7 @@ Basic3D.loadModule("InputHandling", function () {
         throw ("ERROR: Key '" + key + "' not registered");
         return false;
       }
-      if (input.actions[action] === undefined) {
+      if (actions[action] === undefined) {
         throw ("ERROR: Action '" + action + "'not registered");
         return false;
       }
@@ -188,8 +210,8 @@ Basic3D.loadModule("InputHandling", function () {
       if (inverts[key] === undefined) {
         inverts[key] = [];
       }
-      if (input.actions[action] === undefined) {
-        input.actions[action] = true;
+      if (actions[action] === undefined) {
+        actions[action] = true;
       }
       index = inverts[key].findIndex(function (a) {
         return a === action;
