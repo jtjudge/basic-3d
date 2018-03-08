@@ -39,7 +39,7 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       return edge;
     },
 
-    Face: function (v1, v2, v3, edge1, edge2, edge3) {
+    Face: function (v1, v2, v3) {
       var geometry = new THREE.Geometry();
       geometry.vertices.push(v1.obj.position);
       geometry.vertices.push(v2.obj.position);
@@ -54,8 +54,7 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       var face = {
         obj: new THREE.Mesh(geometry, material),
         selected: false,
-        v1: v1, v2: v2, v3: v3,
-        edge1: edge1, edge2: edge2, edge3: edge3
+        v1: v1, v2: v2, v3: v3
       };
       return face;
     },
@@ -65,8 +64,6 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         return v.obj.id === vertex.obj.id;
       });
       if (exists) return;
-      vertex.selected = true;
-      vertex.obj.material.color.setHex(Colors.VERTEX_SELECT);
       vertices.push(vertex);
       Scene.add(vertex.obj);
       console.log("Adding vertex " +
@@ -83,8 +80,6 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       if (exists) return;
       edge.v1.edges.push(edge);
       edge.v2.edges.push(edge);
-      edge.selected = true;
-      edge.obj.material.color.setHex(Colors.EDGE_SELECT);
       edges.push(edge);
       Scene.add(edge.obj);
       console.log("Adding edge " + edge.obj.id);
@@ -98,8 +93,6 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       face.v1.faces.push(face);
       face.v2.faces.push(face);
       face.v3.faces.push(face);
-      face.selected = true;
-      face.obj.material.color.setHex(Colors.FACE_SELECT);
       faces.push(face);
       Scene.add(face.obj);
       console.log("Adding face " + face.obj.id);
@@ -113,8 +106,6 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         // Remove vertex from model and scene
         var target = vertices.splice(index, 1)[0];
         Scene.remove(target.obj);
-        target.selected = false;
-        target.obj.material.color.setHex(Colors.VERTEX);
         console.log("Removing vertex " + vertex.obj.id);
       }
     },
@@ -127,8 +118,6 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         // Remove edge from model and scene
         var target = edges.splice(index, 1)[0];
         Scene.remove(target.obj);
-        target.selected = false;
-        target.obj.material.color.setHex(Colors.EDGE);
         console.log("Removing edge " + edge.obj.id);
       }
     },
@@ -141,8 +130,6 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         // Remove face from model and scene
         var target = faces.splice(index, 1)[0];
         Scene.remove(target.obj);
-        target.selected = false;
-        target.obj.material.color.setHex(Colors.FACE);
         console.log("Removing face " + face.obj.id);
       }
     },

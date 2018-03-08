@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, History) {
+Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selection, History) {
 
   var MAX_VERTS = 100;
   var MAX_DIST = 120;
@@ -36,8 +36,14 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, History
         var pos = new THREE.Vector3().copy(marker.position);
         var vert = new Geometry.Vertex(pos);
         var move = {
-          undo: function () { Geometry.removeVertex(vert); },
-          redo: function () { Geometry.addVertex(vert); }
+          undo: function () {
+            Geometry.removeVertex(vert);
+            Selection.toggleSelection(vert, false);
+          },
+          redo: function () {
+            Geometry.addVertex(vert);
+            Selection.toggleSelection(vert, true);
+          }
         };
         move.redo();
         History.addMove(move);
@@ -59,15 +65,27 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, History
           undo: function () {
             selected.forEach(function (v) {
               Geometry.addVertex(v);
-              v.edges.forEach(Geometry.addEdge);
-              v.faces.forEach(Geometry.addFace);
+              v.edges.forEach(function(e) {
+                Geometry.addEdge(e);
+                Selection.toggleSelection(e, true);
+              });
+              v.faces.forEach(function(f) {
+                Geometry.addFace(f);
+                Selection.toggleSelection(f, true);
+              });
             });
           },
           redo: function () {
             selected.forEach(function (v) {
               Geometry.removeVertex(v);
-              v.edges.forEach(Geometry.removeEdge);
-              v.faces.forEach(Geometry.removeFace);
+              v.edges.forEach(function(e) {
+                Geometry.removeEdge(e);
+                Selection.toggleSelection(e, false);
+              });
+              v.faces.forEach(function(f) {
+                Geometry.removeFace(f);
+                Selection.toggleSelection(f, false);
+              });
             });
           }
         };
@@ -80,8 +98,14 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, History
           var v2 = selected[1];
           var edge = Geometry.Edge(v1, v2);
           var move = {
-            undo: function () { Geometry.removeEdge(edge); },
-            redo: function () { Geometry.addEdge(edge); }
+            undo: function () {
+              Geometry.removeEdge(edge);
+              Selection.toggleSelection(edge, false);
+            },
+            redo: function () {
+              Geometry.addEdge(edge);
+              Selection.toggleSelection(edge, true);
+            }
           };
           move.redo();
           History.addMove(move);
@@ -95,19 +119,27 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, History
           var edge1 = Geometry.Edge(v1, v2);
           var edge2 = Geometry.Edge(v2, v3);
           var edge3 = Geometry.Edge(v1, v3);
-          var face = Geometry.Face(v1, v2, v3, edge1, edge2, edge3);
+          var face = Geometry.Face(v1, v2, v3);
           var move = {
             undo: function () {
               Geometry.removeFace(face);
               Geometry.removeEdge(edge1);
               Geometry.removeEdge(edge2);
               Geometry.removeEdge(edge3);
+              Selection.toggleSelection(face, false);
+              Selection.toggleSelection(edge1, false);
+              Selection.toggleSelection(edge2, false);
+              Selection.toggleSelection(edge3, false);
             },
             redo: function () {
               Geometry.addFace(face);
               Geometry.addEdge(edge1);
               Geometry.addEdge(edge2);
               Geometry.addEdge(edge3);
+              Selection.toggleSelection(face, true);
+              Selection.toggleSelection(edge1, true);
+              Selection.toggleSelection(edge2, true);
+              Selection.toggleSelection(edge3, true);
             }
           };
           move.redo();
