@@ -28,7 +28,7 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History) {
         Input.nextMode("EDIT");
       }
     },
-    onmousemove: function (input) {
+    onmousemove: function () {
       if (Input.mode("TRANSLATE_X")) {
         var dx = Scene.getMovementOnXZ().diff.x;
         Geometry.getSelected().forEach(function (v) {
@@ -61,6 +61,18 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History) {
           move.cancel();
           Input.nextMode("EDIT");
         }
+        if (Input.action("TOGGLE_ROTATE_MODE")) {
+          move.confirm();
+          if(Input.mode("TRANSLATE_X")) Input.nextMode("ROTATE_X");
+          if(Input.mode("TRANSLATE_Y")) Input.nextMode("ROTATE_Y");
+          if(Input.mode("TRANSLATE_Z")) Input.nextMode("ROTATE_Z");
+        }
+        if (Input.action("TOGGLE_SCALE_MODE")) {
+          move.confirm();
+          if(Input.mode("TRANSLATE_X")) Input.nextMode("SCALE_X");
+          if(Input.mode("TRANSLATE_Y")) Input.nextMode("SCALE_Y");
+          if(Input.mode("TRANSLATE_Z")) Input.nextMode("SCALE_Z");
+        }
         if (Input.action("TOGGLE_TRANSLATE_X")) {
           Input.nextMode("TRANSLATE_X");
         }
@@ -72,7 +84,12 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History) {
         }
       }
     },
-    onmode: function (input) {
+    onmode: function () {
+      if (active(Input.mode())) {
+        if (move === undefined || move.done()) {
+          move = History.startMove(Geometry.getSelected());
+        }
+      }
       if (Input.mode("TRANSLATE_X")) {
         Scene.showX(Geometry.getCenter());
       }

@@ -90,6 +90,9 @@ Basic3D.loadModule("History", function (Input) {
           if (!moving) return;
           moving = false;
           flipStates();
+        },
+        done: function () {
+          return !moving;
         }
       }
     }

@@ -95,6 +95,18 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History) {
           move.cancel();
           Input.nextMode("EDIT");
         }
+        if (Input.action("TOGGLE_TRANSLATE_MODE")) {
+          move.confirm();
+          if(Input.mode("ROTATE_X")) Input.nextMode("TRANSLATE_X");
+          if(Input.mode("ROTATE_Y")) Input.nextMode("TRANSLATE_Y");
+          if(Input.mode("ROTATE_Z")) Input.nextMode("TRANSLATE_Z");
+        }
+        if (Input.action("TOGGLE_SCALE_MODE")) {
+          move.confirm();
+          if(Input.mode("ROTATE_X")) Input.nextMode("SCALE_X");
+          if(Input.mode("ROTATE_Y")) Input.nextMode("SCALE_Y");
+          if(Input.mode("ROTATE_Z")) Input.nextMode("SCALE_Z");
+        }
         if (Input.action("TOGGLE_ROTATE_X")) {
           Input.nextMode("ROTATE_X");
         }
@@ -109,6 +121,14 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History) {
     },
     onkeyup: function () {
       if (active(Input.mode())) setAxis();
+    },
+    onmode: function () {
+      if (active(Input.mode())) {
+        if (move === undefined || move.done()) {
+          move = History.startMove(Geometry.getSelected());
+        }
+        setAxis();
+      }
     }
   });
 
