@@ -18,8 +18,8 @@ Basic3D.loadModule("Colors", function () {
 
 });
 
-Basic3D.loadScript("ColorChange", function(Colors) {
-  var script = function(data) {
+Basic3D.loadScript("ColorChange", function (Colors) {
+  var script = function (data) {
     Colors.apply(data);
   };
   return script;

@@ -69,10 +69,10 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       vertex.obj.material.color.setHex(Colors.VERTEX_SELECT);
       vertices.push(vertex);
       Scene.add(vertex.obj);
-      console.log("Adding vertex " + 
-        vertex.obj.id + " at (" + 
+      console.log("Adding vertex " +
+        vertex.obj.id + " at (" +
         vertex.obj.position.x.toFixed(1) + ", " +
-        vertex.obj.position.y.toFixed(1) + ", " + 
+        vertex.obj.position.y.toFixed(1) + ", " +
         vertex.obj.position.z.toFixed(1) + ")");
     },
 

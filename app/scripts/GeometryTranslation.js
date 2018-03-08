@@ -1,15 +1,14 @@
 
-Basic3D.loadModule("GeometryTranslation", function (InputHandling, Scene, Geometry, History) {
+Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History) {
 
   var SPEED = 0.05;
 
   var move;
 
   function active(mode) {
-    return (mode === "TRANSLATE_MODE" ||
-      mode === "TRANSLATE_X" ||
-      mode === "TRANSLATE_Y" ||
-      mode === "TRANSLATE_Z");
+    return mode === "TRANSLATE_X"
+      || mode === "TRANSLATE_Y"
+      || mode === "TRANSLATE_Z";
   }
 
   function translateVertex(v, diff) {
@@ -22,78 +21,75 @@ Basic3D.loadModule("GeometryTranslation", function (InputHandling, Scene, Geomet
     });
   }
 
-  InputHandling.register({
-    onmousedown: function (input) {
-      if (active(input.mode) && input.actions["TRANSLATE_CONFIRM"]) {
+  Input.register({
+    onmousedown: function () {
+      if (active(Input.mode()) && Input.action("TRANSLATE_CONFIRM")) {
         move.confirm();
-        InputHandling.mode("EDIT");
+        Input.nextMode("EDIT");
       }
     },
     onmousemove: function (input) {
-      if (input.mode === "TRANSLATE_X") {
-        var dx = Scene.getMovementOnXZ(input).diff.x;
+      if (Input.mode("TRANSLATE_X")) {
+        var dx = Scene.getMovementOnXZ().diff.x;
         Geometry.getSelected().forEach(function (v) {
           translateVertex(v, new THREE.Vector3(dx, 0, 0));
         });
       }
-      if (input.mode === "TRANSLATE_Y") {
-        var dy = Scene.getMovementOnY(input);
+      if (Input.mode("TRANSLATE_Y")) {
+        var dy = Scene.getMovementOnY();
         Geometry.getSelected().forEach(function (v) {
           translateVertex(v, new THREE.Vector3(0, dy, 0));
         });
       }
-      if (input.mode === "TRANSLATE_Z") {
-        var dz = Scene.getMovementOnXZ(input).diff.z;
+      if (Input.mode("TRANSLATE_Z")) {
+        var dz = Scene.getMovementOnXZ().diff.z;
         Geometry.getSelected().forEach(function (v) {
           translateVertex(v, new THREE.Vector3(0, 0, dz));
         });
       }
     },
-    onkeydown: function (input) {
-      if (input.actions["TOGGLE_TRANSLATE_MODE"]) {
-        if (!active(input.mode)) {
-          if (Geometry.getSelected().length === 0) {
-            InputHandling.mode("EDIT");
-          } else {
-            if(input.mode === "EDIT"){
-              move = History.startMove(Geometry.getSelected());
-              InputHandling.mode("TRANSLATE_MODE");
-            }
+    onkeydown: function () {
+      if (Input.mode("EDIT")) {
+        if (Input.action("TOGGLE_TRANSLATE_MODE")) {
+          if (Geometry.getSelected().length > 0) {
+            move = History.startMove(Geometry.getSelected());
+            Input.nextMode("TRANSLATE_X");
           }
-        } else {
+        }
+      } else if (active(Input.mode())) {
+        if (Input.action("TOGGLE_TRANSLATE_MODE")) {
           move.cancel();
-          InputHandling.mode("EDIT");
+          Input.nextMode("EDIT");
         }
-      } else if (active(input.mode)) {
-        if (input.actions["TOGGLE_TRANSLATE_X"]) {
-          InputHandling.mode("TRANSLATE_X");
+        if (Input.action("TOGGLE_TRANSLATE_X")) {
+          Input.nextMode("TRANSLATE_X");
         }
-        if (input.actions["TOGGLE_TRANSLATE_Y"]) {
-          InputHandling.mode("TRANSLATE_Y");
+        if (Input.action("TOGGLE_TRANSLATE_Y")) {
+          Input.nextMode("TRANSLATE_Y");
         }
-        if (input.actions["TOGGLE_TRANSLATE_Z"]) {
-          InputHandling.mode("TRANSLATE_Z");
+        if (Input.action("TOGGLE_TRANSLATE_Z")) {
+          Input.nextMode("TRANSLATE_Z");
         }
       }
     },
     onmode: function (input) {
-      if (input.mode === "TRANSLATE_X") {
+      if (Input.mode("TRANSLATE_X")) {
         Scene.showX(Geometry.getCenter());
       }
-      if (input.mode === "TRANSLATE_Y") {
+      if (Input.mode("TRANSLATE_Y")) {
         Scene.showY(Geometry.getCenter());
       }
-      if (input.mode === "TRANSLATE_Z") {
+      if (Input.mode("TRANSLATE_Z")) {
         Scene.showZ(Geometry.getCenter());
-      } 
+      }
     }
   });
 
-  InputHandling.addKeyBinding("KeyT", "TOGGLE_TRANSLATE_MODE");
-  InputHandling.addKeyBinding("KeyX", "TOGGLE_TRANSLATE_X");
-  InputHandling.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y");
-  InputHandling.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z");
-  InputHandling.addKeyBinding("LMB", "TRANSLATE_CONFIRM");
+  Input.addKeyBinding("KeyT", "TOGGLE_TRANSLATE_MODE");
+  Input.addKeyBinding("KeyX", "TOGGLE_TRANSLATE_X");
+  Input.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y");
+  Input.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z");
+  Input.addKeyBinding("LMB", "TRANSLATE_CONFIRM");
 
   return {};
 

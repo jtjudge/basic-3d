@@ -1,44 +1,44 @@
 
-Basic3D.loadModule("History", function(InputHandling) {
+Basic3D.loadModule("History", function (Input) {
 
   var undoHistory = [];
   var redoHistory = [];
 
   function undo() {
-    if(undoHistory.length === 0) return;
+    if (undoHistory.length === 0) return;
     var move = undoHistory.pop();
     move.undo();
     redoHistory.push(move);
   }
 
   function redo() {
-    if(redoHistory.length === 0) return;
+    if (redoHistory.length === 0) return;
     var move = redoHistory.pop();
     move.redo();
     undoHistory.push(move);
   }
 
-  InputHandling.register({
-    onkeydown: function(input) {
-      if(input.actions["HIST_MOD"]) {
-        if(input.actions["HIST_UNDO"]) undo();
-        if(input.actions["HIST_REDO"]) redo();
+  Input.register({
+    onkeydown: function () {
+      if (Input.action("HIST_MOD")) {
+        if (Input.action("HIST_UNDO")) undo();
+        if (Input.action("HIST_REDO")) redo();
       }
     }
   });
 
-  Basic3D.loadScript("Undo", function() {
+  Basic3D.loadScript("Undo", function () {
     return undo;
   });
 
-  Basic3D.loadScript("Redo", function() {
+  Basic3D.loadScript("Redo", function () {
     return redo;
   });
 
-  InputHandling.addKeyBinding("ControlLeft", "HIST_MOD");
-  InputHandling.addKeyBinding("ControlRight", "HIST_MOD");
-  InputHandling.addKeyBinding("KeyZ", "HIST_UNDO");
-  InputHandling.addKeyBinding("KeyY", "HIST_REDO");
+  Input.addKeyBinding("ControlLeft", "HIST_MOD");
+  Input.addKeyBinding("ControlRight", "HIST_MOD");
+  Input.addKeyBinding("KeyZ", "HIST_UNDO");
+  Input.addKeyBinding("KeyY", "HIST_REDO");
 
   return {
     addMove: function (move) {
@@ -47,14 +47,14 @@ Basic3D.loadModule("History", function(InputHandling) {
     },
     startMove: function (vertices) {
       var moving = true;
-      var states = vertices.map(function(v) {
+      var states = vertices.map(function (v) {
         return {
           current: v.obj.position,
           previous: new THREE.Vector3().copy(v.obj.position)
         };
       });
-      var updateVerts = function() {
-        vertices.forEach(function(v) {
+      var updateVerts = function () {
+        vertices.forEach(function (v) {
           v.edges.forEach(function (e) {
             e.obj.geometry.verticesNeedUpdate = true;
             e.obj.geometry.boundingSphere = null;
@@ -67,8 +67,8 @@ Basic3D.loadModule("History", function(InputHandling) {
           });
         });
       };
-      var flipStates = function() {
-        states.forEach(function(s) {
+      var flipStates = function () {
+        states.forEach(function (s) {
           var temp = new THREE.Vector3().copy(s.current);
           s.current.copy(s.previous);
           s.previous = temp;
@@ -77,7 +77,7 @@ Basic3D.loadModule("History", function(InputHandling) {
       };
       return {
         confirm: function () {
-          if(!moving) return;
+          if (!moving) return;
           moving = false;
           redoHistory.length = 0;
           undoHistory.push({
@@ -86,8 +86,8 @@ Basic3D.loadModule("History", function(InputHandling) {
           });
           updateVerts();
         },
-        cancel: function() {
-          if(!moving) return;
+        cancel: function () {
+          if (!moving) return;
           moving = false;
           flipStates();
         }

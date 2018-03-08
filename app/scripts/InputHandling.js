@@ -1,9 +1,9 @@
 
-Basic3D.loadModule("InputHandling", function () {
+Basic3D.loadModule("Input", function () {
 
   // Mechanism to delay mode swap until
   // all keydown/mousedown handlers are fired
-  var swapMode = function() {};
+  var swapMode = function () { };
 
   var bindings = {};
   var inverts = {};
@@ -63,18 +63,18 @@ Basic3D.loadModule("InputHandling", function () {
     handle("onkeydown", event.code, true);
   }
 
-  function keyup(event){
+  function keyup(event) {
     handle("onkeyup", event.code, false);
   }
 
   function mousedown(event) {
     event.preventDefault();
-    handle("onmousedown", mouseEvents[event.which], true); 
+    handle("onmousedown", mouseEvents[event.which], true);
   }
 
   function mouseup(event) {
     event.preventDefault();
-    handle("onmouseup", mouseEvents[event.which], false); 
+    handle("onmouseup", mouseEvents[event.which], false);
   }
 
   function mousemove(event) {
@@ -101,11 +101,15 @@ Basic3D.loadModule("InputHandling", function () {
   }
 
   return {
-    mode: function () {
-      return modes.peek();
+    mode: function (name) {
+      if (name === undefined) {
+        return modes[modes.length - 1];
+      } else {
+        return name === modes[modes.length - 1];
+      }
     },
-    actions: function () {
-      return actions;
+    action: function (name) {
+      return actions[name];
     },
     coords: function () {
       return coords;
@@ -114,8 +118,8 @@ Basic3D.loadModule("InputHandling", function () {
       return scroll;
     },
     register: function (items) {
-      for(var i in items) {
-        if(handlers[i] !== undefined) handlers[i].push(items[i]);
+      for (var i in items) {
+        if (handlers[i] !== undefined) handlers[i].push(items[i]);
       }
     },
     update: function () {
@@ -127,19 +131,20 @@ Basic3D.loadModule("InputHandling", function () {
       scroll = 0;
     },
     nextMode: function (name) {
-      swapMode = function() {
+      swapMode = function () {
         // Perform queued mode change
+        modes.pop();
         modes.push(name);
         console.log(modes);
         handlers.onmode.forEach(function (handler) {
           handler();
         });
         // After performing change, dequeue
-        swapMode = function() {};
+        swapMode = function () { };
       };
     },
-    prevMode: function() {
-      swapMode = function() {
+    prevMode: function () {
+      swapMode = function () {
         // Perform queued mode change
         modes.pop();
         console.log(modes);
@@ -147,16 +152,19 @@ Basic3D.loadModule("InputHandling", function () {
           handler();
         });
         // After performing change, dequeue
-        swapMode = function() {};
+        swapMode = function () { };
       };
+    },
+    bindings: function () {
+      return bindings;
     },
     addKeyBinding: function (key, action) {
       var index;
-      if(inverts[key] !== undefined) {
+      if (inverts[key] !== undefined) {
         index = inverts[key].findIndex(function (a) {
           return a === action;
         });
-        if(index > -1) {
+        if (index > -1) {
           throw ("ERROR: Binding for existing invert '" + key + " --> " + action + "' attempted");
           return false;
         }
@@ -170,7 +178,7 @@ Basic3D.loadModule("InputHandling", function () {
       index = bindings[key].findIndex(function (a) {
         return a === action;
       });
-      if(index > -1) {
+      if (index > -1) {
         throw ("ERROR: Duplicate binding '" + key + " --> " + action + "' attempted");
         return false;
       }
@@ -189,20 +197,20 @@ Basic3D.loadModule("InputHandling", function () {
       var index = bindings[key].findIndex(function (a) {
         return a === action;
       });
-      if(index === -1) {
+      if (index === -1) {
         throw ("ERROR: Binding '" + key + " --> " + action + "' not registered");
         return false;
       }
       bindings[key].splice(index, 1);
       return true;
     },
-    addInvertBinding: function(key, action) {
+    addInvertBinding: function (key, action) {
       var index;
-      if(bindings[key] !== undefined) {
+      if (bindings[key] !== undefined) {
         index = bindings[key].findIndex(function (a) {
           return a === action;
         });
-        if(index > -1) {
+        if (index > -1) {
           throw ("ERROR: Invert for existing binding '" + key + " --> " + action + "' attempted");
           return false;
         }
@@ -216,15 +224,12 @@ Basic3D.loadModule("InputHandling", function () {
       index = inverts[key].findIndex(function (a) {
         return a === action;
       });
-      if(index > -1) {
+      if (index > -1) {
         throw ("ERROR: Duplicate invert '" + key + " --> " + action + "' attempted");
         return false;
       }
       inverts[key].push(action);
       return true;
-    },
-    getBindings: function() {
-      return bindings;
     }
   };
 

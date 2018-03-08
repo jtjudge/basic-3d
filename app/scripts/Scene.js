@@ -1,10 +1,10 @@
 
-Basic3D.loadModule("Scene", function (InputHandling) {
+Basic3D.loadModule("Scene", function (Input) {
 
   var container, renderer, width, height, camera, scene, axis;
 
   function setup() {
-    width = window.innerWidth ;
+    width = window.innerWidth;
     height = window.innerHeight;
     // Create workspace scene
     renderer = new THREE.WebGLRenderer();
@@ -49,13 +49,13 @@ Basic3D.loadModule("Scene", function (InputHandling) {
 
   setup();
 
-  InputHandling.register({
-    onmode: function (input) {
-      if(input.mode === "EDIT") {
+  Input.register({
+    onmode: function () {
+      if (Input.mode("EDIT")) {
         scene.remove(axis);
       }
     },
-    onupdate: function(input) {
+    onupdate: function () {
       renderer.render(scene, camera);
     },
     onresize: function () {
@@ -69,7 +69,7 @@ Basic3D.loadModule("Scene", function (InputHandling) {
 
   return {
     addLayer: addLayer,
-    camera: function() {
+    camera: function () {
       return camera;
     },
     add: function (obj) {
@@ -78,10 +78,10 @@ Basic3D.loadModule("Scene", function (InputHandling) {
     remove: function (obj) {
       scene.remove(obj);
     },
-    intersectObjects: function (input, objects) {
+    intersectObjects: function (objects) {
       var mouse = new THREE.Vector3(
-        (input.coords.x2 / width) * 2 - 1,
-        -(input.coords.y2 / height) * 2 + 1,
+        (Input.coords().x2 / width) * 2 - 1,
+        -(Input.coords().y2 / height) * 2 + 1,
         0.5
       );
       var caster = new THREE.Raycaster();
@@ -97,29 +97,29 @@ Basic3D.loadModule("Scene", function (InputHandling) {
     showZ: function (pos) {
       setAxis(0, 0, 1, pos);
     },
-    getMovementOnXZ: function (input) {
+    getMovementOnXZ: function () {
       var plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 1);
       var mouse1 = new THREE.Vector2(
-        (input.coords.x1 / width) * 2 - 1,
-        -(input.coords.y1 / height) * 2 + 1
+        (Input.coords().x1 / width) * 2 - 1,
+        -(Input.coords().y1 / height) * 2 + 1
       );
       var mouse2 = new THREE.Vector2(
-        (input.coords.x2 / width) * 2 - 1,
-        -(input.coords.y2 / height) * 2 + 1
+        (Input.coords().x2 / width) * 2 - 1,
+        -(Input.coords().y2 / height) * 2 + 1
       );
       var caster = new THREE.Raycaster();
       caster.setFromCamera(mouse1, camera);
       var p1 = caster.ray.intersectPlane(plane);
       caster.setFromCamera(mouse2, camera);
       var p2 = caster.ray.intersectPlane(plane);
-      return { 
-        current: p2, 
+      return {
+        current: p2,
         previous: p1,
         diff: new THREE.Vector3().copy(p2).sub(p1)
       };
     },
-    getMovementOnY: function (input) {
-      return 0.2 * (input.coords.y1 - input.coords.y2);
+    getMovementOnY: function () {
+      return 0.2 * (Input.coords().y1 - Input.coords().y2);
     }
   };
 

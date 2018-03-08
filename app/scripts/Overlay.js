@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Overlay", function (InputHandling, Scene) {
+Basic3D.loadModule("Overlay", function (Input, Scene) {
 
   var renderer, width, height, camera, scene, axis, axisVisible;
 
@@ -25,8 +25,8 @@ Basic3D.loadModule("Overlay", function (InputHandling, Scene) {
 
   setup();
 
-  InputHandling.register({
-    onupdate: function (input) {
+  Input.register({
+    onupdate: function () {
       axis.setRotationFromMatrix(Scene.camera().matrixWorldInverse);
       renderer.render(scene, camera);
     },
@@ -40,9 +40,9 @@ Basic3D.loadModule("Overlay", function (InputHandling, Scene) {
   });
 
   return {
-    toggle: function() {
+    toggle: function () {
       axisVisible = !axisVisible;
-      if(axisVisible) {
+      if (axisVisible) {
         scene.add(axis);
       } else {
         scene.remove(axis);
@@ -52,6 +52,6 @@ Basic3D.loadModule("Overlay", function (InputHandling, Scene) {
 
 });
 
-Basic3D.loadScript("ToggleAxisHelper", function(Overlay) {
+Basic3D.loadScript("ToggleAxisHelper", function (Overlay) {
   return Overlay.toggle;
 });

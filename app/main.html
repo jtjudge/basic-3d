@@ -78,9 +78,9 @@
     });
 
     // Begin update loop
-    Basic3D.loadScript("Start", function (InputHandling) {
+    Basic3D.loadScript("Start", function (Input) {
       var update = function () {
-        InputHandling.update();
+        Input.update();
         requestAnimationFrame(update);
       }
       return update;

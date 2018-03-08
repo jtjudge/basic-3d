@@ -1,8 +1,8 @@
 
-Basic3D.loadModule("Menu", function(Scene) {
+Basic3D.loadModule("Menu", function (Scene) {
 
   // Constructor
-  return function() {
+  return function () {
 
     var menu = document.createElement("div");
     menu.style.color = "white";
@@ -14,10 +14,10 @@ Basic3D.loadModule("Menu", function(Scene) {
 
     // Interface
     return {
-      show: function() {
+      show: function () {
         Scene.addLayer(menu, { top: 100, left: 300 });
       },
-      addButton: function(data) {
+      addButton: function (data) {
         var button = document.createElement("span");
         button.style.backgroundColor = "blue";
         button.innerHTML = data.display;
@@ -25,11 +25,11 @@ Basic3D.loadModule("Menu", function(Scene) {
         button.onclick = data.onclick;
         menu.appendChild(button);
       },
-      addCloseButton: function(cb) {
+      addCloseButton: function (cb) {
         var button = document.createElement("span");
         button.style.backgroundColor = "red";
         button.innerHTML = "X";
-        button.onclick = function() {
+        button.onclick = function () {
           // Note -- need to remove!
           menu.style.display = "none";
           cb();
@@ -42,24 +42,23 @@ Basic3D.loadModule("Menu", function(Scene) {
 });
 
 
-Basic3D.loadScript("KeyBindingsMenu", function(InputHandling, CameraControls, Menu) {
-  var script = function() {
-    var bindings = InputHandling.getBindings();
+Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu) {
+  var script = function () {
 
     var menu = new Menu();
     menu.show();
 
-    CameraControls.disable();
+    Controls.disable();
 
     menu.addButton({
       display: "Click Me",
-      onclick: function() {
+      onclick: function () {
         console.log("Do something fancy");
       }
     });
 
-    menu.addCloseButton(function() {
-      CameraControls.enable();
+    menu.addCloseButton(function () {
+      Controls.enable();
     });
 
   };

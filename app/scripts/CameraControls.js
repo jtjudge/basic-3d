@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
+Basic3D.loadModule("Controls", function (Input, Scene) {
 
   var cam = Scene.camera();
   var invertOrbit = 1;
@@ -10,8 +10,8 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
 
   var smooth = (function () {
     var dest, orig, lock, t;
-    dest = new THREE.Object3D(),
-    orig = new THREE.Object3D(); 
+    dest = new THREE.Object3D();
+    orig = new THREE.Object3D();
     lock = false;
     return {
       start: function () {
@@ -27,52 +27,52 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
         var q0 = new THREE.Quaternion().copy(orig.quaternion);
         q0.slerp(dest.quaternion, t);
         cam.rotation.setFromQuaternion(q0);
-        if(t > 1) {
+        if (t > 1) {
           cam.position.copy(dest.position);
           cam.rotation.copy(dest.rotation);
           lock = false;
         }
       },
-      dest: function() {
+      dest: function () {
         return dest;
       },
-      locked: function() {
+      locked: function () {
         return lock;
       }
     };
   })();
 
-  function shiftCam(input) {
+  function shiftCam() {
     var xDist = 0, yDist = 0, zDist = 0;
-    var speed = (input.actions["CAM_SPEED_MOD"]) ?  6 : 2;
-    if(input.actions["CAM_SHIFT_FREE"]) {
-      xDist += (input.coords.x1 - input.coords.x2) * 0.25;
-      yDist += (input.coords.y2 - input.coords.y1) * 0.25;
+    var speed = (Input.action("CAM_SPEED_MOD")) ? 6 : 2;
+    if (Input.action("CAM_SHIFT_FREE")) {
+      xDist += (Input.coords().x1 - Input.coords().x2) * 0.25;
+      yDist += (Input.coords().y2 - Input.coords().y1) * 0.25;
     } else {
-      if (input.actions["CAM_LEFT"]) xDist -= speed;
-      if (input.actions["CAM_RIGHT"]) xDist += speed;
-      if (input.actions["CAM_UP"]) yDist += speed;
-      if (input.actions["CAM_DOWN"]) yDist -= speed;
-      if (input.actions["CAM_IN"]) zDist -= speed;
-      if (input.actions["CAM_OUT"]) zDist += speed;
+      if (Input.action("CAM_LEFT")) xDist -= speed;
+      if (Input.action("CAM_RIGHT")) xDist += speed;
+      if (Input.action("CAM_UP")) yDist += speed;
+      if (Input.action("CAM_DOWN")) yDist -= speed;
+      if (Input.action("CAM_IN")) zDist -= speed;
+      if (Input.action("CAM_OUT")) zDist += speed;
     }
     cam.translateX(xDist);
     cam.translateY(yDist);
     cam.translateZ(zDist);
   }
 
-  function orbitCam(input) {
+  function orbitCam() {
     var xAngle = 0, yAngle = 0, distance = cam.position.length();
-    var baseAngle = (input.actions["CAM_SPEED_MOD"]) ? 0.003 :  0.001;
+    var baseAngle = (Input.action("CAM_SPEED_MOD")) ? 0.003 : 0.001;
     var yAxis = new THREE.Vector3(0, 1, 0);
-    if(input.actions["CAM_ORBIT_FREE"]) {
-      xAngle += baseAngle * (input.coords.y1 - input.coords.y2) * invertOrbit;
-      yAngle += baseAngle * (input.coords.x1 - input.coords.x2) * invertOrbit;
+    if (Input.action("CAM_ORBIT_FREE")) {
+      xAngle += baseAngle * (Input.coords().y1 - Input.coords().y2) * invertOrbit;
+      yAngle += baseAngle * (Input.coords().x1 - Input.coords().x2) * invertOrbit;
     } else {
-      if (input.actions["CAM_UP"]) xAngle += baseAngle * 10 * invertOrbit;
-      if (input.actions["CAM_DOWN"]) xAngle += baseAngle * -10 * invertOrbit;
-      if (input.actions["CAM_LEFT"]) yAngle += baseAngle * 10 * invertOrbit;
-      if (input.actions["CAM_RIGHT"]) yAngle += baseAngle * -10 * invertOrbit;
+      if (Input.action("CAM_UP")) xAngle += baseAngle * 10 * invertOrbit;
+      if (Input.action("CAM_DOWN")) xAngle += baseAngle * -10 * invertOrbit;
+      if (Input.action("CAM_LEFT")) yAngle += baseAngle * 10 * invertOrbit;
+      if (Input.action("CAM_RIGHT")) yAngle += baseAngle * -10 * invertOrbit;
     }
     cam.translateZ(-distance);
     cam.rotateOnWorldAxis(yAxis, -yAngle * 3);
@@ -85,7 +85,7 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     var origin = new THREE.Vector3(0, 0, 0);
     var distance = 150;
     var dest = smooth.dest();
-    if(snapVert) {
+    if (snapVert) {
       dest.position.set(0, distance, 0);
       dest.rotation.set(0, 0, 0);
       dest.rotateX(-Math.PI / 2);
@@ -106,7 +106,7 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     dest.rotation.copy(cam.rotation);
     distance = dest.position.length();
     dest.translateZ(-distance);
-    if(vert) {
+    if (vert) {
       dest.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), angle);
     } else {
       dest.rotateX(angle);
@@ -124,100 +124,96 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     smooth.start();
   }
 
-  InputHandling.register({
-    onupdate: function (input) {
-      if (input.mode !== "EDIT" || locked) return;
+  Input.register({
+    onupdate: function () {
+      if (!Input.mode("EDIT") || locked) return;
       if (smooth.locked()) {
         smooth.move();
         return;
       }
-      if (input.actions["CAM_ORBIT"]) {
-        orbitCam(input);
-      }
-      if(input.actions["CAM_SHIFT"]) {
-        shiftCam(input);
-      }
-      if(scroll !== 0) {
+      if (Input.action("CAM_ORBIT")) orbitCam();
+      if (Input.action("CAM_SHIFT")) shiftCam();
+      if (scroll !== 0) {
         var diff = (scroll > 0) ? -10 : 10;
         scroll += diff;
         cam.translateZ(-diff);
       }
     },
-    onkeydown: function (input) {
-      if (input.mode !== "EDIT" || locked) return;
+    onkeydown: function () {
+      if (!Input.mode("EDIT") || locked) return;
       if (smooth.locked()) {
         smooth.move();
         return;
       }
-      if (input.actions["CAM_RESET"]) resetCam();
-      if (input.actions["CAM_SWAP_AXIS"]) snapVert = !snapVert;
-      if (input.actions["CAM_SNAP_BOTTOM_LEFT"]) {
+      if (Input.action("CAM_RESET")) resetCam();
+      if (Input.action("CAM_SWAP_AXIS")) snapVert = !snapVert;
+      if (Input.action("CAM_SNAP_BOTTOM_LEFT")) {
         snapCam(3 * Math.PI / 2);
       }
-      if (input.actions["CAM_SNAP_BOTTOM_RIGHT"]) {
+      if (Input.action("CAM_SNAP_BOTTOM_RIGHT")) {
         snapCam(Math.PI);
       }
-      if (input.actions["CAM_SNAP_TOP_LEFT"]) {
+      if (Input.action("CAM_SNAP_TOP_LEFT")) {
         snapCam(2 * Math.PI);
       }
-      if (input.actions["CAM_SNAP_TOP_RIGHT"]) {
+      if (Input.action("CAM_SNAP_TOP_RIGHT")) {
         snapCam(Math.PI / 2);
       }
-      if (input.actions["CAM_ORBIT_LEFT"]) {
+      if (Input.action("CAM_ORBIT_LEFT")) {
         snapOrbit(invertOrbit * Math.PI / 4, true);
       }
-      if (input.actions["CAM_ORBIT_RIGHT"]) {
+      if (Input.action("CAM_ORBIT_RIGHT")) {
         snapOrbit(-invertOrbit * Math.PI / 4, true);
       }
-      if (input.actions["CAM_ORBIT_UP"]) {
+      if (Input.action("CAM_ORBIT_UP")) {
         snapOrbit(-invertOrbit * Math.PI / 4, false);
       }
-      if (input.actions["CAM_ORBIT_DOWN"]) {
+      if (Input.action("CAM_ORBIT_DOWN")) {
         snapOrbit(invertOrbit * Math.PI / 4, false);
       }
     },
-    onmousewheel: function (input) {
-      if (input.mode !== "EDIT" || locked) return;
-      scroll += input.scroll;
-      if(scroll > 200) scroll = 200;
-      if(scroll < -200) scroll = -200;
+    onmousewheel: function () {
+      if (!Input.mode("EDIT") || locked) return;
+      scroll += Input.scroll();
+      if (scroll > 200) scroll = 200;
+      if (scroll < -200) scroll = -200;
     }
   });
 
-  InputHandling.addKeyBinding("KeyO", "CAM_RESET");
+  Input.addKeyBinding("KeyO", "CAM_RESET");
 
-  InputHandling.addKeyBinding("KeyW", "CAM_UP");
-  InputHandling.addKeyBinding("KeyS", "CAM_DOWN");
-  InputHandling.addKeyBinding("KeyA", "CAM_LEFT");
-  InputHandling.addKeyBinding("KeyD", "CAM_RIGHT");
-  InputHandling.addKeyBinding("KeyQ", "CAM_IN");
-  InputHandling.addKeyBinding("KeyZ", "CAM_OUT");
+  Input.addKeyBinding("KeyW", "CAM_UP");
+  Input.addKeyBinding("KeyS", "CAM_DOWN");
+  Input.addKeyBinding("KeyA", "CAM_LEFT");
+  Input.addKeyBinding("KeyD", "CAM_RIGHT");
+  Input.addKeyBinding("KeyQ", "CAM_IN");
+  Input.addKeyBinding("KeyZ", "CAM_OUT");
 
-  InputHandling.addKeyBinding("Space", "CAM_ORBIT");
-  InputHandling.addInvertBinding("Space", "CAM_SHIFT");
+  Input.addKeyBinding("Space", "CAM_ORBIT");
+  Input.addInvertBinding("Space", "CAM_SHIFT");
 
-  InputHandling.addKeyBinding("LMB", "CAM_ORBIT");
-  InputHandling.addKeyBinding("LMB", "CAM_ORBIT_FREE");
-  InputHandling.addKeyBinding("MMB", "CAM_ORBIT");
-  InputHandling.addKeyBinding("MMB", "CAM_ORBIT_FREE");
-  InputHandling.addKeyBinding("RMB", "CAM_SHIFT_FREE");
+  Input.addKeyBinding("LMB", "CAM_ORBIT");
+  Input.addKeyBinding("LMB", "CAM_ORBIT_FREE");
+  Input.addKeyBinding("MMB", "CAM_ORBIT");
+  Input.addKeyBinding("MMB", "CAM_ORBIT_FREE");
+  Input.addKeyBinding("RMB", "CAM_SHIFT_FREE");
 
-  InputHandling.addKeyBinding("ShiftLeft", "CAM_SPEED_MOD");
-  InputHandling.addKeyBinding("ShiftRight", "CAM_SPEED_MOD");
+  Input.addKeyBinding("ShiftLeft", "CAM_SPEED_MOD");
+  Input.addKeyBinding("ShiftRight", "CAM_SPEED_MOD");
 
-  InputHandling.addKeyBinding("Numpad0", "CAM_RESET");
+  Input.addKeyBinding("Numpad0", "CAM_RESET");
 
-  InputHandling.addKeyBinding("Numpad1", "CAM_SNAP_BOTTOM_LEFT");
-  InputHandling.addKeyBinding("Numpad3", "CAM_SNAP_BOTTOM_RIGHT");
-  InputHandling.addKeyBinding("Numpad7", "CAM_SNAP_TOP_LEFT");
-  InputHandling.addKeyBinding("Numpad9", "CAM_SNAP_TOP_RIGHT");
+  Input.addKeyBinding("Numpad1", "CAM_SNAP_BOTTOM_LEFT");
+  Input.addKeyBinding("Numpad3", "CAM_SNAP_BOTTOM_RIGHT");
+  Input.addKeyBinding("Numpad7", "CAM_SNAP_TOP_LEFT");
+  Input.addKeyBinding("Numpad9", "CAM_SNAP_TOP_RIGHT");
 
-  InputHandling.addKeyBinding("Numpad4", "CAM_ORBIT_LEFT");
-  InputHandling.addKeyBinding("Numpad6", "CAM_ORBIT_RIGHT");
-  InputHandling.addKeyBinding("Numpad8", "CAM_ORBIT_UP");
-  InputHandling.addKeyBinding("Numpad2", "CAM_ORBIT_DOWN");
+  Input.addKeyBinding("Numpad4", "CAM_ORBIT_LEFT");
+  Input.addKeyBinding("Numpad6", "CAM_ORBIT_RIGHT");
+  Input.addKeyBinding("Numpad8", "CAM_ORBIT_UP");
+  Input.addKeyBinding("Numpad2", "CAM_ORBIT_DOWN");
 
-  InputHandling.addKeyBinding("Numpad5", "CAM_SWAP_AXIS");
+  Input.addKeyBinding("Numpad5", "CAM_SWAP_AXIS");
 
 
   return {
@@ -227,17 +223,17 @@ Basic3D.loadModule("CameraControls", function (InputHandling, Scene) {
     enable: function () {
       locked = false;
     },
-    disable: function() {
+    disable: function () {
       locked = true;
     }
   };
 
 });
 
-Basic3D.loadScript("InvertOrbit", function(CameraControls) {
-  
-  return function() {
-    CameraControls.invertOrbit();
+Basic3D.loadScript("InvertOrbit", function (Controls) {
+
+  return function () {
+    Controls.invertOrbit();
   };
 
 });

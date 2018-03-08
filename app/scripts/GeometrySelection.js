@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, Geometry) {
+Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry) {
 
   function selectVertex(vertex) {
     vertex.selected = true;
@@ -46,7 +46,7 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
   }
 
   function toggleVertexSelect(target) {
-    if(target === null) {
+    if (target === null) {
       return;
     }
     var vertex = Geometry.getVertices().find(function (v) {
@@ -63,14 +63,14 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
   }
 
   function toggleEdgeSelect(target) {
-    if(target === null) {
+    if (target === null) {
       return;
     }
     var edge = Geometry.getEdges().find(function (v) {
       return v.obj.id == target.id;
     });
     edge.selected = !edge.selected;
-    if(edge.selected){
+    if (edge.selected) {
       edge.obj.material.color.setHex(Colors.EDGE_SELECT);
     } else {
       edge.obj.material.color.setHex(Colors.EDGE);
@@ -80,14 +80,14 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
   }
 
   function toggleFaceSelect(target) {
-    if(target === null) {
+    if (target === null) {
       return;
     }
     var face = Geometry.getFaces().find(function (v) {
       return v.obj.id == target.id;
     });
     face.selected = !face.selected;
-    if(face.selected){
+    if (face.selected) {
       face.obj.material.color.setHex(Colors.EDGE_SELECT);
     } else {
       face.obj.material.color.setHex(Colors.EDGE);
@@ -109,10 +109,10 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
       face.obj.material.color.setHex(Colors.FACE);
     });
   }
-  
-  InputHandling.register({
-    onmousedown: function (input) {
-      if (input.mode === "EDIT" && input.actions["SELECT_GEOM"]) {
+
+  Input.register({
+    onmousedown: function () {
+      if (Input.mode("EDIT") && Input.action("SELECT_GEOM")) {
         var vtargets = Geometry.getVertices().map(function (v) {
           return v.obj;
         });
@@ -122,41 +122,41 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
         var fTargets = Geometry.getFaces().map(function (f) {
           return f.obj;
         });
-        var vhits = Scene.intersectObjects(input, vtargets);
-        var eHits = Scene.intersectObjects(input, eTargets);
-        var fHits = Scene.intersectObjects(input, fTargets);
+        var vhits = Scene.intersectObjects(vtargets);
+        var eHits = Scene.intersectObjects(eTargets);
+        var fHits = Scene.intersectObjects(fTargets);
 
         if (vhits.length === 0 && eHits.length === 0 && fHits.length === 0) {
-            if (!input.actions["MULT_SELECT_MOD"]) {
+          if (!Input.action("MULT_SELECT_MOD")) {
             deselectAll();
           }
-        } else if(vhits.length !== 0) {
+        } else if (vhits.length > 0) {
           if (Geometry.getSelected().length === 0) {
             toggleVertexSelect(vhits[0].object);
           } else {
-            if (input.actions["MULT_SELECT_MOD"]) {
+            if (Input.action("MULT_SELECT_MOD")) {
               toggleVertexSelect(vhits[0].object);
             } else {
               deselectAll();
               toggleVertexSelect(vhits[0].object);
             }
           }
-        } else if(eHits.length !== 0) {
+        } else if (eHits.length !== 0) {
           if (Geometry.getSelected().length === 0) {
             toggleEdgeSelect(eHits[0].object);
           } else {
-            if (input.actions["MULT_SELECT_MOD"]) {
+            if (Input.action("MULT_SELECT_MOD")) {
               toggleEdgeSelect(eHits[0].object);
             } else {
               deselectAll();
               toggleEdgeSelect(eHits[0].object);
             }
           }
-        } else if(fHits.length !== 0) {
+        } else if (fHits.length !== 0) {
           if (Geometry.getSelected().length === 0) {
             toggleFaceSelect(fHits[0].object);
           } else {
-            if (input.actions["MULT_SELECT_MOD"]) {
+            if (Input.action("MULT_SELECT_MOD")) {
               toggleFaceSelect(fHits[0].object);
             } else {
               deselectAll();
@@ -168,9 +168,9 @@ Basic3D.loadModule("GeometrySelection", function (InputHandling, Scene, Colors, 
     }
   });
 
-  InputHandling.addKeyBinding("LMB", "SELECT_GEOM");
-  InputHandling.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
-  InputHandling.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
+  Input.addKeyBinding("LMB", "SELECT_GEOM");
+  Input.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
+  Input.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
 
   return {};
 
