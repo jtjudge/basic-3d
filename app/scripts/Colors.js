@@ -17,17 +17,3 @@ Basic3D.loadModule("Colors", function () {
   return interface;
 
 });
-
-Basic3D.loadScript("ColorChange", function (Colors) {
-  
-  var script = function (data) {
-  var div = document.createElement("input");
-  div.setAttribute("class", "jscolor");
-  div.style.height = '100px';
-  document.body.appendChild(div);
-  console.log(div);
-
-    Colors.apply(data);
-  };
-  return script;
-});

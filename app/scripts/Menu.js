@@ -17,6 +17,12 @@ Basic3D.loadModule("Menu", function (Scene) {
       hide: function () {
         Scene.removeLayer(menu);
       },
+      addItem: function (el) {
+        menu.appendChild(el);
+      },
+      removeItem: function (el) {
+        menu.removeChild(el);
+      },
       addButton: function (data) {
         var button = document.createElement("span");
         button.className = "menu-btn " + data.class;
@@ -99,4 +105,34 @@ Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu, Input) {
 
   };
   return script;
+});
+
+
+
+Basic3D.loadScript("ColorChange", function (Controls, Colors, Menu) {
+
+  var script = function (data) {
+    var menu = new Menu();
+    var picker = document.getElementById("picker");
+    menu.addItem(picker);
+    menu.addButton({
+      class: "menu-confirm-btn",
+      display: "Change",
+      onclick: function () {
+        Colors.apply({
+          name: data,
+          color: "0x" + picker.value
+        });
+        document.getElementById("container").appendChild(picker);
+        picker.style.display = "none";
+        menu.hide();
+        Controls.enable();
+      }
+    });
+    menu.show();
+    Controls.disable();
+    picker.style.display = "inline-block";
+  };
+  return script;
+
 });

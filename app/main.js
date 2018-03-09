@@ -2,7 +2,7 @@ const electron = require("electron");
 const url = require("url");
 const path = require("path");
 
-const { app, BrowserWindow, ipcMain} = electron;
+const { app, BrowserWindow, ipcMain } = electron;
 const Menu = electron.Menu;
 
 process.env.NODE_ENV = "development";
@@ -19,87 +19,87 @@ app.on("ready", function () {
     slashes: true
   }));
 
-  var run = function(name, data) {
+  var run = function (name, data) {
     if (data === undefined) data = {};
     mainWindow.webContents.send("run", {
       name: name, data: data
     });
   };
 
-  var file = (function() {
-    var menu = { 
-      label: "File", 
-      submenu: [] 
+  var file = (function () {
+    var menu = {
+      label: "File",
+      submenu: []
     };
     menu.submenu.push({
-      label: "Quit", 
-      click: function() { 
-        app.quit(); 
+      label: "Quit",
+      click: function () {
+        app.quit();
       }
     });
     return menu;
   })();
 
-  var edit = (function() {
-    var menu = { 
-      label: "Edit", 
-      submenu: [] 
+  var edit = (function () {
+    var menu = {
+      label: "Edit",
+      submenu: []
     };
     menu.submenu.push({
       label: "Undo",
-      click: function() { 
-        run("Undo"); 
+      click: function () {
+        run("Undo");
       }
     });
     menu.submenu.push({
       label: "Redo",
-      click: function() { 
-        run("Redo"); 
+      click: function () {
+        run("Redo");
       }
     });
     return menu;
   })();
 
-  var view = (function() {
-    var menu = { 
-      label: "View", 
-      submenu: [] 
+  var view = (function () {
+    var menu = {
+      label: "View",
+      submenu: []
     };
     menu.submenu.push({
-      label: "Dev Tools", 
-      click: function() { 
-        mainWindow.toggleDevTools(); 
+      label: "Dev Tools",
+      click: function () {
+        mainWindow.toggleDevTools();
       }
     });
     menu.submenu.push({
-      label: "Reload", 
-      click: function() { 
+      label: "Reload",
+      click: function () {
         mainWindow.reload();
       }
     });
     return menu;
   })();
 
-  var prefs = (function() {
-    var menu = { 
-      label: "Preferences", 
-      submenu: [] 
+  var prefs = (function () {
+    var menu = {
+      label: "Preferences",
+      submenu: []
     };
     menu.submenu.push({
-      label: "Key Bindings", 
-      click: function() { 
-        run("KeyBindingsMenu"); 
+      label: "Key Bindings",
+      click: function () {
+        run("KeyBindingsMenu");
       }
     });
     menu.submenu.push({
       label: "Toggle Axis Helper",
-      click: function() { 
-        run("ToggleAxisHelper"); 
+      click: function () {
+        run("ToggleAxisHelper");
       }
     });
     menu.submenu.push({
       label: "Invert Orbit Controls",
-      click: function() {
+      click: function () {
         run("InvertOrbit");
       }
     });
@@ -111,52 +111,30 @@ app.on("ready", function () {
   })();
 
   Menu.setApplicationMenu(
-    Menu.buildFromTemplate([ file, edit, view, prefs ])
+    Menu.buildFromTemplate([file, edit, view, prefs])
   );
 
   function getColorSubmenu() {
-    function getColorChanges(name) {
-      function getColorChange(label, color) {
-        return {
-          label: label, 
-          click: function() {
-
-            
-          }
-        };
-      }
-      return [
-        {
-          label: "Select Color"
-          
-        }
-      ];
-    }
-
     var submenu = [];
     submenu.push({
       label: "Vertices",
-      click : () => {
-        run("ColorChange", { name: "VERTICES", color: build_menu()});
+      click: function () {
+        run("ColorChange", "VERTEX");
       }
     });
     submenu.push({
       label: "Edges",
-      click : () => {
-        run("ColorChange", { name: "EDGES", color: build_menu()});
+      click: function () {
+        run("ColorChange", "EDGE");
       }
     });
     submenu.push({
       label: "Faces",
-      click : () => {
-        run("ColorChange", { name: "FACES", color: build_menu()});
+      click: function () {
+        run("ColorChange", "FACE");
       }
     });
     return submenu;
   }
 
 });
-
-function build_menu() {
-
-}
