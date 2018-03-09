@@ -28,7 +28,6 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
     });
     geometry.elementsNeedUpdate = true;
     circle.geometry.verticesNeedUpdate = true;
-    GUI.add(circle);
   }
 
   function calculateCircle(){
