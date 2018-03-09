@@ -24,7 +24,7 @@ Basic3D.loadModule("Scene", function (Input) {
   }
 
   function addLayer(el, pos) {
-    el.className = "sub-container";
+    el.className += " sub-container";
     if (pos.top !== undefined) el.style.top = pos.top + "px";
     if (pos.bottom !== undefined) el.style.bottom = pos.bottom + "px";
     if (pos.left !== undefined) el.style.left = pos.left + "px";
@@ -33,6 +33,10 @@ Basic3D.loadModule("Scene", function (Input) {
       container = document.getElementById("container");
     }
     container.appendChild(el);
+  }
+
+  function removeLayer(el) {
+    el.remove();
   }
 
   function setAxis(x, y, z, pos) {
@@ -69,6 +73,7 @@ Basic3D.loadModule("Scene", function (Input) {
 
   return {
     addLayer: addLayer,
+    removeLayer: removeLayer,
     camera: function () {
       return camera;
     },

@@ -9,26 +9,35 @@ body {
 
 .sub-container {
   position: fixed;
-  overflow-y: scroll;
 }
 
-.key-label {
-  width: 40%;
-  word-wrap: break-word;
-  display: inline-block;
+.menu {
+  color: white;
+  background-color: gray;
+  border: 1px solid black;
+  padding: 10px;
 }
 
-.action-label {
-  width: 40%;
-  word-wrap: break-word;
-  display: inline-block;
+.menu-btn {
+  color: white;
+  border: 1px solid white;
+  margin: 5px;
+  padding: 5px;
 }
 
-.input-box {
-  width: 30%;
-  display: inline-block;
+.menu-confirm-btn {
+  background-color: blue;
 }
-.line-item{
+
+.menu-alt-btn {
+  background-color: green;
+}
+
+.menu-close-btn {
+  background-color: red;
+}
+
+.line-item {
   display: flex;
   justify-content: space-between;
 }
