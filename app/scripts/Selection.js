@@ -78,7 +78,8 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry) {
   Input.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
 
   return {
-    toggleSelection: updateTarget
+    toggleSelection: updateTarget,
+    updateConnected: updateConnected
   };
 
 });

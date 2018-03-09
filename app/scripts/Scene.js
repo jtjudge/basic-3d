@@ -24,7 +24,7 @@ Basic3D.loadModule("Scene", function (Input) {
   }
 
   function addLayer(el, pos) {
-    el.className = "sub-container";
+    el.className += " sub-container";
     if (pos.top !== undefined) el.style.top = pos.top + "px";
     if (pos.bottom !== undefined) el.style.bottom = pos.bottom + "px";
     if (pos.left !== undefined) el.style.left = pos.left + "px";
@@ -33,6 +33,10 @@ Basic3D.loadModule("Scene", function (Input) {
       container = document.getElementById("container");
     }
     container.appendChild(el);
+  }
+
+  function removeLayer(el) {
+    el.remove();
   }
 
   function setAxis(x, y, z, pos) {
@@ -69,6 +73,7 @@ Basic3D.loadModule("Scene", function (Input) {
 
   return {
     addLayer: addLayer,
+    removeLayer: removeLayer,
     camera: function () {
       return camera;
     },
@@ -120,6 +125,24 @@ Basic3D.loadModule("Scene", function (Input) {
     },
     getMovementOnY: function () {
       return 0.2 * (Input.coords().y1 - Input.coords().y2);
+    },
+    toScreenPosition: function(obj) {
+      var vector = new THREE.Vector3();
+
+      var halfWidth = .5 * renderer.context.canvas.width;
+      var halfHeight = .5 * renderer.context.canvas.height;
+
+      obj.matrixWorldNeedsUpdate = true;
+      vector.setFromMatrixPosition(obj.matrixWorld);
+      vector.project(camera);
+
+      vector.x = (vector.x * halfWidth) + halfWidth;
+      vector.y = - (vector.y * halfHeight) + halfHeight;
+
+      return {
+        x: vector.x,
+        y: vector.y
+      }
     }
   };
 

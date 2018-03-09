@@ -9,4 +9,41 @@ body {
 
 .sub-container {
   position: fixed;
+  overflow: auto;
+  height: 500px;
+}
+
+.menu {
+  color: white;
+  background-color: gray;
+  border: 1px solid black;
+  padding: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.menu-btn {
+  color: white;
+  border: 1px solid white;
+  margin: 5px;
+  padding: 5px;
+}
+
+.menu-confirm-btn {
+  background-color: green;
+  font-weight: bold;
+}
+
+.menu-alt-btn {
+  background-color: blue;
+  font-weight: bold;
+}
+
+.menu-close-btn {
+  background-color: red;
+  font-weight: bold;
+}
+
+.line-item {
+  display: flex;
+  justify-content: space-between;
 }
