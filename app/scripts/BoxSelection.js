@@ -43,7 +43,7 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
 
   Input.register({
     onmousedown: function(input) {
-      if(Input.mode("START_BOX")){
+      if(Input.mode("START_BOX") && Input.action("FORMING_BOX")){
         x = (Input.coords().x1 / (window.innerWidth) * 1.2) - .595;
         y = (Input.coords().y1 / (window.innerHeight) * -.83) + .39;
         w = .001;
@@ -54,7 +54,7 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
       }
     },
     onmouseup: function(input){
-      if(active()){
+      if(active() && !Input.action("FORMING_BOX")){
         Input.setMode("START_BOX");
 
         var min = GUI.toScreenPosition(rect.geometry.vertices[0]);

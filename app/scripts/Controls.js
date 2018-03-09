@@ -124,9 +124,16 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
     smooth.start();
   }
 
+  function condition() {
+    return !locked && (Input.mode("EDIT")
+      || Input.mode("START_CIRCLE")
+      || Input.mode("START_BOX"));
+  }
+
+
   Input.register({
     onupdate: function () {
-      if (!Input.mode("EDIT") || locked) return;
+      if (!condition()) return;
       if (smooth.locked()) {
         smooth.move();
         return;
@@ -140,7 +147,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
       }
     },
     onkeydown: function () {
-      if (!Input.mode("EDIT") || locked) return;
+      if (!condition()) return;
       if (smooth.locked()) {
         smooth.move();
         return;
@@ -173,7 +180,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
       }
     },
     onmousewheel: function () {
-      if (!Input.mode("EDIT") || locked) return;
+      if (!condition()) return;
       scroll += Input.scroll();
       if (scroll > 200) scroll = 200;
       if (scroll < -200) scroll = -200;

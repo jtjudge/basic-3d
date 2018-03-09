@@ -64,12 +64,12 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
 
   Input.register({
     onmousedown: function(input) {
-      if(active()){
+      if(active() && Input.action("FORMING_CIRCLE")){
         Input.setMode("CIRCLE_DOWN");
       }
     },
     onmouseup: function(input) {
-      if(active()){
+      if(active() && !Input.action("FORMING_CIRCLE")){
         Input.setMode("START_CIRCLE");
       }
     },
