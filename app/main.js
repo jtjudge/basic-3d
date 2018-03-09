@@ -120,31 +120,48 @@ app.on("ready", function () {
         return {
           label: label, 
           click: function() {
-            run("ColorChange", { name: name, color: color });
+
+            
           }
         };
       }
       return [
-        getColorChange("Red", 0xff0000),
-        getColorChange("Green", 0x00ff00),
-        getColorChange("Blue", 0x0000ff)
+        {
+          label: "Select Color"
+          
+        }
       ];
     }
 
     var submenu = [];
     submenu.push({
       label: "Vertices",
-      submenu: getColorChanges("VERTEX")
+      click : () => {
+        run("ColorChange", { name: "VERTICES", color: build_menu()});
+      }
     });
     submenu.push({
       label: "Edges",
-      submenu: getColorChanges("EDGE")
+      click : () => {
+        run("ColorChange", { name: "EDGES", color: build_menu()});
+      }
     });
     submenu.push({
       label: "Faces",
-      submenu: getColorChanges("FACE")
+      click : () => {
+        run("ColorChange", { name: "FACES", color: build_menu()});
+      }
     });
     return submenu;
   }
 
 });
+
+function build_menu() {
+  let test = new BrowserWindow({width: 300, height: 200});
+  test.loadURL(url.format({
+    pathname: path.join(__dirname, "color_picker.html"),
+    protocol: "file:",
+    slashes: true
+  }));
+}
