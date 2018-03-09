@@ -8,7 +8,7 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
   var material = new THREE.MeshBasicMaterial({
     color: 0xff0000,
     side: THREE.DoubleSide,
-    transparent: true, 
+    transparent: true,
     opacity: .15
   });
 
@@ -17,8 +17,8 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
   geometry.vertices.push(new THREE.Vector3(x+w,y,0));
   geometry.vertices.push(new THREE.Vector3(x,y+h,0));
   geometry.vertices.push(new THREE.Vector3(x+w,y+h,0));
-  geometry.faces.push(new THREE.Face3(0, 1, 3)); 
-  geometry.faces.push(new THREE.Face3(0, 2, 3)); 
+  geometry.faces.push(new THREE.Face3(0, 1, 3));
+  geometry.faces.push(new THREE.Face3(0, 2, 3));
 
   var rect = new THREE.Mesh(geometry, material);
 
@@ -31,8 +31,8 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
     geometry.vertices.push(new THREE.Vector3(x+w,y+h,0));
     rect.geometry.verticesNeedUpdate = true;
     geometry.faces = [];
-    geometry.faces.push(new THREE.Face3(0, 1, 3)); 
-    geometry.faces.push(new THREE.Face3(0, 2, 3)); 
+    geometry.faces.push(new THREE.Face3(0, 1, 3));
+    geometry.faces.push(new THREE.Face3(0, 2, 3));
     geometry.elementsNeedUpdate = true;
   }
 
@@ -40,7 +40,7 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
     return (Input.mode("START_BOX") ||
       Input.mode("FORM_BOX"));
   }
-  
+
   Input.register({
     onmousedown: function(input) {
       if(Input.mode("START_BOX")){
@@ -95,7 +95,7 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
       }
     }
   });
-  
+
   Input.addKeyBinding("KeyB", "TOGGLE_BOX_SELECT");
   Input.addKeyBinding("LMB", "FORMING_BOX");
   Input.addKeyBinding("ControlLeft", "INVERSE_TOGGLE");
