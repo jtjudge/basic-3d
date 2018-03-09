@@ -11,11 +11,15 @@ Basic3D.loadModule("Menu", function (Scene) {
 
     // Interface
     return {
-      show: function () {
-        Scene.addLayer(menu, { top: 100, left: 300 });
+      show: function (location) {
+        if(location === undefined) location = { top: 100, left: 300 };
+        Scene.addLayer(menu, location);
       },
       hide: function () {
         Scene.removeLayer(menu);
+      },
+      setClass: function(c) {
+        menu.className += " " + c;
       },
       addItem: function (el) {
         menu.appendChild(el);

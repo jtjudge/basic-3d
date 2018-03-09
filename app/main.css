@@ -21,6 +21,10 @@ body {
   overflow: auto;
 }
 
+.menu-transparent {
+  background-color: rgba(0, 0, 0, 0);
+}
+
 .menu-btn {
   color: white;
   border: 1px solid white;
@@ -44,4 +48,8 @@ body {
 .line-item {
   display: flex;
   justify-content: space-between;
+}
+
+.notification {
+  font-size: 32pt;
 }

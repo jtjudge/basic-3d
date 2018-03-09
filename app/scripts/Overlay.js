@@ -1,7 +1,7 @@
 
-Basic3D.loadModule("Overlay", function (Input, Scene) {
+Basic3D.loadModule("Overlay", function (Input, Scene, Menu) {
 
-  var renderer, width, height, camera, scene, axis, axisVisible;
+  var renderer, width, height, camera, scene, axis, axisVisible, display;
 
   function setup() {
     width = window.innerHeight / 8;
@@ -23,7 +23,19 @@ Basic3D.loadModule("Overlay", function (Input, Scene) {
     axisVisible = true;
   }
 
+  function displayMode() {
+    if(display) display.hide();
+    display = new Menu();
+    display.setClass("menu-transparent");
+    var text = document.createElement("div");
+    text.className = "notification";
+    text.innerHTML = Input.mode();
+    display.addItem(text);
+    display.show({ top: 0, left: 0 });
+  }
+
   setup();
+  displayMode();
 
   Input.register({
     onupdate: function () {
@@ -36,7 +48,8 @@ Basic3D.loadModule("Overlay", function (Input, Scene) {
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
-    }
+    },
+    onmode: displayMode
   });
 
   return {
