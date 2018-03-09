@@ -10,11 +10,3 @@ body {
 .sub-container {
   position: fixed;
 }
-
-.hide {
-  display: none;
-}
-
-.show {
-  display: inherit;
-}
