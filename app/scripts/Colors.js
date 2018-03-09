@@ -19,7 +19,12 @@ Basic3D.loadModule("Colors", function () {
 });
 
 Basic3D.loadScript("ColorChange", function (Colors) {
+
   var script = function (data) {
+    var div = document.createElement("div");
+    div.setAttribute("class", "jscolor");
+    document.body.appendChild(div);
+
     Colors.apply(data);
   };
   return script;

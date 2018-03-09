@@ -158,11 +158,5 @@ app.on("ready", function () {
 });
 
 function build_menu() {
-  let test = new BrowserWindow({width: 300, height: 200});
-  test.loadURL(url.format({
-    pathname: path.join(__dirname, "color_picker.html"),
-    protocol: "file:",
-    slashes: true
-  }));
-  return color;
+
 }
