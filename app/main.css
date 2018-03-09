@@ -9,6 +9,8 @@ body {
 
 .sub-container {
   position: fixed;
+  overflow: auto;
+  height: 500px;
 }
 
 .menu {

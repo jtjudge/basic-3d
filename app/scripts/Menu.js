@@ -28,7 +28,7 @@ Basic3D.loadModule("Menu", function (Scene) {
         var line = document.createElement("div");
         line.className = "line-item";
         line.innerHTML =
-        `<span>${action}</span>
+        `<span id = "actionLabel" style = "width: 40%; word-wrap: break-word; display: inline-block;">${action}</span>
         <span>${key}</span>
         <input type="text"></input>`;
         menu.appendChild(line);
