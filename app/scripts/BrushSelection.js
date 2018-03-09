@@ -4,6 +4,7 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
   var y = 0;
   var w = .1;
   var h = .1;
+  var base = 1;
   var mod = 1;
   var modded = false;
 
@@ -38,6 +39,23 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
     h = newY - y;
     y = newY;
   }
+
+  function drawBrush() {
+    if(Input.action("DOUBLE") && !modded) {
+      circle.scale.set(2 * base, 2 * base, 1);
+      mod = 1 / (2 * base);
+      calculateCircle();
+      remakeCircle();
+      modded = true;
+    } else if(!Input.action("DOUBLE") && modded) {
+      circle.scale.set(base, base, 1);
+      mod = 1 / base;
+      calculateCircle();
+      remakeCircle();
+      modded = false;
+    }
+  }
+
 
   function active(){
     return (Input.mode("CIRCLE_DOWN") ||
@@ -85,22 +103,10 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
           GUI.remove(circle);
         }
       }
-      if(Input.action("DOUBLE") && !modded) {
-        circle.scale.set(2, 2, 1);
-        mod = 0.5;
-        calculateCircle();
-        remakeCircle();
-        modded = true;
-      }
+      drawBrush();
     },
     onkeyup: function(input) {
-      if(!Input.action("DOUBLE") && modded) {
-        circle.scale.set(1, 1, 1);
-        mod = 1;
-        calculateCircle();
-        remakeCircle();
-        modded = false;
-      }
+      drawBrush();
     }
   });
 
@@ -108,5 +114,24 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
   Input.addKeyBinding("LMB", "FORMING_CIRCLE");
   Input.addKeyBinding("ShiftLeft", "DOUBLE");
 
-  return {};
+  return {
+    setSize: function(scalar) {
+      base = scalar;
+      drawBrush();
+    }
+  };
+
+  });
+
+
+  Basic3D.loadScript("ToggleBigBrush", function(BrushSelect) {
+
+    var big = false;
+
+    var script = function() {
+      BrushSelect.setSize((big = !big) ? 2.0 : 1.0)
+    }
+
+    return script;
+
   });

@@ -107,6 +107,12 @@ app.on("ready", function () {
       label: "Change Colors",
       submenu: getColorSubmenu()
     });
+    menu.submenu.push({
+      label: "Change Brush Size",
+      click: function () {
+        run("ToggleBigBrush");
+      }
+    });
     return menu;
   })();
 
