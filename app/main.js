@@ -164,4 +164,5 @@ function build_menu() {
     protocol: "file:",
     slashes: true
   }));
+  return color;
 }

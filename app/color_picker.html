@@ -4,12 +4,13 @@
     <script>
         function sendColor() {
             //send back selected value
+            let color = document.getElementById("cs").value;
             window.close();
         }
     </script>
 </head>
 <body>
-<input class="jscolor">
+<input class="jscolor" id="cs">
 <input type="button" value="Submit" onclick="sendColor"/>
 </body>
 </html>
