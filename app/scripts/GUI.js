@@ -26,10 +26,7 @@ Basic3D.loadModule("GUI", function (Input, Scene) {
 
 
   Input.register({
-    onupdate: function (input) {
-      hudRenderer.render(hudScene, hudCamera);
-    },
-    onresize: function (input){
+    onresize: function (){
       WIDTH = window.innerWidth;
       HEIGHT = window.innerHeight;
       // hudCamera.aspect = WIDTH / HEIGHT;
@@ -39,6 +36,9 @@ Basic3D.loadModule("GUI", function (Input, Scene) {
   });
 
   return {
+    update: function () {
+      hudRenderer.render(hudScene, hudCamera);
+    },
     toggle: function() {
       if(hudRenderer.domElement.style.visibility === "hidden") {
         hudRenderer.domElement.style.visibility = "visible";

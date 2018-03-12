@@ -132,20 +132,6 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
 
 
   Input.register({
-    onupdate: function () {
-      if (!condition()) return;
-      if (smooth.locked()) {
-        smooth.move();
-        return;
-      }
-      if (Input.action("CAM_ORBIT")) orbitCam();
-      if (Input.action("CAM_SHIFT")) shiftCam();
-      if (scroll !== 0) {
-        var diff = (scroll > 0) ? -10 : 10;
-        scroll += diff;
-        cam.translateZ(-diff);
-      }
-    },
     onkeydown: function () {
       if (!condition()) return;
       if (smooth.locked()) {
@@ -224,6 +210,20 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
 
 
   return {
+    update: function () {
+      if (!condition()) return;
+      if (smooth.locked()) {
+        smooth.move();
+        return;
+      }
+      if (Input.action("CAM_ORBIT")) orbitCam();
+      if (Input.action("CAM_SHIFT")) shiftCam();
+      if (scroll !== 0) {
+        var diff = (scroll > 0) ? -10 : 10;
+        scroll += diff;
+        cam.translateZ(-diff);
+      }
+    },
     invertOrbit: function () {
       invertOrbit = -invertOrbit;
     },

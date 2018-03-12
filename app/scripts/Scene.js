@@ -59,9 +59,6 @@ Basic3D.loadModule("Scene", function (Input) {
         scene.remove(axis);
       }
     },
-    onupdate: function () {
-      renderer.render(scene, camera);
-    },
     onresize: function () {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -72,6 +69,9 @@ Basic3D.loadModule("Scene", function (Input) {
   });
 
   return {
+    update: function () {
+      renderer.render(scene, camera);
+    },
     addLayer: addLayer,
     removeLayer: removeLayer,
     camera: function () {

@@ -22,7 +22,6 @@ Basic3D.loadModule("Input", function () {
     onmousemove: [],
     onmousewheel: [],
     onresize: [],
-    onupdate: [],
     onmode: []
   };
 
@@ -124,9 +123,6 @@ Basic3D.loadModule("Input", function () {
       }
     },
     update: function () {
-      handlers.onupdate.forEach(function (handler) {
-        handler();
-      });
       coords.x1 = coords.x2;
       coords.y1 = coords.y2;
       scroll = 0;

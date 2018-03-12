@@ -38,10 +38,6 @@ Basic3D.loadModule("Overlay", function (Input, Scene, Menu) {
   displayMode();
 
   Input.register({
-    onupdate: function () {
-      axis.setRotationFromMatrix(Scene.camera().matrixWorldInverse);
-      renderer.render(scene, camera);
-    },
     onresize: function () {
       width = window.innerHeight / 8;
       height = window.innerHeight / 8;
@@ -53,6 +49,10 @@ Basic3D.loadModule("Overlay", function (Input, Scene, Menu) {
   });
 
   return {
+    update: function () {
+      axis.setRotationFromMatrix(Scene.camera().matrixWorldInverse);
+      renderer.render(scene, camera);
+    },
     toggle: function () {
       axisVisible = !axisVisible;
       if (axisVisible) {
