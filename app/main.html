@@ -14,88 +14,23 @@
     <input id="picker" class="jscolor" value="ffffff" style="display: none;"></input>
   </div>
 
-  <script>
-    var Basic3D = (function () {
-
-      var modules = {};
-      var scripts = {};
-
-      function getDependencies (func) {
-        var deps = func.toString()
-        .match(/function\s.*?\(([^)]*)\)/)[1].split(',')
-        .map(function (arg) { return arg.replace(/\/\*.*\*\//, '').trim(); })
-        .filter(function (arg) { return arg; });
-        return {
-          loaded: deps.filter(function(d) { return modules[d] !== undefined }),
-          missing: deps.filter(function(d) { return modules[d] === undefined; })
-        };
-      }
-
-      function getParameters (name, func) {
-        var deps = getDependencies(func);
-        if (deps.missing.length > 0) {
-          throw ("ERROR: '" + name + "' missing '" + deps.missing + "'.");
-        }
-        return deps.loaded.map(function(d) { return modules[d]; });
-      }
-
-      return {
-        loadModule: function (name, loader) {
-          var params = getParameters(name, loader);
-          modules[name] = loader.apply(null, params);
-        },
-        loadScript: function (name, loader) {
-          var params = getParameters(name, loader);
-          scripts[name] = loader.apply(null, params);
-        },
-        runScript: function (name, data) {
-          if (scripts[name] === undefined) {
-            throw ("ERROR: Script '" + name + "' not loaded.");
-          }
-          console.log("Running script '" + name + "'.");
-          scripts[name](data);
-          console.log("Finished script '" + name + "'.");
-        }
-      };
-
-    })();
-  </script>
-
+  <script src="scripts/Core.js"></script>
+  <script src="scripts/Creation.js"></script>
+  <script src="scripts/Translation.js"></script>
+  <script src="scripts/Rotation.js"></script>
   <script src="scripts/Colors.js"></script>
-  <script src="scripts/Input.js"></script>
   <script src="scripts/Scene.js"></script>
   <script src="scripts/Controls.js"></script>
   <script src="scripts/Menu.js"></script>
   <script src="scripts/Overlay.js"></script>
   <script src="scripts/GUI.js"></script>
   <script src="scripts/Geometry.js"></script>
-  <script src="scripts/History.js"></script>
-  <script src="scripts/Selection.js"></script>
+  <script src="scripts/Scale.js"></script>
   <script src="scripts/BoxSelection.js"></script>
   <script src="scripts/BrushSelection.js"></script>
-  <script src="scripts/Creation.js"></script>
-  <script src="scripts/Translation.js"></script>
-  <script src="scripts/Rotation.js"></script>
-  <script src="scripts/Scale.js"></script>
-
-  <script>
-    // Set up communications
-    require("electron").ipcRenderer
-    .on("run", function (event, arg) {
-      Basic3D.runScript(arg.name, arg.data);
-    });
-
-    // Begin update loop
-    Basic3D.loadScript("Start", function (Input) {
-      var update = function () {
-        Input.update();
-        requestAnimationFrame(update);
-      }
-      return update;
-    });
-    Basic3D.runScript("Start", {});
-  </script>
-
+  <script src="scripts/History.js"></script>
+  <script src="scripts/Selection.js"></script>
+  <script src="scripts/Input.js"></script>
 
 </body>
 
