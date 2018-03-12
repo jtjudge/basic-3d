@@ -221,6 +221,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
       if (scroll !== 0) {
         var diff = (scroll > 0) ? -10 : 10;
         scroll += diff;
+        if(Math.abs(scroll) < Math.abs(diff)) scroll = 0;
         cam.translateZ(-diff);
       }
     },
