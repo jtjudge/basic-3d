@@ -12,7 +12,9 @@ Basic3D.loadModule("Menu", function (Scene) {
     // Interface
     return {
       show: function (location) {
-        if(location === undefined) location = { top: 100, left: 300 };
+        if(location === undefined) location = { 
+          top: 10, left: 20, right: 20 
+        };
         Scene.addLayer(menu, location);
       },
       hide: function () {
@@ -37,8 +39,7 @@ Basic3D.loadModule("Menu", function (Scene) {
       addLineItem: function(code, display, key) {
         var line = document.createElement("div");
         line.className = "line-item";
-        line.innerHTML =
-        `<span data-code="${code}">${display}</span>
+        line.innerHTML = `<span data-code="${code}">${display}</span>
         <input type="text" data-key="${key}" value="${key}"></input>`;
         menu.appendChild(line);
         lines.push(line);
@@ -56,7 +57,6 @@ Basic3D.loadModule("Menu", function (Scene) {
   };
 
 });
-
 
 Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu, Input) {
   var script = function () {

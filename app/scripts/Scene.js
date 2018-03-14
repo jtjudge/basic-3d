@@ -25,13 +25,13 @@ Basic3D.loadModule("Scene", function (Input) {
 
   function addLayer(el, pos) {
     el.className += " sub-container";
-    if (pos.top !== undefined) el.style.top = pos.top + "px";
-    if (pos.bottom !== undefined) el.style.bottom = pos.bottom + "px";
-    if (pos.left !== undefined) el.style.left = pos.left + "px";
-    if (pos.right !== undefined) el.style.right = pos.right + "px";
-    if (container === undefined) {
-      container = document.getElementById("container");
-    }
+    if (pos.top !== undefined) el.style.top = pos.top + "%";
+    if (pos.bottom !== undefined) el.style.bottom = pos.bottom + "%";
+    if (pos.left !== undefined) el.style.left = pos.left + "%";
+    if (pos.right !== undefined) el.style.right = pos.right + "%";
+    if (pos.height !== undefined) el.style.height = pos.height + "%";
+    if (pos.width !== undefined) el.style.width = pos.width + "%";
+    if (container === undefined) container = document.getElementById("container");
     container.appendChild(el);
   }
 
