@@ -1,13 +1,15 @@
 
-Basic3D.loadModule("Input", function () {
+Basic3D.loadModule("Input", function (Bindings) {
+  
+  Bindings.register({
+    code: "HELLO",
+    display: "Hello there",
+    key: "LMB"
+  });
 
-  var swapMode = function () { };
-
-  var bindings = {};
-  var inverts = {};
+  var swap = null;
 
   var mode = "EDIT";
-  var actions = [];
   var coords = {
     x1: 0, x2: 0,
     y1: 0, y2: 0
@@ -39,21 +41,20 @@ Basic3D.loadModule("Input", function () {
   document.onmousewheel = mousewheel;
   window.onresize = resize;
 
-  function handle(list, code, down) {
-    if (bindings[code] !== undefined) {
-      bindings[code].forEach(function (action) {
-        actions[action] = down;
-      });
-    }
-    if (inverts[code] !== undefined) {
-      inverts[code].forEach(function (action) {
-        actions[action] = !down;
-      });
+  function handle(list, keycode, pressed) {
+    if(keycode !== undefined && pressed !== undefined) {
+      Bindings.fire(keycode, pressed);
     }
     handlers[list].forEach(function (handler) {
       handler();
     });
-    swapMode();
+    if (swap === null) return;
+    console.log(mode + " --> " + swap);
+    mode = swap;
+    swap = null;
+    handlers.onmode.forEach(function (handler) {
+      handler();
+    });
   }
 
   function keydown(event) {
@@ -78,138 +79,62 @@ Basic3D.loadModule("Input", function () {
     var rect = container.getBoundingClientRect();
     coords.x2 = event.clientX - rect.left;
     coords.y2 = event.clientY - rect.top;
-    handlers.onmousemove.forEach(function (handler) {
-      handler();
-    });
+    handle("onmousemove");
   }
 
   function mousewheel(event) {
     event.preventDefault();
     scroll = event.deltaY;
-    handlers.onmousewheel.forEach(function (handler) {
-      handler();
-    });
+    handle("onmousewheel");
   }
 
   function resize() {
-    handlers.onresize.forEach(function (handler) {
-      handler();
-    });
+    handle("onresize");
   }
 
   return {
-    bindings: function () {
-      return bindings;
-    },
-    mode: function (name) {
-      return (name === undefined) ? mode : name === mode;
-    },
-    action: function (name) {
-      return actions[name];
-    },
-    coords: function () {
-      return coords;
-    },
-    scroll: function () {
-      return scroll;
-    },
-    register: function (items) {
-      for (var i in items) {
-        if (handlers[i] !== undefined) {
-          handlers[i].push(items[i]);
-        } else {
-          throw ("ERROR: Unrecognized listener '" + i + "'");
-        }
-      }
-    },
     update: function () {
       coords.x1 = coords.x2;
       coords.y1 = coords.y2;
       scroll = 0;
     },
-    setMode: function (name) {
-      swapMode = function () {
-        console.log(mode + " --> " + name);
-        mode = name;
-        handlers.onmode.forEach(function (handler) {
-          handler();
-        });
-        swapMode = function () { };
-      };
+    mode: function (name) {
+      return (name === undefined) ? mode : name === mode;
     },
-    addKeyBinding: function (key, action) {
-      var index;
-      if (inverts[key] !== undefined) {
-        index = inverts[key].findIndex(function (a) {
-          return a === action;
-        });
-        if (index > -1) {
-          throw ("ERROR: Binding for existing invert '" + key + " --> " + action + "' attempted");
-          return false;
+    coords: function () { return coords; },
+    scroll: function () { return scroll; },
+    register: function (items) {
+      for (var i in items) {
+        if (handlers[i] === undefined) {
+          throw ("ERROR: Unrecognized listener '" + i + "'");
         }
+        handlers[i].push(items[i]);
       }
-      if (bindings[key] === undefined) {
-        bindings[key] = [];
-      }
-      if (actions[action] === undefined) {
-        actions[action] = false;
-      }
-      index = bindings[key].findIndex(function (a) {
-        return a === action;
+    },
+    setMode: function (name) {
+      swap = name;
+    },
+    action: function (name) { 
+      return Bindings.action(name); 
+    },
+    addKeyBinding: function (key, action, display) {
+      Bindings.register({
+        code: action,
+        display: display,
+        key: key
       });
-      if (index > -1) {
-        throw ("ERROR: Duplicate binding '" + key + " --> " + action + "' attempted");
-        return false;
-      }
-      bindings[key].push(action);
-      return true;
     },
     removeKeyBinding: function (key, action) {
-      if (bindings[key] === undefined) {
-        throw ("ERROR: Key '" + key + "' not registered");
-        return false;
-      }
-      if (actions[action] === undefined) {
-        throw ("ERROR: Action '" + action + "'not registered");
-        return false;
-      }
-      var index = bindings[key].findIndex(function (a) {
-        return a === action;
-      });
-      if (index === -1) {
-        throw ("ERROR: Binding '" + key + " --> " + action + "' not registered");
-        return false;
-      }
-      bindings[key].splice(index, 1);
-      return true;
+      console.log("Removing '" + key + "' --> '" + action + "'");
     },
     addInvertBinding: function (key, action) {
-      var index;
-      if (bindings[key] !== undefined) {
-        index = bindings[key].findIndex(function (a) {
-          return a === action;
-        });
-        if (index > -1) {
-          throw ("ERROR: Invert for existing binding '" + key + " --> " + action + "' attempted");
-          return false;
-        }
-      }
-      if (inverts[key] === undefined) {
-        inverts[key] = [];
-      }
-      if (actions[action] === undefined) {
-        actions[action] = true;
-      }
-      index = inverts[key].findIndex(function (a) {
-        return a === action;
+      Bindings.register({
+        code: action,
+        key: key,
+        invert: true
       });
-      if (index > -1) {
-        throw ("ERROR: Duplicate invert '" + key + " --> " + action + "' attempted");
-        return false;
-      }
-      inverts[key].push(action);
-      return true;
-    }
+    },
+    bindings: Bindings.getBindings
   };
 
 });

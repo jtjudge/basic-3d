@@ -34,11 +34,11 @@ Basic3D.loadModule("Menu", function (Scene) {
         button.onclick = data.onclick;
         menu.appendChild(button);
       },
-      addLineItem: function(action, key) {
+      addLineItem: function(code, display, key) {
         var line = document.createElement("div");
         line.className = "line-item";
         line.innerHTML =
-        `<span id = "actionLabel" style = "width: 40%; word-wrap: break-word; display: inline-block;">${action}</span>
+        `<span data-code="${code}">${display}</span>
         <span>${key}</span>
         <input type="text"></input>`;
         menu.appendChild(line);
@@ -64,22 +64,22 @@ Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu, Input) {
     var menu = new Menu();
 
     var bindings = Input.bindings();
-    console.log(bindings);
-    for(var key in bindings) {
-      menu.addLineItem(bindings[key][0], key);
-    }
+    bindings.forEach(function(b) {
+      menu.addLineItem(b.action.code, b.action.display, b.key);
+    });
 
     menu.addButton({
       class: "menu-confirm-btn",
       display: "Confirm",
       onclick: function () {
         menu.lineItems().forEach( function (line) {
-          var action = line.children[0].innerHTML;
+          var code = line.children[0].dataset.code;
+          var display = line.children[0].innerHTML;
           var oldKey = line.children[1].innerHTML;
           var newKey = line.children[2].value;
           if(newKey.length > 0) {
-            Input.removeKeyBinding(oldKey, action);
-            Input.addKeyBinding(newKey, action);
+            Input.removeKeyBinding(oldKey, code);
+            Input.addKeyBinding(newKey, code, display);
           }
         });
         menu.hide();
