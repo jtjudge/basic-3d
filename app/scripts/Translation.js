@@ -102,7 +102,7 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History) {
     }
   });
 
-  Input.addKeyBinding("KeyT", "TOGGLE_TRANSLATE_MODE");
+  Input.addKeyBinding("KeyT", "TOGGLE_TRANSLATE_MODE", "Toggle Translate Mode");
   Input.addKeyBinding("KeyX", "TOGGLE_TRANSLATE_X");
   Input.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y");
   Input.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z");

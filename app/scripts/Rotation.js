@@ -132,7 +132,7 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History) {
     }
   });
 
-  Input.addKeyBinding("KeyR", "TOGGLE_ROTATE_MODE");
+  Input.addKeyBinding("KeyR", "TOGGLE_ROTATE_MODE", "Toggle Rotate Mode");
   Input.addKeyBinding("Space", "ROTATE_WORLD_MOD");
   Input.addKeyBinding("KeyX", "TOGGLE_ROTATE_X");
   Input.addKeyBinding("KeyY", "TOGGLE_ROTATE_Y");

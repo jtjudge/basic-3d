@@ -119,7 +119,7 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History) {
     }
   });
 
-  Input.addKeyBinding("KeyG", "TOGGLE_SCALE_MODE");
+  Input.addKeyBinding("KeyG", "TOGGLE_SCALE_MODE", "Toggle Scale Mode");
   Input.addKeyBinding("Space", "SCALE_WORLD_MOD");
   Input.addKeyBinding("KeyX", "TOGGLE_SCALE_X");
   Input.addKeyBinding("KeyY", "TOGGLE_SCALE_Y");

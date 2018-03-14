@@ -96,7 +96,7 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
     }
   });
 
-  Input.addKeyBinding("KeyB", "TOGGLE_BOX_SELECT");
+  Input.addKeyBinding("KeyB", "TOGGLE_BOX_SELECT", "Toggle Box Select Mode");
   Input.addKeyBinding("LMB", "FORMING_BOX");
   Input.addKeyBinding("ControlLeft", "INVERSE_TOGGLE");
 

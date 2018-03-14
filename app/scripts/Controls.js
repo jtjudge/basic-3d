@@ -173,14 +173,14 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
     }
   });
 
-  Input.addKeyBinding("KeyO", "CAM_RESET");
+  Input.addKeyBinding("KeyO", "CAM_RESET", "Reset Camera");
 
-  Input.addKeyBinding("KeyW", "CAM_UP");
-  Input.addKeyBinding("KeyS", "CAM_DOWN");
-  Input.addKeyBinding("KeyA", "CAM_LEFT");
-  Input.addKeyBinding("KeyD", "CAM_RIGHT");
-  Input.addKeyBinding("KeyQ", "CAM_IN");
-  Input.addKeyBinding("KeyZ", "CAM_OUT");
+  Input.addKeyBinding("KeyW", "CAM_UP", "Shift Camera Up");
+  Input.addKeyBinding("KeyS", "CAM_DOWN", "Shift Camera Down");
+  Input.addKeyBinding("KeyA", "CAM_LEFT", "Shift Camera Left");
+  Input.addKeyBinding("KeyD", "CAM_RIGHT", "Shift Camera Right");
+  Input.addKeyBinding("KeyQ", "CAM_IN", "Shift Camera In");
+  Input.addKeyBinding("KeyZ", "CAM_OUT", "Shift Camera Out");
 
   Input.addKeyBinding("Space", "CAM_ORBIT");
   Input.addInvertBinding("Space", "CAM_SHIFT");
@@ -201,10 +201,10 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
   Input.addKeyBinding("Numpad7", "CAM_SNAP_TOP_LEFT");
   Input.addKeyBinding("Numpad9", "CAM_SNAP_TOP_RIGHT");
 
-  Input.addKeyBinding("Numpad4", "CAM_ORBIT_LEFT");
-  Input.addKeyBinding("Numpad6", "CAM_ORBIT_RIGHT");
-  Input.addKeyBinding("Numpad8", "CAM_ORBIT_UP");
-  Input.addKeyBinding("Numpad2", "CAM_ORBIT_DOWN");
+  Input.addKeyBinding("Numpad4", "CAM_ORBIT_LEFT", "Orbit Camera Left");
+  Input.addKeyBinding("Numpad6", "CAM_ORBIT_RIGHT", "Orbit Camera Right");
+  Input.addKeyBinding("Numpad8", "CAM_ORBIT_UP", "Orbit Camera Up");
+  Input.addKeyBinding("Numpad2", "CAM_ORBIT_DOWN", "Orbit Camera Down");
 
   Input.addKeyBinding("Numpad5", "CAM_SWAP_AXIS");
 

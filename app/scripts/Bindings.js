@@ -12,7 +12,7 @@ Basic3D.loadModule("Bindings", function () {
 
   function getBindingIndex(keyCode, actionCode) {
     return bindings.findIndex(function(b) {
-      return b.key === keyCode && b.action === actionCode;
+      return b.key === keyCode && b.action.code === actionCode;
     });
   }
 
@@ -41,6 +41,7 @@ Basic3D.loadModule("Bindings", function () {
       invert: (invert !== undefined)
     });
     action.active = (invert !== undefined);
+    console.log("Added '" + keyCode + "' --> '" + actionCode + "'");
   }
 
   function removeBinding(keyCode, actionCode) {
@@ -49,6 +50,7 @@ Basic3D.loadModule("Bindings", function () {
       throw ("ERROR: Cannot remove unregistered binding '" + keyCode + "' --> '" + actionCode + "'");
     }
     bindings.splice(index, 1);
+    console.log("Removed '" + keyCode + "' --> '" + actionCode + "'");
   }
 
   function fireBinding(keyCode, value) {
@@ -68,14 +70,13 @@ Basic3D.loadModule("Bindings", function () {
     register: function (data) {
       addAction(data.code, data.display);
       addBinding(data.key, data.code, data.invert);
-      console.log(bindings);
     },
     getBindings: function() {
       return bindings.filter(function(b) {
         return b.action.bindable;
       });
-    }
-
+    },
+    removeBinding: removeBinding
   };
 
 });

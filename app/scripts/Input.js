@@ -1,12 +1,6 @@
 
 Basic3D.loadModule("Input", function (Bindings) {
   
-  Bindings.register({
-    code: "HELLO",
-    display: "Hello there",
-    key: "LMB"
-  });
-
   var swap = null;
 
   var mode = "EDIT";
@@ -124,9 +118,7 @@ Basic3D.loadModule("Input", function (Bindings) {
         key: key
       });
     },
-    removeKeyBinding: function (key, action) {
-      console.log("Removing '" + key + "' --> '" + action + "'");
-    },
+    removeKeyBinding: Bindings.removeBinding,
     addInvertBinding: function (key, action) {
       Bindings.register({
         code: action,

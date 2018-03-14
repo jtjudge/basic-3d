@@ -39,11 +39,10 @@ Basic3D.loadModule("Menu", function (Scene) {
         line.className = "line-item";
         line.innerHTML =
         `<span data-code="${code}">${display}</span>
-        <span>${key}</span>
-        <input type="text"></input>`;
+        <input type="text" data-key="${key}" value="${key}"></input>`;
         menu.appendChild(line);
         lines.push(line);
-        var input = line.children[2];
+        var input = line.children[1];
         input.onclick = input.focus;
         input.onkeydown = function(event) {
           event.preventDefault();
@@ -75,9 +74,9 @@ Basic3D.loadScript("KeyBindingsMenu", function (Controls, Menu, Input) {
         menu.lineItems().forEach( function (line) {
           var code = line.children[0].dataset.code;
           var display = line.children[0].innerHTML;
-          var oldKey = line.children[1].innerHTML;
-          var newKey = line.children[2].value;
-          if(newKey.length > 0) {
+          var oldKey = line.children[1].dataset.key;
+          var newKey = line.children[1].value;
+          if(newKey !== oldKey) {
             Input.removeKeyBinding(oldKey, code);
             Input.addKeyBinding(newKey, code, display);
           }

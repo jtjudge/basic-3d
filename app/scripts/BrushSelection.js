@@ -110,7 +110,7 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
     }
   });
 
-  Input.addKeyBinding("KeyC", "TOGGLE_CIRCLE_SELECT");
+  Input.addKeyBinding("KeyC", "TOGGLE_CIRCLE_SELECT", "Toggle Brush Select Mode");
   Input.addKeyBinding("LMB", "FORMING_CIRCLE");
   Input.addKeyBinding("ShiftLeft", "DOUBLE");
 
