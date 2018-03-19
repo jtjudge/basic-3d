@@ -71,3 +71,13 @@ body {
   border-radius: 4px;
   padding: 5px;
 }
+
+.picker {
+  display: flex;
+}
+
+.picker-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

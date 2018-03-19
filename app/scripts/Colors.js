@@ -1,10 +1,7 @@
 
 Basic3D.loadModule("Colors", function () {
 
-  var interface = {
-    apply: function (change) {
-      interface[change.name] = change.color;
-    },
+  var colors = {
     VERTEX: 0xffffff,
     EDGE: 0xffffff,
     FACE: 0xffffff,
@@ -13,6 +10,26 @@ Basic3D.loadModule("Colors", function () {
     FACE_SELECT: 0xff0000,
     VERTEX_MARKER: 0x00ff00
   };
+
+  var interface = {
+    apply: function (change) {
+      interface[change.name] = change.color;
+    },
+    getColors: function () {
+      var list = [];
+      for(var c in colors) {
+        list.push({
+          name: c,
+          value: colors[c]
+        });
+      }
+      return list;
+    }
+  };
+
+  for(var c in colors) {
+    interface[c] = colors[c];
+  }
 
   return interface;
 

@@ -175,6 +175,21 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         (minY + maxY) / 2,
         (minZ + maxZ) / 2
       );
+    },
+
+    refresh: function () {
+      vertices.forEach(function (vertex) {
+        vertex.obj.material.color.setHex(
+          (vertex.selected) ? Colors.VERTEX_SELECT : Colors.VERTEX);
+      });
+      edges.forEach(function (edge) {
+        edge.obj.material.color.setHex(
+          (edge.selected) ? Colors.EDGE_SELECT : Colors.EDGE);
+      });
+      faces.forEach(function (face) {
+        face.obj.material.color.setHex(
+          (face.selected) ? Colors.FACE_SELECT : Colors.FACE);
+      });
     }
 
   };

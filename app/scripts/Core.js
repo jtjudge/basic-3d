@@ -9,6 +9,22 @@ var Basic3D = (function () {
     queued: []
   };
 
+  var checkQueue = (function() {
+    var count = 0;
+    return function () {
+      if(count++ < 1000) return;
+      queue.forEach(function(item) {
+        var str = "Module '" + item.name + "' missing dependencies (";
+        getDependencies(item.loader).missing.forEach(function(dep) {
+          str += " '" + dep + "'";
+        });
+        str += " )";
+        console.warn(str);
+      });
+      count = 0;
+    };
+  })();
+
   function getDependencies(loader) {
     var deps = loader.toString()
     .match(/function\s.*?\(([^)]*)\)/)[1].split(',')
@@ -65,6 +81,7 @@ var Basic3D = (function () {
       listeners.active.push(listeners.queued.pop());
     };
     listeners.active.forEach(function(func) { func(); });
+    checkQueue();
     requestAnimationFrame(update);
   }
   
@@ -73,16 +90,7 @@ var Basic3D = (function () {
   return {
     loadModule: loadModule,
     loadScript: loadModule,
-    runScript: runScript,
-    check: function () {
-      queue.forEach(function(item) {
-        var str = "[" + item.name + "]";
-        getDependencies(item.loader).missing.forEach(function(dep) {
-          str += " " + dep;
-        });
-        console.log(str);
-      });
-    }
+    runScript: runScript
   };
 
 })();
