@@ -4,17 +4,17 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry) {
   function updateConnected(vert) {
     vert.edges.forEach(function (e) {
       e.selected = e.v1.selected && e.v2.selected;
-      e.obj.material.color.setHex((e.selected) ? Colors.EDGE_SELECT : Colors.EDGE);
+      e.obj.material.color.set((e.selected) ? Colors.EDGE_SELECT : Colors.EDGE);
     });
     vert.faces.forEach(function (f) {
       f.selected = f.v1.selected && f.v2.selected && f.v3.selected;
-      f.obj.material.color.setHex((f.selected) ? Colors.FACE_SELECT : Colors.FACE);
+      f.obj.material.color.set((f.selected) ? Colors.FACE_SELECT : Colors.FACE);
     });
   }
 
   function updateVertex(target, value) {
     target.selected = value;
-    target.obj.material.color.setHex((value) ? Colors.VERTEX_SELECT : Colors.VERTEX);
+    target.obj.material.color.set((value) ? Colors.VERTEX_SELECT : Colors.VERTEX);
     updateConnected(target);
   }
 
@@ -28,15 +28,15 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry) {
   function updateAll(value) {
     Geometry.getVertices().forEach(function (vertex) {
       vertex.selected = value;
-      vertex.obj.material.color.setHex((value) ? Colors.VERTEX_SELECT : Colors.VERTEX);
+      vertex.obj.material.color.set((value) ? Colors.VERTEX_SELECT : Colors.VERTEX);
     });
     Geometry.getEdges().forEach(function (edge) {
       edge.selected = value;
-      edge.obj.material.color.setHex((value) ? Colors.EDGE_SELECT : Colors.EDGE);
+      edge.obj.material.color.set((value) ? Colors.EDGE_SELECT : Colors.EDGE);
     });
     Geometry.getFaces().forEach(function (face) {
       face.selected = value;
-      face.obj.material.color.setHex((value) ? Colors.FACE_SELECT : Colors.FACE);
+      face.obj.material.color.set((value) ? Colors.FACE_SELECT : Colors.FACE);
     });
   }
 

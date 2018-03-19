@@ -74,10 +74,29 @@ body {
 
 .picker {
   display: flex;
+  align-items: flex-start;
 }
 
-.picker-controls {
+.picker-dropdown {
+  color: white;
+  background-color: gray;
+  border: 1px solid black;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.picker-dropdown-item {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+.picker-dropdown-item:hover {
+  background-color: cyan;
+  color: black;
+}
+
+.picker-wheel {
+  margin: 20px;
 }

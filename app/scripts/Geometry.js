@@ -179,15 +179,15 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
 
     refresh: function () {
       vertices.forEach(function (vertex) {
-        vertex.obj.material.color.setHex(
+        vertex.obj.material.color.set(
           (vertex.selected) ? Colors.VERTEX_SELECT : Colors.VERTEX);
       });
       edges.forEach(function (edge) {
-        edge.obj.material.color.setHex(
+        edge.obj.material.color.set(
           (edge.selected) ? Colors.EDGE_SELECT : Colors.EDGE);
       });
       faces.forEach(function (face) {
-        face.obj.material.color.setHex(
+        face.obj.material.color.set(
           (face.selected) ? Colors.FACE_SELECT : Colors.FACE);
       });
     }

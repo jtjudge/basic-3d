@@ -87,7 +87,7 @@ Basic3D.loadModule("BrushSelect", function (Input, GUI, Scene, Colors, Geometry,
           var vPos = Scene.toScreenPosition(v.obj);
           if(vPos.x > minX.x && vPos.x < maxX.x && vPos.y > minY.y && vPos.y < maxY.y){
             v.selected = !Input.action("INVERSE_TOGGLE");
-            v.obj.material.color.setHex(Input.action("INVERSE_TOGGLE") ? Colors.VERTEX : Colors.VERTEX_SELECT);
+            v.obj.material.color.set(Input.action("INVERSE_TOGGLE") ? Colors.VERTEX : Colors.VERTEX_SELECT);
             Selection.updateConnected(v);
           }
         });

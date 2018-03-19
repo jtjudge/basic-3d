@@ -66,7 +66,7 @@ Basic3D.loadModule("BoxSelect", function (Input, GUI, Scene, Colors, Geometry, S
           if(vPos.x > min.x && vPos.x < max.x && vPos.y > min.y && vPos.y < max.y){
 
             v.selected = !Input.action("INVERSE_TOGGLE");
-            v.obj.material.color.setHex(Input.action("INVERSE_TOGGLE") ? Colors.VERTEX : Colors.VERTEX_SELECT);
+            v.obj.material.color.set(Input.action("INVERSE_TOGGLE") ? Colors.VERTEX : Colors.VERTEX_SELECT);
             Selection.updateConnected(v);
           }
         });
