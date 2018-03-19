@@ -73,7 +73,16 @@ var Basic3D = (function () {
   return {
     loadModule: loadModule,
     loadScript: loadModule,
-    runScript: runScript
+    runScript: runScript,
+    check: function () {
+      queue.forEach(function(item) {
+        var str = "[" + item.name + "]";
+        getDependencies(item.loader).missing.forEach(function(dep) {
+          str += " " + dep;
+        });
+        console.log(str);
+      });
+    }
   };
 
 })();

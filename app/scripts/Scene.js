@@ -1,7 +1,7 @@
 
-Basic3D.loadModule("Scene", function (Input) {
+Basic3D.loadModule("Scene", function (Input, Display) {
 
-  var container, renderer, width, height, camera, scene, axis;
+  var renderer, width, height, camera, scene, axis;
 
   function setup() {
     width = window.innerWidth;
@@ -12,8 +12,7 @@ Basic3D.loadModule("Scene", function (Input) {
     scene = new THREE.Scene();
     scene.add(camera);
     renderer.setSize(width, height);
-    // Add to DOM
-    addLayer(renderer.domElement, {});
+
     // Set up workspace camera
     camera.position.set(150, 100, 150);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -21,22 +20,10 @@ Basic3D.loadModule("Scene", function (Input) {
     scene.add(new THREE.GridHelper(100, 10));
     // Add lighting
     scene.add(new THREE.AmbientLight(0x212223));
-  }
-
-  function addLayer(el, pos) {
-    el.className += " sub-container";
-    if (pos.top !== undefined) el.style.top = pos.top + "%";
-    if (pos.bottom !== undefined) el.style.bottom = pos.bottom + "%";
-    if (pos.left !== undefined) el.style.left = pos.left + "%";
-    if (pos.right !== undefined) el.style.right = pos.right + "%";
-    if (pos.height !== undefined) el.style.height = pos.height + "%";
-    if (pos.width !== undefined) el.style.width = pos.width + "%";
-    if (container === undefined) container = document.getElementById("container");
-    container.appendChild(el);
-  }
-
-  function removeLayer(el) {
-    el.remove();
+    
+    // Add to DOM
+    var sceneDisplay = new Display.Scene(renderer.domElement);
+    sceneDisplay.show();
   }
 
   function setAxis(x, y, z, pos) {
@@ -72,8 +59,6 @@ Basic3D.loadModule("Scene", function (Input) {
     update: function () {
       renderer.render(scene, camera);
     },
-    addLayer: addLayer,
-    removeLayer: removeLayer,
     camera: function () {
       return camera;
     },

@@ -88,7 +88,7 @@ app.on("ready", function () {
     menu.submenu.push({
       label: "Key Bindings",
       click: function () {
-        run("KeyBindingsMenu");
+        run("BindingsMenu");
       }
     });
     menu.submenu.push({
@@ -105,7 +105,9 @@ app.on("ready", function () {
     });
     menu.submenu.push({
       label: "Change Colors",
-      submenu: getColorSubmenu()
+      click: function () {
+        run("ColorsMenu");
+      }
     });
     menu.submenu.push({
       label: "Change Brush Size",
@@ -119,28 +121,5 @@ app.on("ready", function () {
   Menu.setApplicationMenu(
     Menu.buildFromTemplate([file, edit, view, prefs])
   );
-
-  function getColorSubmenu() {
-    var submenu = [];
-    submenu.push({
-      label: "Vertices",
-      click: function () {
-        run("ColorChange", "VERTEX");
-      }
-    });
-    submenu.push({
-      label: "Edges",
-      click: function () {
-        run("ColorChange", "EDGE");
-      }
-    });
-    submenu.push({
-      label: "Faces",
-      click: function () {
-        run("ColorChange", "FACE");
-      }
-    });
-    return submenu;
-  }
 
 });

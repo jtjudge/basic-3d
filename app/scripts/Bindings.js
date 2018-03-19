@@ -41,7 +41,6 @@ Basic3D.loadModule("Bindings", function () {
       invert: (invert !== undefined)
     });
     action.active = (invert !== undefined);
-    console.log("Added '" + keyCode + "' --> '" + actionCode + "'");
   }
 
   function removeBinding(keyCode, actionCode) {
@@ -50,7 +49,6 @@ Basic3D.loadModule("Bindings", function () {
       throw ("ERROR: Cannot remove unregistered binding '" + keyCode + "' --> '" + actionCode + "'");
     }
     bindings.splice(index, 1);
-    console.log("Removed '" + keyCode + "' --> '" + actionCode + "'");
   }
 
   function fireBinding(keyCode, value) {

@@ -3,12 +3,18 @@ body {
   margin: 0;
 }
 
-.main-container {
+.container-main {
   position: relative;
+  height: 100vh;
+  width: 100vw;
 }
 
-.sub-container {
+.container-sub {
   position: fixed;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  visibility: hidden;
 }
 
 .menu {
@@ -19,11 +25,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.menu-transparent {
+.label {
+  color: white;
+  padding: 10px;
   background-color: rgba(0, 0, 0, 0);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 32pt;
 }
 
-.menu-btn {
+.btn {
   color: white;
   border: 1px solid white;
   margin: 5px;
@@ -32,24 +42,32 @@ body {
   display: inline-block;
 }
 
-.menu-confirm-btn {
+.btn-confirm {
   background-color: green;
 }
 
-.menu-alt-btn {
+.btn-alt {
   background-color: blue;
 }
 
-.menu-close-btn {
+.btn-close {
   background-color: red;
 }
 
-.line-item {
+.line {
   display: flex;
   justify-content: space-between;
   margin: 5px;
 }
 
-.notification {
-  font-size: 32pt;
+.line-label {
+  padding: 0 10px;
+}
+
+.line-input {
+  color: white;
+  background-color: gray;
+  border: 1px solid black;
+  border-radius: 4px;
+  padding: 5px;
 }

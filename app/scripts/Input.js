@@ -125,8 +125,7 @@ Basic3D.loadModule("Input", function (Bindings) {
         key: key,
         invert: true
       });
-    },
-    bindings: Bindings.getBindings
+    }
   };
 
 });
