@@ -10,6 +10,12 @@ Basic3D.loadModule("Bindings", function () {
     });
   }
 
+  function getBinding(actionCode) {
+    return bindings.find(function(b) {
+      return b.action.code === actionCode;
+    });
+  }
+
   function getBindingIndex(keyCode, actionCode) {
     return bindings.findIndex(function(b) {
       return b.key === keyCode && b.action.code === actionCode;
@@ -74,7 +80,8 @@ Basic3D.loadModule("Bindings", function () {
         return b.action.bindable;
       });
     },
-    removeBinding: removeBinding
+    removeBinding: removeBinding,
+    getBinding: getBinding
   };
 
 });

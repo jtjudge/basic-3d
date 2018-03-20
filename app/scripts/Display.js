@@ -27,7 +27,10 @@ Basic3D.loadModule("Display", function () {
       },
       align: function (args) {
         if (args === undefined) return;
-        wrap.style.justifyContent = args.x;
+        wrap.style.justifyContent = 
+          (args.x === "left") ? "flex-start" :
+          (args.x === "right") ? "flex-end" :
+          args.x;
         wrap.style.alignItems = 
           (args.y === "top") ? "flex-start" : 
           (args.y === "bottom") ? "flex-end" : 
