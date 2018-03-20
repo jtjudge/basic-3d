@@ -125,11 +125,8 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
   }
 
   function condition() {
-    return !locked && (Input.mode("EDIT")
-      || Input.mode("START_CIRCLE")
-      || Input.mode("START_BOX"));
+    return !locked && Input.mode("EDIT");
   }
-
 
   Input.register({
     onkeydown: function () {

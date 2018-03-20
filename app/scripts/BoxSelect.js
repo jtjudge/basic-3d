@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("BoxSelect", function(Controls, Geometry, Selection, Input, Display, Scene) {
+Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Display, Scene) {
 
   var layer, canvas, ctx, center, diff, down;
 
@@ -28,9 +28,9 @@ Basic3D.loadModule("BoxSelect", function(Controls, Geometry, Selection, Input, D
       x: Math.abs(diff.x),
       y: Math.abs(diff.y)
     };
-    return pos.x > point.x 
-      && pos.x < point.x + len.x 
-      && pos.y > point.y 
+    return pos.x > point.x
+      && pos.x < point.x + len.x
+      && pos.y > point.y
       && pos.y < point.y + len.y;
   }
 
@@ -49,7 +49,6 @@ Basic3D.loadModule("BoxSelect", function(Controls, Geometry, Selection, Input, D
       center.x = Input.coords().x2;
       center.y = Input.coords().y2;
       down = true;
-      Controls.disable();
     },
     onmousemove: function () {
       if (!Input.mode("BOX_SELECT") || !down) return;
@@ -68,7 +67,9 @@ Basic3D.loadModule("BoxSelect", function(Controls, Geometry, Selection, Input, D
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       down = false;
-      Controls.enable();
+    },
+    onmode: function () {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
   });
