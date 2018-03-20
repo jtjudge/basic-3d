@@ -111,7 +111,7 @@ Basic3D.loadModule("Scene", function (Input, Display) {
     getMovementOnY: function () {
       return 0.2 * (Input.coords().y1 - Input.coords().y2);
     },
-    toScreenPosition: function(obj) {
+    getScreenPosition: function (obj) {
       var vector = new THREE.Vector3();
 
       var halfWidth = .5 * renderer.context.canvas.width;

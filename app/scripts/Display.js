@@ -65,6 +65,11 @@ Basic3D.loadModule("Display", function () {
       var el = document.createElement("div");
       el.className = "label";
       return addInterface(el);
+    },
+    Layer: function () {
+      var el = document.createElement("div");
+      el.className = "layer";
+      return addInterface(el);
     }
   };
 
