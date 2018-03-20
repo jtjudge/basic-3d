@@ -1,18 +1,11 @@
 
 Basic3D.loadModule("BrushSelect", function (Input, Scene, Selection, Geometry, Display) {
 
-  var center, radius, scale, mod, down;
-
-  var layer, canvas, ctx;
+  var layer, canvas, ctx, center, radius, scale, mod, down;
 
   layer = new Display.Layer();
   canvas = document.createElement("canvas");
-
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
   ctx = canvas.getContext("2d");
-  ctx.fillStyle = "rgba(0, 255, 0, 0.5)";
 
   center = { x: 0, y: 0 };
   radius = 20;
@@ -21,6 +14,14 @@ Basic3D.loadModule("BrushSelect", function (Input, Scene, Selection, Geometry, D
 
   layer.addItem(canvas);
   layer.show();
+
+  function refresh() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx.fillStyle = "rgba(0, 255, 0, 0.5)";
+  }
+
+  refresh();
 
   function bounded(pos) {
     var len = Input.action("BRUSH_SIZE_MOD") ? 
@@ -93,7 +94,8 @@ Basic3D.loadModule("BrushSelect", function (Input, Scene, Selection, Geometry, D
     },
     onmode: function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+    },
+    onresize: refresh
   });
 
   Input.addKeyBinding("KeyC", "TOGGLE_BRUSH_SELECT", "Toggle Brush Select");

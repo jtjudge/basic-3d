@@ -5,19 +5,21 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Display, S
 
   layer = new Display.Layer();
   canvas = document.createElement("canvas");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  canvas.style.backgroundColor = "rgba(0, 0, 0, 0)";
-
   ctx = canvas.getContext("2d");
-  ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
 
   center = { x: 0, y: 0 };
   diff = { x: 0, y: 0 };
 
   layer.addItem(canvas);
   layer.show();
+
+  function refresh() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+  }
+
+  refresh();
 
   function bounded(pos) {
     var point = {
@@ -70,8 +72,8 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Display, S
     },
     onmode: function () {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
+    },
+    onresize: refresh
   });
 
   Input.addKeyBinding("KeyB", "TOGGLE_BOX_SELECT", "Toggle Box Select");
