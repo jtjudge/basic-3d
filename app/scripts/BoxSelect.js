@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Display, Scene) {
+Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Controls, Display, Scene) {
 
   var layer, canvas, ctx, center, diff, down;
 
@@ -13,13 +13,13 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Display, S
   layer.addItem(canvas);
   layer.show();
 
+  refresh();
+
   function refresh() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
   }
-
-  refresh();
 
   function bounded(pos) {
     var point = {
@@ -41,23 +41,29 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Display, S
       if (Input.action("TOGGLE_BOX_SELECT")) {
         if (Input.mode("EDIT")) {
           Input.setMode("BOX_SELECT");
+          Controls.disable(["orbit"]);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
         } else if (Input.mode("BOX_SELECT")) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          Controls.enable(["orbit"]);
           Input.setMode("EDIT");
         }
       }
     },
     onmousedown: function () {
-      if (!Input.mode("BOX_SELECT")) return;
-      center.x = Input.coords().x2;
-      center.y = Input.coords().y2;
-      down = true;
+      if (Input.mode("BOX_SELECT") && Input.action("BOX_SELECT_DOWN") && !down) {
+        center.x = Input.coords().x2;
+        center.y = Input.coords().y2;
+        down = true;
+      }
     },
     onmousemove: function () {
-      if (!Input.mode("BOX_SELECT") || !down) return;
-      diff.x = Input.coords().x2 - center.x;
-      diff.y = Input.coords().y2 - center.y;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillRect(center.x, center.y, diff.x, diff.y);
+      if (Input.mode("BOX_SELECT") && down) {
+        diff.x = Input.coords().x2 - center.x;
+        diff.y = Input.coords().y2 - center.y;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(center.x, center.y, diff.x, diff.y);
+      }
     },
     onmouseup: function () {
       if (!Input.mode("BOX_SELECT")) return;
@@ -66,17 +72,14 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Display, S
         var pos = Scene.getScreenPosition(vert.obj);
         if (bounded(pos)) Selection.toggleSelection(vert, !deselect);
       });
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       down = false;
-    },
-    onmode: function () {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
     },
     onresize: refresh
   });
 
   Input.addKeyBinding("KeyB", "TOGGLE_BOX_SELECT", "Toggle Box Select");
+  Input.addKeyBinding("LMB", "BOX_SELECT_DOWN");
   Input.addKeyBinding("ControlLeft", "BOX_DESELECT_MOD");
   Input.addKeyBinding("ControlRight", "BOX_DESELECT_MOD");
 

@@ -50,7 +50,7 @@ Basic3D.loadScript("ColorsMenu", function (Display, Controls, Colors, Geometry) 
 
     function hideMenu() {
       menu.hide();
-      Controls.enable();
+      Controls.enable(["shift", "orbit", "snap"]);
     }
 
     function resetMenu() {
@@ -123,7 +123,7 @@ Basic3D.loadScript("ColorsMenu", function (Display, Controls, Colors, Geometry) 
 
     menu.align({x: "center", y: "center"});
     menu.show();
-    Controls.disable();
+    Controls.disable(["shift", "orbit", "snap"]);
 
   };
 

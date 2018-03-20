@@ -2,11 +2,15 @@
 Basic3D.loadModule("Controls", function (Input, Scene) {
 
   var cam = Scene.camera();
-  var invertOrbit = 1;
-  var snapVert = true;
+
   var scroll = 0;
 
-  var locked = false;
+  var snapVert = true;
+  var invertOrbit = false;
+
+  var shiftLocked = false;
+  var orbitLocked = false;
+  var snapLocked = false;
 
   var smooth = (function () {
     var dest, orig, lock, t;
@@ -20,6 +24,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
         t = 0;
       },
       move: function () {
+        if (!lock) return false;
         t += 0.05;
         var pos = new THREE.Vector3().copy(orig.position);
         pos.lerp(dest.position, t);
@@ -32,6 +37,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
           cam.rotation.copy(dest.rotation);
           lock = false;
         }
+        return true;
       },
       dest: function () {
         return dest;
@@ -43,6 +49,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
   })();
 
   function shiftCam() {
+    if (shiftLocked) return;
     var xDist = 0, yDist = 0, zDist = 0;
     var speed = (Input.action("CAM_SPEED_MOD")) ? 6 : 2;
     if (Input.action("CAM_SHIFT_FREE")) {
@@ -62,17 +69,19 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
   }
 
   function orbitCam() {
+    if (orbitLocked) return;
     var xAngle = 0, yAngle = 0, distance = cam.position.length();
     var baseAngle = (Input.action("CAM_SPEED_MOD")) ? 0.003 : 0.001;
     var yAxis = new THREE.Vector3(0, 1, 0);
+    var inv = (invertOrbit) ? -1 : 1;
     if (Input.action("CAM_ORBIT_FREE")) {
-      xAngle += baseAngle * (Input.coords().y1 - Input.coords().y2) * invertOrbit;
-      yAngle += baseAngle * (Input.coords().x1 - Input.coords().x2) * invertOrbit;
+      xAngle += baseAngle * (Input.coords().y1 - Input.coords().y2) * inv;
+      yAngle += baseAngle * (Input.coords().x1 - Input.coords().x2) * inv;
     } else {
-      if (Input.action("CAM_UP")) xAngle += baseAngle * 10 * invertOrbit;
-      if (Input.action("CAM_DOWN")) xAngle += baseAngle * -10 * invertOrbit;
-      if (Input.action("CAM_LEFT")) yAngle += baseAngle * 10 * invertOrbit;
-      if (Input.action("CAM_RIGHT")) yAngle += baseAngle * -10 * invertOrbit;
+      if (Input.action("CAM_UP")) xAngle += baseAngle * 10 * inv;
+      if (Input.action("CAM_DOWN")) xAngle += baseAngle * -10 * inv;
+      if (Input.action("CAM_LEFT")) yAngle += baseAngle * 10 * inv;
+      if (Input.action("CAM_RIGHT")) yAngle += baseAngle * -10 * inv;
     }
     cam.translateZ(-distance);
     cam.rotateOnWorldAxis(yAxis, -yAngle * 3);
@@ -81,6 +90,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
   }
 
   function snapCam(angle) {
+    if (snapLocked) return;
     var axis = new THREE.Vector3(0, 1, 0);
     var origin = new THREE.Vector3(0, 0, 0);
     var distance = 150;
@@ -101,21 +111,24 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
   }
 
   function snapOrbit(angle, vert) {
-    var dest = smooth.dest(), distance;
+    if (snapLocked) return;
+    var dest = smooth.dest(), distance, inv;
     dest.position.copy(cam.position);
     dest.rotation.copy(cam.rotation);
     distance = dest.position.length();
+    inv = (invertOrbit) ? -1 : 1;
     dest.translateZ(-distance);
     if (vert) {
-      dest.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), angle);
+      dest.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), angle * inv);
     } else {
-      dest.rotateX(angle);
+      dest.rotateX(angle * inv);
     }
     dest.translateZ(distance);
     smooth.start();
   }
 
   function resetCam() {
+    if (snapLocked) return;
     var dest = smooth.dest();
     dest.position.set(150, 100, 150);
     dest.rotation.set(0, 0, 0);
@@ -124,17 +137,9 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
     smooth.start();
   }
 
-  function condition() {
-    return !locked && Input.mode("EDIT");
-  }
-
   Input.register({
     onkeydown: function () {
-      if (!condition()) return;
-      if (smooth.locked()) {
-        smooth.move();
-        return;
-      }
+      if (smooth.locked()) return;
       if (Input.action("CAM_RESET")) resetCam();
       if (Input.action("CAM_SWAP_AXIS")) snapVert = !snapVert;
       if (Input.action("CAM_SNAP_BOTTOM_LEFT")) {
@@ -150,20 +155,20 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
         snapCam(Math.PI / 2);
       }
       if (Input.action("CAM_ORBIT_LEFT")) {
-        snapOrbit(invertOrbit * Math.PI / 4, true);
+        snapOrbit(-Math.PI / 4, true);
       }
       if (Input.action("CAM_ORBIT_RIGHT")) {
-        snapOrbit(-invertOrbit * Math.PI / 4, true);
+        snapOrbit(Math.PI / 4, true);
       }
       if (Input.action("CAM_ORBIT_UP")) {
-        snapOrbit(-invertOrbit * Math.PI / 4, false);
+        snapOrbit(-Math.PI / 4, false);
       }
       if (Input.action("CAM_ORBIT_DOWN")) {
-        snapOrbit(invertOrbit * Math.PI / 4, false);
+        snapOrbit(Math.PI / 4, false);
       }
     },
     onmousewheel: function () {
-      if (!condition()) return;
+      if (shiftLocked) return;
       scroll += Input.scroll();
       if (scroll > 200) scroll = 200;
       if (scroll < -200) scroll = -200;
@@ -208,11 +213,7 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
 
   return {
     update: function () {
-      if (!condition()) return;
-      if (smooth.locked()) {
-        smooth.move();
-        return;
-      }
+      if (smooth.move()) return;
       if (Input.action("CAM_ORBIT")) orbitCam();
       if (Input.action("CAM_SHIFT")) shiftCam();
       if (scroll !== 0) {
@@ -223,13 +224,23 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
       }
     },
     invertOrbit: function () {
-      invertOrbit = -invertOrbit;
+      invertOrbit = !invertOrbit;
     },
-    enable: function () {
-      locked = false;
+    enable: function (args) {
+      if (args === undefined) return;
+      args.forEach(function(a) {
+        if (a === "shift") shiftLocked = false;
+        if (a === "orbit") orbitLocked = false;
+        if (a === "snap") snapLocked = false;
+      });
     },
-    disable: function () {
-      locked = true;
+    disable: function (args) {
+      if (args === undefined) return;
+      args.forEach(function(a) {
+        if (a === "shift") shiftLocked = true;
+        if (a === "orbit") orbitLocked = true;
+        if (a === "snap") snapLocked = true;
+      });
     }
   };
 

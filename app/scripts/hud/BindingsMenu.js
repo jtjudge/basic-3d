@@ -62,7 +62,7 @@ Basic3D.loadScript("BindingsMenu", function (Display, Input, Controls, Bindings)
           }
         });
         menu.hide();
-        Controls.enable();
+        Controls.enable(["shift", "orbit", "snap"]);
       }
     });
 
@@ -79,12 +79,12 @@ Basic3D.loadScript("BindingsMenu", function (Display, Input, Controls, Bindings)
       display: "Cancel",
       onclick: function () {
         menu.hide();
-        Controls.enable();
+        Controls.enable(["shift", "orbit", "snap"]);
       }
     });
 
     menu.show();
-    Controls.disable();
+    Controls.disable(["shift", "orbit", "snap"]);
 
   };
 
