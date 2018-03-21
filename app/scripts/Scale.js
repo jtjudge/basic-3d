@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History) {
+Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History, TipsDisplay) {
 
   var SPEED = 0.04;
 
@@ -45,7 +45,9 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History) {
     onmousemove: function () {
       if (Input.mode("SCALE_X")) {
         Geometry.getSelected().forEach(function (v) {
-          var val = (Scene.getMovementOnXZ().diff.x > 0) ? (.99 * (v.obj.position.x - center.x) - (v.obj.position.x - center.x)) : (1.01 * (v.obj.position.x - center.x) - (v.obj.position.x - center.x));
+          var val = (Scene.getMovementOnXZ().diff.x > 0) ? 
+            (.99 * (v.obj.position.x - center.x) - (v.obj.position.x - center.x)) : 
+            (1.01 * (v.obj.position.x - center.x) - (v.obj.position.x - center.x));
           val = (Scene.getMovementOnXZ().diff.x == 0) ? 0 : val; 
           var diff = new THREE.Vector3(val, 0, 0);
           scaleVertex(v, diff);
@@ -53,7 +55,9 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History) {
       }
       if (Input.mode("SCALE_Y")) {
         Geometry.getSelected().forEach(function (v) {
-          var val = (Scene.getMovementOnY() > 0) ? (.99 * (v.obj.position.y - center.y) - (v.obj.position.y - center.y)) : (1.01 * (v.obj.position.y - center.y) - (v.obj.position.y - center.y));
+          var val = (Scene.getMovementOnY() > 0) ? 
+            (.99 * (v.obj.position.y - center.y) - (v.obj.position.y - center.y)) : 
+            (1.01 * (v.obj.position.y - center.y) - (v.obj.position.y - center.y));
           val = (Scene.getMovementOnY() == 0) ? 0 : val; 
           var diff = new THREE.Vector3(0, val, 0);
           scaleVertex(v, diff);
@@ -61,7 +65,9 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History) {
       }
       if (Input.mode("SCALE_Z")) {
         Geometry.getSelected().forEach(function (v) {
-          var val = (Scene.getMovementOnXZ().diff.z > 0) ? (.99 * (v.obj.position.z - center.z) - (v.obj.position.z - center.z)) : (1.01 * (v.obj.position.z - center.z) - (v.obj.position.z - center.z));
+          var val = (Scene.getMovementOnXZ().diff.z > 0) ? 
+            (.99 * (v.obj.position.z - center.z) - (v.obj.position.z - center.z)) : 
+            (1.01 * (v.obj.position.z - center.z) - (v.obj.position.z - center.z));
           val = (Scene.getMovementOnXZ().diff.z == 0) ? 0 : val; 
           var diff = new THREE.Vector3(0, 0, val);
           scaleVertex(v, diff);
@@ -114,6 +120,9 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History) {
         if (move === undefined || move.done()) {
           move = History.startMove(Geometry.getSelected());
         }
+        TipsDisplay.set("Scale", function () {
+          return "X, Y, or Z to swap axis, Spacebar for origin, LMB to confirm, G to cancel";
+        });
         setAxis();
       }
     }

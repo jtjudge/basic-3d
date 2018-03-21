@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History) {
+Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History, TipsDisplay) {
 
   var SPEED = 0.04;
 
@@ -127,6 +127,9 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History) {
         if (move === undefined || move.done()) {
           move = History.startMove(Geometry.getSelected());
         }
+        TipsDisplay.set("Rotate", function () {
+          return "X, Y, or Z to swap axis, Spacebar for origin, LMB to confirm, R to cancel";
+        });
         setAxis();
       }
     }

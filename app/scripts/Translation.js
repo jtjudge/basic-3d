@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History) {
+Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History, TipsDisplay) {
 
   var SPEED = 0.05;
 
@@ -89,6 +89,9 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History) {
         if (move === undefined || move.done()) {
           move = History.startMove(Geometry.getSelected());
         }
+        TipsDisplay.set("Translate", function () {
+          return "X, Y, or Z to swap axis, LMB to confirm, T to cancel";
+        });
       }
       if (Input.mode("TRANSLATE_X")) {
         Scene.showX(Geometry.getCenter());

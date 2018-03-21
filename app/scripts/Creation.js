@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selection, History) {
+Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selection, History, TipsDisplay) {
 
   var MAX_VERTS = 100;
   var MAX_DIST = 120;
@@ -163,9 +163,15 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
       if (Input.mode("VERTEX_XZ")) {
         showMarker();
         moveMarker();
+        TipsDisplay.set("Vertex", function () {
+          return "Drag to move on XZ plane, LMB to confirm, V to cancel";
+        });
       }
       if (Input.mode("VERTEX_Y")) {
         Scene.showY(marker.position);
+        TipsDisplay.set("Vertex", function () {
+          return "Drag to move along Y axis, LMB to confirm, V to cancel";
+        });
       }
     }
   });
