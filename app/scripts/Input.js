@@ -1,6 +1,6 @@
 
 Basic3D.loadModule("Input", function (Bindings) {
-  
+
   var swap = null;
 
   var mode = "EDIT";
@@ -29,6 +29,7 @@ Basic3D.loadModule("Input", function (Bindings) {
 
   document.onkeydown = keydown;
   document.onkeyup = keyup;
+  document.onkeypress = keypress;
   document.onmousedown = mousedown;
   document.onmouseup = mouseup;
   document.onmousemove = mousemove;
@@ -59,6 +60,10 @@ Basic3D.loadModule("Input", function (Bindings) {
     handle("onkeyup", event.code, false);
   }
 
+  function keypress(event) {
+    handle("onkeypress", event.code, true);
+  }
+  
   function mousedown(event) {
     event.preventDefault();
     handle("onmousedown", mouseEvents[event.which], true);
@@ -108,8 +113,8 @@ Basic3D.loadModule("Input", function (Bindings) {
     setMode: function (name) {
       swap = name;
     },
-    action: function (name) { 
-      return Bindings.action(name); 
+    action: function (name) {
+      return Bindings.action(name);
     },
     addKeyBinding: function (key, action, display) {
       Bindings.register({

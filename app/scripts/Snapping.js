@@ -30,4 +30,12 @@ Basic3D.loadModule("Snapping", function(Input, Scene, Geometry, Selection) {
       }
     }
   }
+
+  Input.register({
+    onkeypress: function() {
+      if(Input.action("SNAP") && (Input.mode("VERTEX_XZ") || Input.mode("VERTEX_Y") || Input.mode("TRANSLATE_X") || Input.mode("TRANSLATE_Y") || Input.mode("TRANSLATE_Z"))) {
+        
+      }
+    }
+  })
 })
