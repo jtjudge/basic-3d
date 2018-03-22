@@ -1,41 +1,37 @@
 
-Basic3D.loadModule("Snapping", function(Input, Scene, Geometry, Selection) {
+Basic3D.loadModule("Snapping", function(Input, Geometry) {
 
-  var tolerance = 1;
+  Input.addKeyBinding("ControlLeft", "SNAP");
+  Input.addKeyBinding("ControlRight", "SNAP");
 
-  function snap(vSource, vSnap) {
-    if(vSource.x <== vSnap.x + tolerance && vSource.x >== vSnap.x - tolerance) {
-      if(vSource.y <== vSnap.y + tolerance && vSource.y >== vSnap.y - tolerance) {
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(vSource);
-        geometry.vertices.push(vSnap);
-        var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff} ));
-        scene.add(line);
-      }
-      else if(vSource.z <== vSnap.z + tolerance && vSource.y >== vSnap.y - tolerance) {
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(vSource);
-        geometry.vertices.push(vSnap);
-        var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff} ));
-        scene.add(line);
-      }
-    }
-    else if(vSource.y <== vSnap.y + tolerance && vSource.y >== vSnap.y - tolerance) {
-      if(vSource.z <== vSnap.z + tolerance && vSource.y >== vSnap.y - tolerance) {
-        var geometry = new THREE.Geometry();
-        geometry.vertices.push(vSource);
-        geometry.vertices.push(vSnap);
-        var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff} ));
-        scene.add(line);
-      }
-    }
+  var tol = 1.0;
+
+  function inRange(val, targ) {
+    return val > targ - tol && val < targ + tol;
   }
 
-  Input.register({
-    onkeypress: function() {
-      if(Input.action("SNAP") && (Input.mode("VERTEX_XZ") || Input.mode("VERTEX_Y") || Input.mode("TRANSLATE_X") || Input.mode("TRANSLATE_Y") || Input.mode("TRANSLATE_Z"))) {
-        
+  return {
+    update: function() {
+      if(Input.action("SNAP") && Geometry.getSelected().length > 0) {
+        var center = Geometry.getCenter();
+        var targets = Geometry.getVertices().filter(function(v) {
+          return !v.selected;
+        });
+        targets.forEach(function (v) {
+          var pos = v.obj.position;
+          if(inRange(center.y, pos.y) && inRange(center.z, pos.z)) {
+            //Snap on X
+            console.log("SNAP Y on vert " + v.obj.id);
+          }
+          if(inRange(center.x, pos.x) && inRange(center.z, pos.z)) {
+            //Snap on Y
+            console.log("SNAP Y on vert " + v.obj.id);
+          }
+          if(inRange(center.x, pos.x) && inRange(center.y, pos.y)) {
+            //Snap on Z
+            console.log("SNAP Z on vert " + v.obj.id);
+          }
+        });
       }
     }
-  })
-})
+  });
