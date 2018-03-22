@@ -115,6 +115,12 @@ app.on("ready", function () {
         run("ToggleBigBrush");
       }
     });
+    menu.submenu.push({
+      label: "Tips Formatting",
+      click: function () {
+        run("ToggleTipsList");
+      }
+    });
     return menu;
   })();
 
