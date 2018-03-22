@@ -23,7 +23,6 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
     if (target.v1) updateVertex(target.v1, value);
     if (target.v2) updateVertex(target.v2, value);
     if (target.v3) updateVertex(target.v3, value);
-    setDisplay();
   }
 
   function updateAll(value) {
@@ -39,7 +38,6 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
       face.selected = value;
       face.obj.material.color.set((value) ? Colors.FACE_SELECT : Colors.FACE);
     });
-    setDisplay();
   }
 
   function performSelection(arr) {
@@ -64,16 +62,6 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
     return false;
   }
 
-  function setDisplay() {
-    TipsDisplay.set("Edit", function() {
-      if (Geometry.getSelected().length > 0) {
-        return "V for new vertex, T to translate, R to rotate, G to scale";
-      } else {
-        return "V for new vertex";
-      }
-    });
-  }
-
   Input.register({
     onmousedown: function () {
       if (Input.mode("EDIT") && Input.action("SELECT_GEOM")) {
@@ -82,15 +70,17 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
         if(performSelection(Geometry.getFaces())) return;
         if (!Input.action("MULT_SELECT_MOD")) updateAll(false);
       }
-    },
-    onmode: function () {
-      if (Input.mode("EDIT")) setDisplay();
     }
   });
 
   Input.addKeyBinding("LMB", "SELECT_GEOM");
   Input.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
   Input.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
+
+  TipsDisplay.registerMode({
+    name: "EDIT",
+    display: "Edit"
+  });
 
   return {
     toggleSelection: updateTarget

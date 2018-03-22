@@ -24,7 +24,7 @@ Basic3D.loadModule("VertexDisplay", function (Input, Display, Geometry, Creation
     var selected = Geometry.getSelected();
     if (selected.length > 0 || Creation.active()) {
       var pos, text, obj, coords;
-      
+
       pos = (Creation.active()) ? Creation.marker() : Geometry.getCenter();
       text = `(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)}, ${pos.z.toFixed(1)})`;
       coords = new THREE.Vector3().copy(pos).project(Scene.camera());
@@ -39,17 +39,14 @@ Basic3D.loadModule("VertexDisplay", function (Input, Display, Geometry, Creation
   }
 
   Input.register({
-    onkeydown: refresh,
-    onkeyup: refresh,
-    onmousedown: refresh,
-    onmousemove: refresh,
-    onmousewheel: refresh,
     onresize: function() {
       setup();
       refresh();
     }
   });
 
-  return {};
+  return {
+    update: refresh
+  };
 
 });

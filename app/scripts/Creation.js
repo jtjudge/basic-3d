@@ -163,15 +163,9 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
       if (Input.mode("VERTEX_XZ")) {
         showMarker();
         moveMarker();
-        TipsDisplay.set("Vertex", function () {
-          return "Drag to move on XZ plane, LMB to confirm, V to cancel";
-        });
       }
       if (Input.mode("VERTEX_Y")) {
         Scene.showY(marker.position);
-        TipsDisplay.set("Vertex", function () {
-          return "Drag to move along Y axis, LMB to confirm, V to cancel";
-        });
       }
     }
   });
@@ -181,6 +175,76 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
   Input.addKeyBinding("KeyE", "PLACE_EDGE");
   Input.addKeyBinding("KeyF", "PLACE_FACE");
   Input.addKeyBinding("KeyX", "DELETE_VERTEX");
+
+  TipsDisplay.registerMode({
+    name: "VERTEX",
+    mapped: ["VERTEX_XZ", "VERTEX_Y"],
+    display: "Vertex"
+  });
+
+  TipsDisplay.registerTip({
+    mode: "VERTEX",
+    builder: function (get) {
+      return `Drag to move on XZ-plane`;
+    },
+    condition: function () {
+      return Input.mode("VERTEX_XZ");
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "VERTEX",
+    builder: function (get) {
+      return `Drag to move along Y-axis`;
+    },
+    condition: function () {
+      return Input.mode("VERTEX_Y");
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "VERTEX",
+    builder: function (get) {
+      return `${get("PLACE_VERTEX")} to confirm`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "VERTEX",
+    builder: function (get) {
+      return `${get("TOGGLE_VERTEX_MODE")} to cancel`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("DELETE_VERTEX")} to delete`;
+    },
+    condition: function () {
+      return Geometry.getSelected().length > 0;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("TOGGLE_VERTEX_MODE")} to create vertex`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("PLACE_EDGE")} to create edge`;
+    },
+    condition: function () {
+      return Geometry.getSelected().length === 2;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("PLACE_FACE")} to create face`;
+    },
+    condition: function () {
+      return Geometry.getSelected().length === 3;
+    }
+  });
 
   return {
     active: function () {

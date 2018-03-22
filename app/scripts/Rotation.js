@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History, TipsDisplay) {
+Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
 
   var SPEED = 0.04;
 
@@ -127,9 +127,6 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History, TipsDi
         if (move === undefined || move.done()) {
           move = History.startMove(Geometry.getSelected());
         }
-        TipsDisplay.set("Rotate", function () {
-          return "X, Y, or Z to swap axis, Spacebar for origin, LMB to confirm, R to cancel";
-        });
         setAxis();
       }
     }
@@ -141,6 +138,53 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, History, TipsDi
   Input.addKeyBinding("KeyY", "TOGGLE_ROTATE_Y");
   Input.addKeyBinding("KeyZ", "TOGGLE_ROTATE_Z");
   Input.addKeyBinding("LMB", "ROTATE_CONFIRM");
+
+  TipsDisplay.registerMode({
+    name: "ROTATE",
+    mapped: ["ROTATE_X", "ROTATE_Y", "ROTATE_Z"],
+    display: "Rotate"
+  });
+
+  TipsDisplay.registerTip({
+    mode: "ROTATE",
+    builder: function(get) {
+      return `${get("TOGGLE_ROTATE_MODE")} to cancel`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "ROTATE",
+    builder: function(get) {
+      return `${get("ROTATE_CONFIRM")} to confirm`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "ROTATE",
+    builder: function(get) {
+      var x = get("TOGGLE_ROTATE_X");
+      var y = get("TOGGLE_ROTATE_Y");
+      var z = get("TOGGLE_ROTATE_Z");
+      return `${x}, ${y}, or ${z} to swap axis`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "ROTATE",
+    builder: function(get) {
+      return `${get("ROTATE_WORLD_MOD")} for origin`;
+    },
+    condition: function () {
+      return !Input.action("ROTATE_WORLD_MOD");
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function(get) {
+      return `${get("TOGGLE_ROTATE_MODE")} to rotate`;
+    }, 
+    condition: function() {
+      return Geometry.getSelected().length > 0;
+    }
+  });
 
   return {};
 

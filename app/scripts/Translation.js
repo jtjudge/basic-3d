@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History, TipsDisplay) {
+Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
 
   var SPEED = 0.05;
 
@@ -89,9 +89,6 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History, Tip
         if (move === undefined || move.done()) {
           move = History.startMove(Geometry.getSelected());
         }
-        TipsDisplay.set("Translate", function () {
-          return "X, Y, or Z to swap axis, LMB to confirm, T to cancel";
-        });
       }
       if (Input.mode("TRANSLATE_X")) {
         Scene.showX(Geometry.getCenter());
@@ -110,6 +107,43 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, History, Tip
   Input.addKeyBinding("KeyY", "TOGGLE_TRANSLATE_Y");
   Input.addKeyBinding("KeyZ", "TOGGLE_TRANSLATE_Z");
   Input.addKeyBinding("LMB", "TRANSLATE_CONFIRM");
+
+  TipsDisplay.registerMode({
+    name: "TRANSLATE", 
+    mapped: ["TRANSLATE_X", "TRANSLATE_Y", "TRANSLATE_Z"], 
+    display: "Translate"
+  });
+
+  TipsDisplay.registerTip({
+    mode: "TRANSLATE", 
+    builder: function (get) {
+      return `${get("TOGGLE_TRANSLATE_MODE")} to cancel`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "TRANSLATE", 
+    builder: function(get) {
+      return `${get("TRANSLATE_CONFIRM")} to confirm`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "TRANSLATE", 
+    builder: function(get) {
+      var x = get("TOGGLE_TRANSLATE_X");
+      var y = get("TOGGLE_TRANSLATE_Y");
+      var z = get("TOGGLE_TRANSLATE_Z");
+      return `${x}, ${y}, or ${z} to swap axis`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function(get) {
+      return `${get("TOGGLE_TRANSLATE_MODE")} to translate`;
+    }, 
+    condition: function() {
+      return Geometry.getSelected().length > 0;
+    }
+  });
 
   return {};
 

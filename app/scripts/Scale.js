@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History, TipsDisplay) {
+Basic3D.loadModule("Scale", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
 
   var SPEED = 0.04;
 
@@ -120,9 +120,6 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History, TipsDispl
         if (move === undefined || move.done()) {
           move = History.startMove(Geometry.getSelected());
         }
-        TipsDisplay.set("Scale", function () {
-          return "X, Y, or Z to swap axis, Spacebar for origin, LMB to confirm, G to cancel";
-        });
         setAxis();
       }
     }
@@ -134,6 +131,53 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, History, TipsDispl
   Input.addKeyBinding("KeyY", "TOGGLE_SCALE_Y");
   Input.addKeyBinding("KeyZ", "TOGGLE_SCALE_Z");
   Input.addKeyBinding("LMB", "SCALE_CONFIRM");
+
+  TipsDisplay.registerMode({
+    name: "SCALE",
+    mapped: ["SCALE_X", "SCALE_Y", "SCALE_Z"],
+    display: "Scale"
+  });
+
+  TipsDisplay.registerTip({
+    mode: "SCALE",
+    builder: function(get) {
+      return `${get("TOGGLE_SCALE_MODE")} to cancel`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "SCALE",
+    builder: function(get) {
+      return `${get("SCALE_CONFIRM")} to confirm`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "SCALE",
+    builder: function(get) {
+      var x = get("TOGGLE_SCALE_X");
+      var y = get("TOGGLE_SCALE_Y");
+      var z = get("TOGGLE_SCALE_Z");
+      return `${x}, ${y}, or ${z} to swap axis`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "SCALE",
+    builder: function(get) {
+      return `${get("SCALE_WORLD_MOD")} for origin`;
+    },
+    condition: function () {
+      return !Input.action("SCALE_WORLD_MOD");
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function(get) {
+      return `${get("TOGGLE_SCALE_MODE")} to scale`;
+    }, 
+    condition: function() {
+      return Geometry.getSelected().length > 0;
+    }
+  });
 
   return {};
 
