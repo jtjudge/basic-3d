@@ -182,6 +182,13 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
   Input.addKeyBinding("KeyF", "PLACE_FACE");
   Input.addKeyBinding("KeyX", "DELETE_VERTEX");
 
-  return {};
+  return {
+    active: function () {
+      return Input.mode("VERTEX_XZ") || Input.mode("VERTEX_Y");
+    },
+    marker: function () {
+      return (marker === undefined) ? new THREE.Vector3() : marker.position;
+    }
+  };
 
 });
