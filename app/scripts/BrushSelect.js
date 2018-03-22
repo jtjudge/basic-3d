@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("BrushSelect", function (Input, Controls, Scene, Selection, Geometry, Display) {
+Basic3D.loadModule("BrushSelect", function (Input, Controls, Scene, Selection, TipsDisplay, Geometry, Display) {
 
   var layer, canvas, ctx, center, radius, scale, mod, down;
 
@@ -100,6 +100,53 @@ Basic3D.loadModule("BrushSelect", function (Input, Controls, Scene, Selection, G
   Input.addKeyBinding("ControlRight", "BRUSH_DESELECT_MOD");
   Input.addKeyBinding("ShiftLeft", "BRUSH_SIZE_MOD");
   Input.addKeyBinding("ShiftRight", "BRUSH_SIZE_MOD");
+
+  TipsDisplay.registerMode({
+    name: "BRUSH_SELECT",
+    display: "Brush Select",
+  });
+
+  TipsDisplay.registerTip({
+    mode: "BRUSH_SELECT",
+    builder: function (get) {
+      return `${get("TOGGLE_BRUSH_SELECT")} to exit`
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "BRUSH_SELECT",
+    builder: function (get) {
+      var reaction = (Input.action("BRUSH_DESELECT_MOD")) ? "deselect" : "select";
+      return `${get("BRUSH_SELECT_DOWN")} to ${reaction}`
+    },
+    condition: function () {
+      return !Input.action("BRUSH_SELECT_DOWN");
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "BRUSH_SELECT",
+    builder: function (get) {
+      return `${get("BRUSH_DESELECT_MOD")} to invert select`
+    },
+    condition: function () {
+      return !Input.action("BRUSH_DESELECT_MOD");
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "BRUSH_SELECT",
+    builder: function (get) {
+      return `${get("BRUSH_SIZE_MOD")} to change brush size`
+    },
+    condition: function () {
+      return !Input.action("BRUSH_SIZE_MOD");
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("TOGGLE_BRUSH_SELECT")} to brush select`
+    }
+  });
 
   return {
     setScale: function (val) { scale = val; },

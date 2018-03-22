@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Controls, Display, Scene) {
+Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Controls, Display, TipsDisplay, Scene) {
 
   var layer, canvas, ctx, center, diff, down;
 
@@ -83,6 +83,43 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Controls, 
   Input.addKeyBinding("ControlLeft", "BOX_DESELECT_MOD");
   Input.addKeyBinding("ControlRight", "BOX_DESELECT_MOD");
 
+  TipsDisplay.registerMode({
+    name: "BOX_SELECT",
+    display: "Box Select"
+  });
+
+  TipsDisplay.registerTip({
+    mode: "BOX_SELECT",
+    builder: function (get) {
+      var action, reaction;
+      action = (Input.action("BOX_SELECT_DOWN")) ? "Drag + release " : "Hold ";
+      action += get("BOX_SELECT_DOWN");
+      reaction = (Input.action("BOX_DESELECT_MOD")) ? "deselect" : "select";
+      return `${action} to ${reaction}`;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "BOX_SELECT",
+    builder: function (get) {
+      return `${get("BOX_DESELECT_MOD")} to invert select`;
+    },
+    condition: function() {
+      return !Input.action("BOX_DESELECT_MOD");
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "BOX_SELECT",
+    builder: function (get) {
+      return `${get("TOGGLE_BOX_SELECT")} to exit`;
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("TOGGLE_BOX_SELECT")} for box select`;
+    }
+  });
 
   return {};
 
