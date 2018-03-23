@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, History, TipsDisplay, Snapping) {
+Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
 
   var SPEED = 0.05;
 
@@ -59,11 +59,6 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
           }
         }
       }
-      else if(Input.action("SNAP")) {
-        if(Snapping.update()) {
-        lock = true;
-        }
-      }
        else if (active(Input.mode()) && !lock) {
         if (Input.action("TOGGLE_TRANSLATE_MODE")) {
           move.cancel();
@@ -90,12 +85,6 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
         if (Input.action("TOGGLE_TRANSLATE_Z")) {
           Input.setMode("TRANSLATE_Z");
         }
-      }
-    },
-    onkeyup: function() {
-      if(lock) {
-        Snapping.remove();
-        lock = false;
       }
     },
     onmode: function () {
@@ -159,6 +148,16 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
     }
   });
 
-  return {};
+  return {
+    lock: function() {
+      lock = true;
+    },
+    getlock: function() {
+      return lock;
+    },
+    unlock: function() {
+      lock = false;
+    }
+  };
 
 });

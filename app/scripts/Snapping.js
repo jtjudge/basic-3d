@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
+Basic3D.loadModule("Snapping", function(Input, Geometry, Scene, Translation) {
 
   Input.addKeyBinding("ControlLeft", "SNAP");
   Input.addKeyBinding("ControlRight", "SNAP");
@@ -29,7 +29,7 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
             lines.push(line);
             Scene.add(line);
-            return true;
+            Translation.lock();
           }
           if(inRange(center.x, pos.x) && inRange(center.z, pos.z)) {
             //Snap on Y
@@ -39,7 +39,7 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
             lines.push(line);
             Scene.add(line);
-            return true;
+            Tranlation.lock();
           }
           if(inRange(center.x, pos.x) && inRange(center.y, pos.y)) {
             //Snap on Z
@@ -49,18 +49,18 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
             lines.push(line);
             Scene.add(line);
-            return true;
+            Translation.lock();
           }
         });
       }
-    },
-
-    remove: function() {
-      lines.forEach(function(l) {
-        Scene.remove(l);
-      });
-      lines = [];
-      return true;
+      else if(!Input.action("SNAP") && Translation.getlock())
+      {
+        lines.forEach(function(l) {
+          Scene.remove(l);
+        });
+        lines = [];
+        Translation.unlock();
+      }
     }
   }
 });
