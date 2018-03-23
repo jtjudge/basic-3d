@@ -112,14 +112,11 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
         }
         if(selected.length > 2){
           var edges = [];
-          for (var i = 0; i < selected.length - 2; i++) {
+          for (var i = 0; i < selected.length - 1; i++) {
             var v1 = selected[i];
             var v2 = selected[i+1];
-            var v3 = selected[i+2];
             var edge1 = Geometry.Edge(v1, v2);
-            var edge2 = Geometry.Edge(v2, v3);
-            var edge3 = Geometry.Edge(v1, v3);
-            edges.push(edge1, edge2, edge3);
+            edges.push(edge1);
         }
         var move = {
           undo: function () {
@@ -142,39 +139,6 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
         
       } else if (Input.action("PLACE_FACE")) {
         var selected = Geometry.getSelected();
-        if (selected.length === 3) {
-          var v1 = selected[0];
-          var v2 = selected[1];
-          var v3 = selected[2];
-          var edge1 = Geometry.Edge(v1, v2);
-          var edge2 = Geometry.Edge(v2, v3);
-          var edge3 = Geometry.Edge(v1, v3);
-          var face = Geometry.Face(v1, v2, v3);
-          var move = {
-            undo: function () {
-              Geometry.removeFace(face);
-              Geometry.removeEdge(edge1);
-              Geometry.removeEdge(edge2);
-              Geometry.removeEdge(edge3);
-              Selection.toggleSelection(face, false);
-              Selection.toggleSelection(edge1, false);
-              Selection.toggleSelection(edge2, false);
-              Selection.toggleSelection(edge3, false);
-            },
-            redo: function () {
-              Geometry.addFace(face);
-              Geometry.addEdge(edge1);
-              Geometry.addEdge(edge2);
-              Geometry.addEdge(edge3);
-              Selection.toggleSelection(face, true);
-              Selection.toggleSelection(edge1, true);
-              Selection.toggleSelection(edge2, true);
-              Selection.toggleSelection(edge3, true);
-            }
-          };
-          move.redo();
-          History.addMove(move);
-        }
         if (selected.length > 2) {
           var edges = [], faces = [];
           for (var i = 0; i < selected.length - 2; i++) {
