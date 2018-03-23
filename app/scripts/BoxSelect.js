@@ -134,7 +134,6 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Controls, 
       return Geometry.getSelected().length > 0;
     }
   });
-  TipsD
   TipsDisplay.registerTip({
     mode: "BOX_SELECT",
     builder: function (get) {
