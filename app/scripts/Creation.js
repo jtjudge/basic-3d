@@ -58,7 +58,7 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
           Input.setMode("VERTEX_XZ");
         }
       }
-      if (!Input.mode("EDIT")) return;
+      if (!(Input.mode("EDIT") || Input.mode("BRUSH_SELECT") || Input.mode("BOX_SELECT"))) return;
       if (Input.action("DELETE_VERTEX")) {
         var selected = Geometry.getSelected();
         var move = {

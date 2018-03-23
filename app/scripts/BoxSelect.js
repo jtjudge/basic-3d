@@ -110,6 +110,34 @@ Basic3D.loadModule("BoxSelect", function (Geometry, Selection, Input, Controls, 
   TipsDisplay.registerTip({
     mode: "BOX_SELECT",
     builder: function (get) {
+      return `${get("PLACE_EDGE")} to create edge`;
+    },
+    condition: function () {
+      return Geometry.getSelected().length === 2;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "BOX_SELECT",
+    builder: function (get) {
+      return `${get("PLACE_FACE")} to create face`;
+    },
+    condition: function () {
+      return Geometry.getSelected().length >= 3;
+    }
+  });
+  TipsDisplay.registerTip({
+    mode: "BOX_SELECT",
+    builder: function (get) {
+      return `${get("DELETE_VERTEX")} to delete`;
+    },
+    condition: function () {
+      return Geometry.getSelected().length > 0;
+    }
+  });
+  TipsD
+  TipsDisplay.registerTip({
+    mode: "BOX_SELECT",
+    builder: function (get) {
       return `${get("TOGGLE_BOX_SELECT")} to exit`;
     }
   });
