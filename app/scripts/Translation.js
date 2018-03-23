@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
+Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, History, TipsDisplay, Snapping) {
 
   var SPEED = 0.05;
 
@@ -56,7 +56,13 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
             Input.setMode("TRANSLATE_X");
           }
         }
-      } else if (active(Input.mode())) {
+      }
+      else if(Input.action("SNAP")) {
+        if(Snapping.update()) {
+        Input.setMode("LOCK");
+        }
+      }
+       else if (active(Input.mode()) && !Input.mode("LOCK")) {
         if (Input.action("TOGGLE_TRANSLATE_MODE")) {
           move.cancel();
           Input.setMode("EDIT");
@@ -84,6 +90,12 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
         }
       }
     },
+    onkeyup: function() {
+      if(Input.mode("LOCK")) {
+        Snapping.remove();
+        Input.setMode("EDIT");
+      }
+    },
     onmode: function () {
       if (active(Input.mode())) {
         if (move === undefined || move.done()) {
@@ -109,25 +121,25 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
   Input.addKeyBinding("LMB", "TRANSLATE_CONFIRM");
 
   TipsDisplay.registerMode({
-    name: "TRANSLATE", 
-    mapped: ["TRANSLATE_X", "TRANSLATE_Y", "TRANSLATE_Z"], 
+    name: "TRANSLATE",
+    mapped: ["TRANSLATE_X", "TRANSLATE_Y", "TRANSLATE_Z"],
     display: "Translate"
   });
 
   TipsDisplay.registerTip({
-    mode: "TRANSLATE", 
+    mode: "TRANSLATE",
     builder: function (get) {
       return `${get("TOGGLE_TRANSLATE_MODE")} to cancel`;
     }
   });
   TipsDisplay.registerTip({
-    mode: "TRANSLATE", 
+    mode: "TRANSLATE",
     builder: function(get) {
       return `${get("TRANSLATE_CONFIRM")} to confirm`;
     }
   });
   TipsDisplay.registerTip({
-    mode: "TRANSLATE", 
+    mode: "TRANSLATE",
     builder: function(get) {
       var x = get("TOGGLE_TRANSLATE_X");
       var y = get("TOGGLE_TRANSLATE_Y");
@@ -139,7 +151,7 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
     mode: "EDIT",
     builder: function(get) {
       return `${get("TOGGLE_TRANSLATE_MODE")} to translate`;
-    }, 
+    },
     condition: function() {
       return Geometry.getSelected().length > 0;
     }

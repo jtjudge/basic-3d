@@ -20,27 +20,39 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
         targets.forEach(function (v) {
           var pos = v.obj.position;
           if(inRange(center.y, pos.y) && inRange(center.z, pos.z)) {
+            //Snap on X
             var geometry = new THREE.Geometry();
             geometry.vertices.push(center);
             geometry.vertices.push(pos);
-            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0000ff}));
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
             Scene.add(line);
+            return true;
           }
           if(inRange(center.x, pos.x) && inRange(center.z, pos.z)) {
+            //Snap on Y
             var geometry = new THREE.Geometry();
             geometry.vertices.push(center);
             geometry.vertices.push(pos);
-            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0000ff}));
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
             Scene.add(line);
+            return true;
           }
           if(inRange(center.x, pos.x) && inRange(center.y, pos.y)) {
+            //Snap on Z
             var geometry = new THREE.Geometry();
             geometry.vertices.push(center);
             geometry.vertices.push(pos);
-            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0000ff}));
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
             Scene.add(line);
+            return true;
           }
         });
       }
+    },
+
+    remove: function() {
+      line.dispose();
+      return true;
     }
-  });
+  }
+});
