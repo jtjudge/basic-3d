@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
+Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, Selection, History, TipsDisplay, EditMenu) {
 
   var SPEED = 0.04;
 
@@ -184,6 +184,29 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, Selection, Hist
     condition: function() {
       return Geometry.getSelected().length > 0;
     }
+  });
+
+  EditMenu.registerComponent(function () {
+
+    var button = document.createElement("div");
+    button.className = "btn edit-menu-btn";
+    button.innerHTML = "Rotate";
+    button.onclick = function () {
+      console.log("ROTATE");
+    };
+
+    return {
+      parent: "TransformMenu",
+      name: "RotateButton",
+      element: button,
+      update: function () {
+        if (Geometry.getSelected().length > 0) {
+          button.style.display = "block";
+        } else {
+          button.style.display = "none";
+        }
+      }
+    };
   });
 
   return {};

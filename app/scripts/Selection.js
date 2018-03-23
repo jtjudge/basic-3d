@@ -103,22 +103,30 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
   EditMenu.registerComponent(function () {
     var selectMenu = document.createElement("div");
     selectMenu.className = "edit-menu-section";
+
+    var title = document.createElement("div");
+    title.className = "edit-menu-label";
+    title.innerHTML = "Selection";
+    selectMenu.appendChild(title);
+
+    var content = document.createElement("div");
+    selectMenu.appendChild(content);
+
     return {
-      name: "Selection Menu",
+      name: "SelectionMenu",
       element: selectMenu,
       update: function () {
         var num = Geometry.getSelected().length;
         if (num === 0) {
-          selectMenu.style.display = "none";
-          selectMenu.innerHTML = "";
+          content.style.display = "none";
+          content.innerHTML = "";
         } else {
           var center = Geometry.getCenter();
           var position = `(${center.x.toFixed(1)}, ${center.y.toFixed(1)}, ${center.y.toFixed(1)})`;
-          selectMenu.style.display = "block";
-          selectMenu.innerHTML = 
-          `<div>Selection:</div>
-          <div>${num} vertices</div>
+          content.innerHTML = 
+          `<div>${num} vertices</div>
           <div>${position}</div>`;
+          content.style.display = "block";
         }
       }
     };

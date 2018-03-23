@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("EditMenu", function (Display) {
+Basic3D.loadModule("EditMenu", function (Input, Display) {
 
   var components = [], queue = [];
 
@@ -12,30 +12,55 @@ Basic3D.loadModule("EditMenu", function (Display) {
     label.innerHTML = "Edit Menu";
     label.className = "edit-menu-label";
     return {
-      name: "Menu Title",
+      name: "MenuTitle",
       element: label,
       update: function () {}
     }
   });
 
-  function registerComponent (func) {
-    if (!loaded) queue.push(func);
-    if (loaded) {
-      var comp = func();
-      components.push(comp);
+  registerComponent(function () {
+    var transformMenu = document.createElement("div");
+    transformMenu.className = "edit-menu-section";
+
+    var label = document.createElement("div");
+    label.innerHTML = "Transform";
+    label.className = "edit-menu-label";
+
+    transformMenu.appendChild(label);
+
+    return {
+      name: "TransformMenu",
+      element: transformMenu,
+      update: function () {}
+    }
+  });
+
+  function addComp(comp) {
+    components.push(comp);
+    if (comp.parent === undefined) {
       menu.addItem(comp.element);
-      console.log(components);
+    } else {
+      var parent = components.find(function(c) {
+        return c.name === comp.parent;
+      });
+      parent.element.appendChild(comp.element);
+    }
+  }
+
+  function registerComponent (func) {
+    if (!loaded) {
+      queue.push(func);
+    } else {
+      addComp(func());
     }
   }
 
   window.onload = function() {
     menu = new Display.Menu();
-    menu.align({x: "left", y: "center"});
+    menu.align({x: "left", y: "top"});
+    menu.setCSS({marginTop: "10px", marginLeft: "10px"});
     while(queue.length > 0) {
-      var comp = (queue.shift())();
-      components.push(comp);
-      menu.addItem(comp.element);
-      console.log(components);
+      addComp(queue.shift()());
     }
     loaded = true;
     menu.show();

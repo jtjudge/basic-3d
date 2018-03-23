@@ -1,56 +1,74 @@
 
-Basic3D.loadModule("TipsDisplay", function (Input, Bindings, Display) {
-
-  var label = new Display.Label();
+Basic3D.loadModule("TipsDisplay", function (Input, Bindings, Display, EditMenu) {
 
   var modes = {};
-
   var list = false;
 
-  label.align({ x: "left", y: "top" });
-  label.show();
+  EditMenu.registerComponent(function () {
 
-  Input.addKeyBinding("KeyH", "TOGGLE_TIPS", "Toggle Tips");
-  Input.register({
-    onkeydown: function () {
-      if (Input.action("TOGGLE_TIPS")) label.toggle();
+    var menu = document.createElement("div");
+    menu.className = "edit-menu-section";
+
+    var title = document.createElement("div");
+    title.className = "edit-menu-label edit-menu-tips-header";
+    menu.appendChild(title);
+
+    var content = document.createElement("div");
+    menu.appendChild(content);
+
+    Input.addKeyBinding("KeyH", "TOGGLE_TIPS", "Toggle Tips");
+    Input.register({
+      onkeydown: function () {
+        if (Input.action("TOGGLE_TIPS")) {
+          content.style.display = (content.style.display === "none") ? "block" : "none";
+        }
+      }
+    });
+
+    function buildTip(content, index) {
+      var html = "";
+      if (!list) {
+        html += "<div>";
+      } else {
+        html += (index > 0) ? ", " : " ";
+      }
+      html += content;
+      if (!list) {
+        html += "</div>";
+      }
+      return html;
     }
+
+    return {
+      order: -1,
+      name: "TipsDisplay",
+      element: menu,
+      update: function () {
+        var mode = modes[Input.mode()];
+        if (mode === undefined) {
+          mode = { display: Input.mode(), tips: [] };
+        }
+        var html = "";
+        var shown = mode.tips.filter(function (obj) {
+          if (obj.condition === undefined) return true;
+          return obj.condition();
+        });
+        shown.forEach(function(obj, index) {
+          var txt = obj.builder(function (actionCode) {
+            return Bindings.getBinding(actionCode).key;
+          });
+          html += buildTip(txt, index);
+        });
+        html += buildTip(`${Bindings.getBinding("TOGGLE_TIPS").key} to hide tips`, shown.length);
+        content.innerHTML = html;
+        title.innerHTML = 
+        `<div class="edit-menu-tips-title">Tips</div>
+        <div class="edit-menu-tips-mode">${mode.display} Mode</div>`;
+      }
+    };
   });
 
-  function buildTip(content, index) {
-    var html = "";
-    if (!list) {
-      html += "<div>";
-    } else {
-      html += (index > 0) ? ", " : " ";
-    }
-    html += content;
-    if (!list) {
-      html += "</div>";
-    }
-    return html;
-  }
-
   return {
-    update: function () {
-      var mode = modes[Input.mode()];
-      if (mode === undefined) {
-        mode = { display: Input.mode(), tips: [] };
-      }
-      var html = `[ ${mode.display} ]`;
-      var shown = mode.tips.filter(function (obj) {
-        if (obj.condition === undefined) return true;
-        return obj.condition();
-      });
-      shown.forEach(function(obj, index) {
-        var txt = obj.builder(function (actionCode) {
-          return Bindings.getBinding(actionCode).key;
-        });
-        html += buildTip(txt, index);
-      });
-      html += buildTip(`${Bindings.getBinding("TOGGLE_TIPS").key} to hide tips`, shown.length);
-      label.setHTML(html);
-    },
     registerMode: function (params) {
       modes[params.name] = { display: params.display, tips: [] };
       if (params.mapped !== undefined) {
