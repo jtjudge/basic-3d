@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Snapping", function(Input, Geometry) {
+Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
 
   Input.addKeyBinding("ControlLeft", "SNAP");
   Input.addKeyBinding("ControlRight", "SNAP");
@@ -20,16 +20,25 @@ Basic3D.loadModule("Snapping", function(Input, Geometry) {
         targets.forEach(function (v) {
           var pos = v.obj.position;
           if(inRange(center.y, pos.y) && inRange(center.z, pos.z)) {
-            //Snap on X
-            console.log("SNAP Y on vert " + v.obj.id);
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(center);
+            geometry.vertices.push(pos);
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0000ff}));
+            Scene.add(line);
           }
           if(inRange(center.x, pos.x) && inRange(center.z, pos.z)) {
-            //Snap on Y
-            console.log("SNAP Y on vert " + v.obj.id);
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(center);
+            geometry.vertices.push(pos);
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0000ff}));
+            Scene.add(line);
           }
           if(inRange(center.x, pos.x) && inRange(center.y, pos.y)) {
-            //Snap on Z
-            console.log("SNAP Z on vert " + v.obj.id);
+            var geometry = new THREE.Geometry();
+            geometry.vertices.push(center);
+            geometry.vertices.push(pos);
+            var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({color: 0x0000ff}));
+            Scene.add(line);
           }
         });
       }
