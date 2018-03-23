@@ -8,12 +8,9 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
     var v = [];
     var e = [];
     var f = [];
-    var v1 = Geometry.Vertex(face.v1.obj.position);
-    var v2 = Geometry.Vertex(face.v2.obj.position);
-    var v3 = Geometry.Vertex(face.v3.obj.position);
-    v.push(v1);
-    v.push(v2);
-    v.push(v3);
+    v.push(Geometry.Vertex(face.v1.obj.position));
+    v.push(Geometry.Vertex(face.v2.obj.position));
+    v.push(Geometry.Vertex(face.v3.obj.position));
     e.push(Geometry.Edge(v1, v2));
     e.push(Geometry.Edge(v2, v3));
     e.push(Geometry.Edge(v3, v1));
