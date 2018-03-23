@@ -70,12 +70,30 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
         if(performSelection(Geometry.getFaces())) return;
         if (!Input.action("MULT_SELECT_MOD")) updateAll(false);
       }
+    },
+    onkeydown: function () {
+      if(Input.mode("EDIT")){
+        if(Input.action("SELECT_ALL")) {
+          if(Input.action("SELECT_ALL_MOD")){
+            if(Input.action("DESELECT_ALL_MOD")){
+              updateAll(false);
+            } else {
+              updateAll(true);
+            }
+          }
+        }
+      }
     }
   });
 
   Input.addKeyBinding("LMB", "SELECT_GEOM");
+  Input.addKeyBinding("KeyA", "SELECT_ALL")
   Input.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
   Input.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
+  Input.addKeyBinding("ControlLeft", "SELECT_ALL_MOD");
+  Input.addKeyBinding("ControlRight", "SELECT_ALL_MOD");
+  Input.addKeyBinding("ShiftLeft", "DESELECT_ALL_MOD");
+  Input.addKeyBinding("ShiftRight", "DESELECT_ALL_MOD");
 
   TipsDisplay.registerMode({
     name: "EDIT",
