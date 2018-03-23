@@ -5,31 +5,24 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
   var move, newGeo;
 
   function extrudeFace(face) {
+    var fv = [];
     var v = [];
     var e = [];
     var f = [];
-    var v1 = Geometry.Vertex(face.v1.obj.position);
-    var v2 = Geometry.Vertex(face.v2.obj.position);
-    var v3 = Geometry.Vertex(face.v3.obj.position);
-    v.push(v1);
-    v.push(v2);
-    v.push(v3);
-    e.push(Geometry.Edge(v1, v2));
-    e.push(Geometry.Edge(v2, v3));
-    e.push(Geometry.Edge(v3, v1));
-    e.push(Geometry.Edge(v1, face.v2));
-    e.push(Geometry.Edge(v3, face.v1));
-    e.push(Geometry.Edge(v2, face.v3));
-    e.push(Geometry.Edge(v1, face.v1));
-    e.push(Geometry.Edge(v2, face.v2));
-    e.push(Geometry.Edge(v3, face.v3));
-    f.push(Geometry.Face(v1, v2, v3));
-    f.push(Geometry.Face(v2, v1, face.v2));
-    f.push(Geometry.Face(v1, face.v2, face.v1));
-    f.push(Geometry.Face(v3, v2, face.v3));
-    f.push(Geometry.Face(v2, face.v3, face.v2));
-    f.push(Geometry.Face(v1, v3, face.v1));
-    f.push(Geometry.Face(v3, face.v1, face.v3));
+    fv.push(face.v1);
+    fv.push(face.v2);
+    fv.push(face.v3);
+    v.push(Geometry.Vertex(face.v1.obj.position));
+    v.push(Geometry.Vertex(face.v2.obj.position));
+    v.push(Geometry.Vertex(face.v3.obj.position));
+    f.push(Geometry.Face(v[0], v[1], v[2]));
+    for(i = 0; i < 3; i++) {
+      e.push(Geometry.Edge(v[i], v[(i+1) % 3]));
+      e.push(Geometry.Edge(v[i], fv[(i+1) % 3]));
+      e.push(Geometry.Edge(v[i], fv[i]));
+      f.push(Geometry.Face(v[i], v[(i+1) % 3], fv[(i+1) % 3]));
+      f.push(Geometry.Face(v[i], fv[i], fv[(i+1) % 3]));
+    }
     return {
       v : v,
       e : e,
@@ -115,5 +108,4 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
   Input.addKeyBinding("KeyY", "TOGGLE_EXTRUSION", "Toggle Extrusion");
 
   return {};
-
 });
