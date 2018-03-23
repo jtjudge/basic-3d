@@ -1,6 +1,6 @@
 
 Basic3D.loadModule("Input", function (Bindings) {
-  
+
   var swap = null;
 
   var mode = "EDIT";
@@ -108,8 +108,8 @@ Basic3D.loadModule("Input", function (Bindings) {
     setMode: function (name) {
       swap = name;
     },
-    action: function (name) { 
-      return Bindings.action(name); 
+    action: function (name) {
+      return Bindings.action(name);
     },
     addKeyBinding: function (key, action, display) {
       Bindings.register({
