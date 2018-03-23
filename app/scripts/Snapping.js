@@ -6,6 +6,8 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
 
   var tol = 1.0;
 
+  var lines = [];
+
   function inRange(val, targ) {
     return val > targ - tol && val < targ + tol;
   }
@@ -25,6 +27,7 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
             geometry.vertices.push(center);
             geometry.vertices.push(pos);
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
+            lines.push(line);
             Scene.add(line);
             return true;
           }
@@ -34,6 +37,7 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
             geometry.vertices.push(center);
             geometry.vertices.push(pos);
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
+            lines.push(line);
             Scene.add(line);
             return true;
           }
@@ -43,6 +47,7 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
             geometry.vertices.push(center);
             geometry.vertices.push(pos);
             var line = new THREE.Line(geometry, new THREE.LineBasicMaterial( {color: 0x0000ff}));
+            lines.push(line);
             Scene.add(line);
             return true;
           }
@@ -51,7 +56,10 @@ Basic3D.loadModule("Snapping", function(Input, Geometry, Scene) {
     },
 
     remove: function() {
-      line.dispose();
+      lines.forEach(function(l) {
+        Scene.remove(l);
+      });
+      lines = [];
       return true;
     }
   }

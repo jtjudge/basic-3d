@@ -5,6 +5,8 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
 
   var move;
 
+  var lock = false;
+
   function active(mode) {
     return mode === "TRANSLATE_X"
       || mode === "TRANSLATE_Y"
@@ -29,19 +31,19 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
       }
     },
     onmousemove: function () {
-      if (Input.mode("TRANSLATE_X")) {
+      if (Input.mode("TRANSLATE_X") && !lock) {
         var dx = Scene.getMovementOnXZ().diff.x;
         Geometry.getSelected().forEach(function (v) {
           translateVertex(v, new THREE.Vector3(dx, 0, 0));
         });
       }
-      if (Input.mode("TRANSLATE_Y")) {
+      if (Input.mode("TRANSLATE_Y") && !lock) {
         var dy = Scene.getMovementOnY();
         Geometry.getSelected().forEach(function (v) {
           translateVertex(v, new THREE.Vector3(0, dy, 0));
         });
       }
-      if (Input.mode("TRANSLATE_Z")) {
+      if (Input.mode("TRANSLATE_Z") && !lock) {
         var dz = Scene.getMovementOnXZ().diff.z;
         Geometry.getSelected().forEach(function (v) {
           translateVertex(v, new THREE.Vector3(0, 0, dz));
@@ -49,7 +51,7 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
       }
     },
     onkeydown: function () {
-      if (Input.mode("EDIT")) {
+      if (Input.mode("EDIT") && !lock) {
         if (Input.action("TOGGLE_TRANSLATE_MODE")) {
           if (Geometry.getSelected().length > 0) {
             move = History.startMove(Geometry.getSelected());
@@ -59,10 +61,10 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
       }
       else if(Input.action("SNAP")) {
         if(Snapping.update()) {
-        Input.setMode("LOCK");
+        lock = true;
         }
       }
-       else if (active(Input.mode()) && !Input.mode("LOCK")) {
+       else if (active(Input.mode()) && !lock) {
         if (Input.action("TOGGLE_TRANSLATE_MODE")) {
           move.cancel();
           Input.setMode("EDIT");
@@ -91,9 +93,9 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
       }
     },
     onkeyup: function() {
-      if(Input.mode("LOCK")) {
+      if(lock) {
         Snapping.remove();
-        Input.setMode("EDIT");
+        lock = false;
       }
     },
     onmode: function () {
