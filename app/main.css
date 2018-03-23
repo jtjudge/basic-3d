@@ -114,3 +114,9 @@ body {
 		-1px 1px 0 #000,
 		1px 1px 0 #000;
 }
+
+.edit-menu-section {
+  background-color: darkgray;
+  border: 1px solid darkslategray;
+  padding: 10px;
+}

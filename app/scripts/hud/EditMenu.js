@@ -1,61 +1,53 @@
 
 Basic3D.loadModule("EditMenu", function (Display) {
 
+  var components = [], queue = [];
+
   var menu;
 
-  function button(parent, info) {
-    var button = document.createElement("div");
-    button.className = "btn edit-menu-btn";
-    button.innerHTML = info.label;
-    button.onclick = info.onclick;
-    parent.appendChild(button);
-  }
+  var loaded = false;
 
-  function label(parent, info) {
+  registerComponent(function () {
     var label = document.createElement("div");
+    label.innerHTML = "Edit Menu";
     label.className = "edit-menu-label";
-    label.innerHTML = info;
-    parent.appendChild(label);
+    return {
+      name: "Menu Title",
+      element: label,
+      update: function () {}
+    }
+  });
+
+  function registerComponent (func) {
+    if (!loaded) queue.push(func);
+    if (loaded) {
+      var comp = func();
+      components.push(comp);
+      menu.addItem(comp.element);
+      console.log(components);
+    }
   }
 
   window.onload = function() {
     menu = new Display.Menu();
-
-    var row1 = document.createElement("div");
-    var row2 = document.createElement("div");
-    var row3 = document.createElement("div");
-
-    label(row1, "Edit Menu");
-    button(row1, {
-      label: "<<<",
-      onclick: function () {
-        menu.hide();
-      }
-    });
-
-    button(row2, {
-      label: "Create Vertex",
-      onclick: function () {
-        console.log("Create vertex");
-      }
-    });
-    button(row3, {
-      label: "Delete Vertex",
-      onclick: function () {
-        console.log("Delete vertex");
-      }
-    });
-
-    menu.addItem(row1);
-    menu.addItem(row2);
-    menu.addItem(row3);
-
-    menu.align({ x: "left", y: "center" });
+    menu.align({x: "left", y: "center"});
+    while(queue.length > 0) {
+      var comp = (queue.shift())();
+      components.push(comp);
+      menu.addItem(comp.element);
+      console.log(components);
+    }
+    loaded = true;
     menu.show();
   };
 
   return {
-
+    update: function () {
+      components.forEach(function(comp) {
+        comp.update();
+      });
+    },
+    registerComponent: registerComponent
   };
 
 });

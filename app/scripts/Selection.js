@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDisplay) {
+Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDisplay, EditMenu) {
 
   function updateConnected(vert) {
     vert.edges.forEach(function (e) {
@@ -80,6 +80,30 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
   TipsDisplay.registerMode({
     name: "EDIT",
     display: "Edit"
+  });
+
+  EditMenu.registerComponent(function () {
+    var selectMenu = document.createElement("div");
+    selectMenu.className = "edit-menu-section";
+    return {
+      name: "Selection Menu",
+      element: selectMenu,
+      update: function () {
+        var num = Geometry.getSelected().length;
+        if (num === 0) {
+          selectMenu.style.display = "none";
+          selectMenu.innerHTML = "";
+        } else {
+          var center = Geometry.getCenter();
+          var position = `(${center.x.toFixed(1)}, ${center.y.toFixed(1)}, ${center.y.toFixed(1)})`;
+          selectMenu.style.display = "block";
+          selectMenu.innerHTML = 
+          `<div>Selection:</div>
+          <div>${num} vertices</div>
+          <div>${position}</div>`;
+        }
+      }
+    };
   });
 
   return {
