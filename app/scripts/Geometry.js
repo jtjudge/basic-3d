@@ -152,6 +152,12 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
       });
     },
 
+    getSelectedFaces: function() {
+      return faces.filter(function(f) {
+        return f.selected;
+      });
+    },
+
     getCenter: function () {
       var minX = Infinity, maxX = -Infinity,
         minY = Infinity, maxY = -Infinity,
