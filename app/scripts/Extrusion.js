@@ -5,17 +5,12 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
   var move, newGeo;
 
   function extrudeFace(face) {
-    var fv = [];
-    var v = [];
+    var fv = [face.v1, face.v2, face.v3];
+    var v = fv.map(function(vtx) {
+      return Geometry.Vertex(vtx.obj.position);
+    });
     var e = [];
-    var f = [];
-    fv.push(face.v1);
-    fv.push(face.v2);
-    fv.push(face.v3);
-    v.push(Geometry.Vertex(face.v1.obj.position));
-    v.push(Geometry.Vertex(face.v2.obj.position));
-    v.push(Geometry.Vertex(face.v3.obj.position));
-    f.push(Geometry.Face(v[0], v[1], v[2]));
+    var f = [Geometry.Face(v[0], v[1], v[2])];
     for(i = 0; i < 3; i++) {
       e.push(Geometry.Edge(v[i], v[(i+1) % 3]));
       e.push(Geometry.Edge(v[i], fv[(i+1) % 3]));
