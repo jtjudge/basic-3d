@@ -4,32 +4,66 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
   var moveStarted = false;
   var move, newGeo;
 
-  function faceFromExistingFace(face) {
+  function extrudeFace(face) {
+    var v = [];
+    var e = [];
+    var f = [];
     var v1 = Geometry.Vertex(face.v1.obj.position);
     var v2 = Geometry.Vertex(face.v2.obj.position);
     var v3 = Geometry.Vertex(face.v3.obj.position);
-    var e1 = Geometry.Edge(v1, v2);
-    var e2 = Geometry.Edge(v2, v3);
-    var e3 = Geometry.Edge(v1, v3);
-    var f = Geometry.Face(v1, v2, v3);
-    Scene.add(v1);
-    Scene.add(f.obj);
+    v.push(v1);
+    v.push(v2);
+    v.push(v3);
+    e.push(Geometry.Edge(v1, v2));
+    e.push(Geometry.Edge(v2, v3));
+    e.push(Geometry.Edge(v3, v1));
+    e.push(Geometry.Edge(v1, face.v2));
+    e.push(Geometry.Edge(v3, face.v1));
+    e.push(Geometry.Edge(v2, face.v3));
+    e.push(Geometry.Edge(v1, face.v1));
+    e.push(Geometry.Edge(v2, face.v2));
+    e.push(Geometry.Edge(v3, face.v3));
+    f.push(Geometry.Face(v1, v2, v3));
+    f.push(Geometry.Face(v2, v1, face.v2));
+    f.push(Geometry.Face(v1, face.v2, face.v1));
+    f.push(Geometry.Face(v3, v2, face.v3));
+    f.push(Geometry.Face(v2, face.v3, face.v2));
+    f.push(Geometry.Face(v1, v3, face.v1));
+    f.push(Geometry.Face(v3, face.v1, face.v3));
     return {
-      v1 : v1,
-      v2 : v2,
-      v3 : v3,
-      e1 : e1,
-      e2 : e2,
-      e3 : e3,
+      v : v,
+      e : e,
       f : f
     };
   }
 
-  function startMove(face) {
-    newGeo = faceFromExistingFace(face[0]);
-    face.selected = false;
-    newGeo.selected = true;
+  function addGeometry(geometry) {
+    geometry.v.forEach(function (vert) {
+      Geometry.addVertex(vert);
+    });
+    geometry.e.forEach(function (edge) {
+      Geometry.addEdge(edge);
+    });
+    geometry.f.forEach(function (face) {
+      Geometry.addFace(face);
+    });
+  }
 
+  function removeGeometry(geometry) {
+    geometry.v.forEach(function (vert) {
+      Geometry.removeVertex(vert);
+    });
+    geometry.e.forEach(function (edge) {
+      Geometry.removeEdge(edge);
+    });
+    geometry.f.forEach(function (face) {
+      Geometry.removeFace(face);
+    });
+  }
+
+  function startMove(face) {
+    newGeo = extrudeFace(face[0]);
+    addGeometry(newGeo);
   }
 
   function translateVertex(v, diff) {
@@ -43,10 +77,17 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
   }
 
   Input.register({
+    onmousedown: function () {
+      if(Input.mode("Extrude") && moveStarted){
+        Controls.enable(["orbit"]);
+        Input.setMode("EDIT");
+        moveStarted = false;
+      }
+    },
     onkeydown: function() {
       if(Input.action("TOGGLE_EXTRUSION")) {
         if(Input.mode("EDIT") && !moveStarted) {
-          if(Geometry.getSelectedFaces().length = 1) {
+          if(Geometry.getSelectedFaces().length === 1) {
             Controls.disable(["orbit"]);
             Input.setMode("Extrude");
             moveStarted = true;
@@ -54,7 +95,7 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
           }
         } else if(Input.mode("Extrude") && moveStarted) {
           Controls.enable(["orbit"]);
-          Scene.remove(newGeo.f.obj);
+          removeGeometry(newGeo);
           Input.setMode("EDIT");
           moveStarted = false;
         }
@@ -65,9 +106,9 @@ Basic3D.loadModule("Extrusion", function (Input, Scene, Controls, Geometry, Sele
         var dx = Scene.getMovementOnXZ().diff.x;
         var dy = Scene.getMovementOnY();
         var dz = Scene.getMovementOnXZ().diff.z;
-        Geometry.getSelected().forEach(function (v) {
-          translateVertex(v, new THREE.Vector3(dx, dy, dz));
-        });
+        translateVertex(newGeo.v[0], new THREE.Vector3(dx, dy, dz));
+        translateVertex(newGeo.v[1], new THREE.Vector3(dx, dy, dz));
+        translateVertex(newGeo.v[2], new THREE.Vector3(dx, dy, dz));
       }
     }
   });
