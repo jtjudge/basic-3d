@@ -52,6 +52,7 @@ Basic3D.loadModule("Input", function (Bindings) {
   }
 
   function keydown(event) {
+    event.preventDefault();
     handle("onkeydown", event.code, true);
   }
 

@@ -56,12 +56,14 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
       xDist += (Input.coords().x1 - Input.coords().x2) * 0.25;
       yDist += (Input.coords().y2 - Input.coords().y1) * 0.25;
     } else {
-      if (Input.action("CAM_LEFT")) xDist -= speed;
-      if (Input.action("CAM_RIGHT")) xDist += speed;
-      if (Input.action("CAM_UP")) yDist += speed;
-      if (Input.action("CAM_DOWN")) yDist -= speed;
-      if (Input.action("CAM_IN")) zDist -= speed;
-      if (Input.action("CAM_OUT")) zDist += speed;
+      if (!Input.action("SELECT_ALL_MOD")){
+        if (Input.action("CAM_LEFT")) xDist -= speed;
+        if (Input.action("CAM_RIGHT")) xDist += speed;
+        if (Input.action("CAM_UP")) yDist += speed;
+        if (Input.action("CAM_DOWN")) yDist -= speed;
+        if (Input.action("CAM_IN")) zDist -= speed;
+        if (Input.action("CAM_OUT")) zDist += speed;
+      }
     }
     cam.translateX(xDist);
     cam.translateY(yDist);

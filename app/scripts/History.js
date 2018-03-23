@@ -21,8 +21,10 @@ Basic3D.loadModule("History", function (Input) {
   Input.register({
     onkeydown: function () {
       if (Input.action("HIST_MOD")) {
-        if (Input.action("HIST_UNDO")) undo();
-        if (Input.action("HIST_REDO")) redo();
+        if(!(Input.mode("VERTEX_XZ") || Input.mode("VERTEX_Y") || Input.mode("TRANSLATE_X") || Input.mode("TRANSLATE_Y") || Input.mode("TRANSLATE_Z") || Input.mode("SCALE_X") || Input.mode("SCALE_Y") || Input.mode("SCALE_Z") || Input.mode("ROTATE_X") || Input.mode("ROTATE_Y") || Input.mode("ROTATE_Z"))){
+          if (Input.action("HIST_UNDO")) undo();
+          if (Input.action("HIST_REDO")) redo();
+        }
       }
     }
   });
