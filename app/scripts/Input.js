@@ -62,7 +62,11 @@ Basic3D.loadModule("Input", function (Bindings) {
 
   function mousedown(event) {
     event.preventDefault();
-    handle("onmousedown", mouseEvents[event.which], true);
+    var menu = event.path.some(function(el) {
+      return el.className !== undefined 
+        && el.className.indexOf("menu") > -1;
+    });
+    if (!menu) handle("onmousedown", mouseEvents[event.which], true);
   }
 
   function mouseup(event) {
