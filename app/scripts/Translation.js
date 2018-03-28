@@ -172,21 +172,13 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
   });
 
   return {
+    active: function () {
+      return active(Input.mode());
+    },
     snapped: function () {
       return lock;
     },
     snap: function (pos) {
-      var center = Geometry.getCenter();
-      var diff = pos.sub(center);
-      Geometry.getSelected().forEach(function(v) {
-        v.obj.position.add(diff);
-        v.edges.forEach(function (e) {
-          e.obj.geometry.verticesNeedUpdate = true;
-        });
-        v.faces.forEach(function (f) {
-          f.obj.geometry.verticesNeedUpdate = true;
-        });
-      });
       lock = true;
     },
     unsnap: function () {

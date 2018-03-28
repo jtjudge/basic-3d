@@ -5,7 +5,7 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
   var MAX_DIST = 120;
   var MAX_HEIGHT = 60;
 
-  var marker;
+  var marker, locked = false;
 
   function showMarker() {
     if (!marker) {
@@ -51,15 +51,21 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
       }
     },
     onkeydown: function () {
+
       if (Input.action("TOGGLE_VERTEX_MODE")) {
+        
         if (Input.mode("VERTEX_XZ") || Input.mode("VERTEX_Y")) {
           Input.setMode("EDIT");
         } else if (Input.mode("EDIT") && Geometry.getVertices().length < MAX_VERTS) {
           Input.setMode("VERTEX_XZ");
         }
+
       }
+
       if (!(Input.mode("EDIT") || Input.mode("BRUSH_SELECT") || Input.mode("BOX_SELECT"))) return;
+
       if (Input.action("DELETE_VERTEX")) {
+
         var selected = Geometry.getSelected();
         var move = {
           undo: function () {
@@ -91,53 +97,38 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
         };
         move.redo();
         History.addMove(move);
+
       } else if (Input.action("PLACE_EDGE")) {
+
         var selected = Geometry.getSelected();
-        if (selected.length === 2) {
-          var v1 = selected[0];
-          var v2 = selected[1];
-          var edge = Geometry.Edge(v1, v2);
-          var move = {
-            undo: function () {
-              Geometry.removeEdge(edge);
-              Selection.toggleSelection(edge, false);
-            },
-            redo: function () {
-              Geometry.addEdge(edge);
-              Selection.toggleSelection(edge, true);
-            }
-          };
-          move.redo();
-          History.addMove(move);
-        }
-        if(selected.length > 2){
+        if(selected.length > 1) {
           var edges = [];
           for (var i = 0; i < selected.length - 1; i++) {
             var v1 = selected[i];
             var v2 = selected[i+1];
             var edge1 = Geometry.Edge(v1, v2);
             edges.push(edge1);
-        }
-        var move = {
-          undo: function () {
-            edges.forEach(function(e) {
-              Geometry.removeEdge(e);
-              Selection.toggleSelection(e, false);
-            });
-          },
-          redo: function () {
-            edges.forEach(function(e) {
-              Geometry.addEdge(e);
-              Selection.toggleSelection(e, true);
-            });
           }
-        };
-        move.redo();
-        History.addMove(move);
-      }
-    
-        
+          var move = {
+            undo: function () {
+              edges.forEach(function(e) {
+                Geometry.removeEdge(e);
+                Selection.toggleSelection(e, false);
+              });
+            },
+            redo: function () {
+              edges.forEach(function(e) {
+                Geometry.addEdge(e);
+                Selection.toggleSelection(e, true);
+              });
+            }
+          };
+          move.redo();
+          History.addMove(move);
+        }
+
       } else if (Input.action("PLACE_FACE")) {
+
         var selected = Geometry.getSelected();
         if (selected.length > 2) {
           var edges = [], faces = [];
@@ -179,11 +170,12 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
         }
 
       }
+
     },
     onmousemove: function () {
-      if (Input.mode("VERTEX_XZ")) {
+      if (Input.mode("VERTEX_XZ") && !locked) {
         moveMarker();
-      } else if (Input.mode("VERTEX_Y")) {
+      } else if (Input.mode("VERTEX_Y") && !locked) {
         marker.position.y += Scene.getMovementOnY();
         if (marker.position.y > MAX_HEIGHT) marker.position.y = MAX_HEIGHT;
         if (marker.position.y < -MAX_HEIGHT) marker.position.y = -MAX_HEIGHT;
@@ -285,6 +277,18 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
     },
     marker: function () {
       return (marker === undefined) ? new THREE.Vector3() : marker.position;
+    },
+    markerObj: function () {
+      return { obj: marker, edges: [], faces: [] };
+    },
+    snapped: function () {
+      return locked;
+    },
+    snap: function () {
+      locked = true;
+    },
+    unsnap: function () {
+      locked = false;
     }
   };
 
