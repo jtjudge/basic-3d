@@ -20,13 +20,7 @@ Basic3D.loadModule("Input", function (Bindings) {
     onresize: [],
     onmode: []
   };
-
-  var mouseEvents = {
-    1: "LMB",
-    2: "MMB",
-    3: "RMB"
-  };
-
+  
   document.onkeydown = keydown;
   document.onkeyup = keyup;
   document.onmousedown = mousedown;
@@ -66,12 +60,12 @@ Basic3D.loadModule("Input", function (Bindings) {
       return el.className !== undefined 
         && el.className.indexOf("menu") > -1;
     });
-    if (!menu) handle("onmousedown", mouseEvents[event.which], true);
+    if (!menu) handle("onmousedown", ["LMB", "MMB", "RMB"][event.which - 1], true);
   }
 
   function mouseup(event) {
     event.preventDefault();
-    handle("onmouseup", mouseEvents[event.which], false);
+    handle("onmouseup", ["LMB", "MMB", "RMB"][event.which - 1], false);
   }
 
   function mousemove(event) {
