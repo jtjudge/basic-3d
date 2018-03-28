@@ -183,8 +183,9 @@ Basic3D.loadModule("Controls", function (Input, Scene) {
   Input.addKeyBinding("KeyS", "CAM_DOWN", "Shift Camera Down");
   Input.addKeyBinding("KeyA", "CAM_LEFT", "Shift Camera Left");
   Input.addKeyBinding("KeyD", "CAM_RIGHT", "Shift Camera Right");
-  Input.addKeyBinding("KeyQ", "CAM_IN", "Shift Camera In");
-  Input.addKeyBinding("KeyZ", "CAM_OUT", "Shift Camera Out");
+
+  Input.addKeyBinding("Equal", "CAM_IN", "Shift Camera In");
+  Input.addKeyBinding("Minus", "CAM_OUT", "Shift Camera Out");
 
   Input.addKeyBinding("Space", "CAM_ORBIT");
   Input.addInvertBinding("Space", "CAM_SHIFT");
