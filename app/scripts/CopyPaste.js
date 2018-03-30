@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, TipsDisplay){
+Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, TipsDisplay, History){
 
   var vertices = [];
   var edges = [];
@@ -9,7 +9,6 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
     onkeydown: function (){
       if(Input.action("READY_MOD") && Input.mode("EDIT")){
         if(Input.action("COPY")){
-          console.log("COPY");
           Geometry.getVertices().forEach(function (vertex) {
             if(vertex.selected){
               vertices.push(Geometry.Vertex(vertex.obj.position));
@@ -41,30 +40,49 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
           });
         }
         if(Input.action("PASTE")){
-          console.log("PASTE");
-          Geometry.getVertices().forEach(function (vertex) {
-            Selection.toggleSelection(vertex, false);
-          });
-          vertices.forEach(function(vertex){
-            Geometry.addVertex(vertex);
-            Selection.toggleSelection(vertex, true);
-          });
-
-          Geometry.getEdges().forEach(function (edge) {
-            Selection.toggleSelection(edge, false);
-          });
-          edges.forEach(function(edge){
-            Geometry.addEdge(edge);
-            Selection.toggleSelection(edge, true);
-          });
-
-          Geometry.getFaces().forEach(function (face) {
-            Selection.toggleSelection(face, false);
-          });
-          faces.forEach(function(face){
-            Geometry.addFace(face);
-            Selection.toggleSelection(face, true);
-          });
+          var move = {
+            undo: function () {
+              
+              vertices.forEach(function(vertex){
+                Geometry.removeVertex(vertex);
+              });
+    
+              edges.forEach(function(edge){
+                Geometry.removeEdge(edge);
+              });
+    
+              faces.forEach(function(face){
+                Geometry.removeFace(face);
+              });
+            },
+            redo: function () {
+              Geometry.getVertices().forEach(function (vertex) {
+                Selection.toggleSelection(vertex, false);
+              });
+              vertices.forEach(function(vertex){
+                Geometry.addVertex(vertex);
+                Selection.toggleSelection(vertex, true);
+              });
+    
+              Geometry.getEdges().forEach(function (edge) {
+                Selection.toggleSelection(edge, false);
+              });
+              edges.forEach(function(edge){
+                Geometry.addEdge(edge);
+                Selection.toggleSelection(edge, true);
+              });
+    
+              Geometry.getFaces().forEach(function (face) {
+                Selection.toggleSelection(face, false);
+              });
+              faces.forEach(function(face){
+                Geometry.addFace(face);
+                Selection.toggleSelection(face, true);
+              });
+            }
+          };
+          move.redo();
+          History.addMove(move);
         }
       }
     }
