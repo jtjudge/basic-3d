@@ -51,6 +51,13 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
     console.log("Copied " + clipboard.verts.length + " verts");
   }
 
+  function cut() {
+    copy();
+    clipboard.verts.forEach(Geometry.removeVertex);
+    clipboard.edges.forEach(Geometry.removeEdge);
+    clipboard.faces.forEach(Geometry.removeFace);
+  }
+
   function paste() {
     if (empty) return;
     var board = clone(clipboard);
@@ -83,8 +90,9 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
   Input.register({
     onkeydown: function (){
       if(Input.action("READY_MOD") && Input.mode("EDIT")){
-        if(Input.action("COPY")) copy();
-        if(Input.action("PASTE")) paste();
+        if (Input.action("COPY")) copy();
+        if (Input.action("PASTE")) paste();
+        if (Input.action("CUT")) cut();
       }
     }
   });
@@ -93,11 +101,16 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
     return copy;
   });
 
+  Basic3D.loadScript("Cut", function () {
+    return cut;
+  });
+
   Basic3D.loadScript("Paste", function () {
     return paste;
   });
 
   Input.addKeyBinding("KeyC", "COPY");
+  Input.addKeyBinding("KeyX", "CUT");
   Input.addKeyBinding("KeyV", "PASTE");
   Input.addKeyBinding("ControlLeft", "READY_MOD");
   Input.addKeyBinding("ControlRight", "READY_MOD");
@@ -106,6 +119,16 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
     mode: "EDIT",
     builder: function (get) {
       return `${get("READY_MOD")} + ${get("COPY")} to copy`;
+    },
+    condition: function () {
+      return Geometry.getSelected().length > 0;
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("READY_MOD")} + ${get("CUT")} to cut`;
     },
     condition: function () {
       return Geometry.getSelected().length > 0;

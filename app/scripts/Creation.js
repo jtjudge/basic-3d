@@ -64,7 +64,7 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
 
       if (!(Input.mode("EDIT") || Input.mode("BRUSH_SELECT") || Input.mode("BOX_SELECT"))) return;
 
-      if (Input.action("DELETE_VERTEX")) {
+      if (Input.action("DELETE_VERTEX") && !Input.action("READY_MOD")) {
 
         var selected = Geometry.getSelected();
         var move = {

@@ -52,6 +52,12 @@ app.on("ready", function () {
       }
     });
     menu.submenu.push({
+      label: "Cut",
+      click: function () {
+        run("Cut");
+      }
+    });
+    menu.submenu.push({
       label: "Paste",
       click: function () {
         run("Paste");
