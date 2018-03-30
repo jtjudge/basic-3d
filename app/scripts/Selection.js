@@ -133,7 +133,8 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
   });
 
   return {
-    toggleSelection: updateTarget
+    toggleSelection: updateTarget,
+    toggleAll: updateAll
   };
 
 });

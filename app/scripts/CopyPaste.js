@@ -1,81 +1,78 @@
 
 Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, TipsDisplay, History){
 
-  var vertices = [];
-  var edges = [];
-  var faces = [];
+  var clipboard = {};
+  var empty = true;
 
-  function copy(){
-    Geometry.getVertices().forEach(function (vertex) {
-      if(vertex.selected){
-        vertices.push(Geometry.Vertex(vertex.obj.position));
-      }
-    });
-    Geometry.getEdges().forEach(function (edge) {
-      if(edge.selected){
-        var v1 = edge.v1;
-        var v2 = edge.v2;
-        vertices.forEach(function (vertex){
-          if(v1.obj.position.equals(vertex.obj.position)) v1 = vertex;
-          if(v2.obj.position.equals(vertex.obj.position)) v2 = vertex;
-        });
-        edges.push(Geometry.Edge(v1, v2));
-      }
-    });
-    Geometry.getFaces().forEach(function (face) {
-      if(face.selected){
-        var v1 = face.v1;
-        var v2 = face.v2;
-        var v3 = face.v3
-        vertices.forEach(function (vertex){
-          if(v1.obj.position.equals(vertex.obj.position)) v1 = vertex;
-          if(v2.obj.position.equals(vertex.obj.position)) v2 = vertex;
-          if(v3.obj.position.equals(vertex.obj.position)) v3 = vertex;
-        });
-        faces.push(Geometry.Face(v1, v2, v3));
-      }
-    });
+  function clear() {
+    clipboard = {};
+    empty = true;
   }
 
-  function paste(){
+  function clone(obj) {
+    var newObj = {};
+
+    newObj.verts = obj.verts.map(function (v) {
+      return { newVert: Geometry.Vertex(v.obj.position), oldVert: v };
+    });
+    newObj.edges = obj.edges.map(function (e) {
+      var v1 = newObj.verts.find(function (v) {
+        return v.oldVert === e.v1;
+      }).newVert;
+      var v2 = newObj.verts.find(function (v) {
+        return v.oldVert === e.v2;
+      }).newVert;
+      return Geometry.Edge(v1, v2);
+    });
+    newObj.faces = obj.faces.map(function (f) {
+      var v1 = newObj.verts.find(function (v) {
+        return v.oldVert === f.v1;
+      }).newVert;
+      var v2 = newObj.verts.find(function (v) {
+        return v.oldVert === f.v2;
+      }).newVert;
+      var v3 = newObj.verts.find(function (v) {
+        return v.oldVert === f.v3;
+      }).newVert;
+      return Geometry.Face(v1, v2, v3);
+    });
+    newObj.verts = newObj.verts.map(function (v) { return v.newVert; });
+
+    return newObj;
+  }
+
+  function copy() {
+    clipboard = {
+      verts: Geometry.getSelected(),
+      edges: Geometry.getEdges().filter(function (e) { return e.selected; }),
+      faces: Geometry.getSelectedFaces()
+    };
+    empty = false;
+    console.log("Copied " + clipboard.verts.length + " verts");
+  }
+
+  function paste() {
+    if (empty) return;
+    var board = clone(clipboard);
     var move = {
       undo: function () {
-        
-        vertices.forEach(function(vertex){
-          Geometry.removeVertex(vertex);
-        });
-
-        edges.forEach(function(edge){
-          Geometry.removeEdge(edge);
-        });
-
-        faces.forEach(function(face){
-          Geometry.removeFace(face);
-        });
+        board.verts.forEach(Geometry.removeVertex);
+        board.edges.forEach(Geometry.removeEdge);
+        board.faces.forEach(Geometry.removeFace);
       },
       redo: function () {
-        Geometry.getVertices().forEach(function (vertex) {
-          Selection.toggleSelection(vertex, false);
+        Selection.toggleAll(false);
+        board.verts.forEach(function (v) {
+          Geometry.addVertex(v);
+          Selection.toggleSelection(v, true);
         });
-        vertices.forEach(function(vertex){
-          Geometry.addVertex(vertex);
-          Selection.toggleSelection(vertex, true);
+        board.edges.forEach(function (e) {
+          Geometry.addEdge(e);
+          Selection.toggleSelection(e, true);
         });
-
-        Geometry.getEdges().forEach(function (edge) {
-          Selection.toggleSelection(edge, false);
-        });
-        edges.forEach(function(edge){
-          Geometry.addEdge(edge);
-          Selection.toggleSelection(edge, true);
-        });
-
-        Geometry.getFaces().forEach(function (face) {
-          Selection.toggleSelection(face, false);
-        });
-        faces.forEach(function(face){
-          Geometry.addFace(face);
-          Selection.toggleSelection(face, true);
+        board.faces.forEach(function (f) {
+          Geometry.addFace(f);
+          Selection.toggleSelection(f, true);
         });
       }
     };
@@ -86,12 +83,8 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
   Input.register({
     onkeydown: function (){
       if(Input.action("READY_MOD") && Input.mode("EDIT")){
-        if(Input.action("COPY")){
-          copy();
-        }
-        if(Input.action("PASTE")){
-          paste();
-        }
+        if(Input.action("COPY")) copy();
+        if(Input.action("PASTE")) paste();
       }
     }
   });
@@ -113,14 +106,20 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, Tip
     mode: "EDIT",
     builder: function (get) {
       return `${get("READY_MOD")} + ${get("COPY")} to copy`;
-    }   
+    },
+    condition: function () {
+      return Geometry.getSelected().length > 0;
+    }
   });
 
   TipsDisplay.registerTip({
     mode: "EDIT",
     builder: function (get) {
       return `${get("READY_MOD")} + ${get("PASTE")} to paste`;
-    }   
+    },
+    condition: function () {
+      return !empty;
+    }
   });
 
   return {};
