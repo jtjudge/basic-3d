@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection){
+Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection, TipsDisplay){
 
   var vertices = [];
   var edges = [];
@@ -74,5 +74,20 @@ Basic3D.loadModule("CopyPaste", function (Input, Scene, Geometry, Selection){
   Input.addKeyBinding("KeyV", "PASTE");
   Input.addKeyBinding("ControlLeft", "READY_MOD");
   Input.addKeyBinding("ControlRight", "READY_MOD");
+  
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("READY_MOD")} + ${get("COPY")} to copy`;
+    }   
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("READY_MOD")} + ${get("PASTE")} to paste`;
+    }   
+  });
+
   return {};
 });
