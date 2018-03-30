@@ -19,7 +19,6 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
   }
 
   function updateVertex(vert, value) {
-    console.log("Vertex " + vert.obj.id);
     vert.selected = value;
     vert.obj.material.color.set((vert.selected) ? Colors.VERTEX_SELECT : Colors.VERTEX);
     if (mode !== "VERTEX") return;
@@ -32,7 +31,6 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
   }
 
   function updateEdge(edge, value) {
-    console.log("Edge " + edge.obj.id);
     edge.selected = value;
     edge.obj.material.color.set((edge.selected) ? Colors.EDGE_SELECT : Colors.EDGE);
     if (mode !== "EDGE") return;
@@ -45,7 +43,6 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
   }
 
   function updateFace(face, value) {
-    console.log("Face " + face.obj.id);
     face.selected = value;
     face.obj.material.color.set((face.selected) ? Colors.FACE_SELECT : Colors.FACE);
     if (mode !== "FACE") return;
@@ -90,7 +87,7 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
       }
     },
     onkeydown: function () {
-      if(Input.mode("EDIT")){
+      if(Input.mode("EDIT") || Input.mode("BRUSH_SELECT") || Input.mode("BOX_SELECT")) {
         if(Input.action("SELECT_ALL")) {
           if(Input.action("SELECT_ALL_MOD")){
             if(Input.action("DESELECT_ALL_MOD")){

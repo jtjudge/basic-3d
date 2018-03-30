@@ -33,11 +33,26 @@ Basic3D.loadModule("BrushSelect", function (Input, Controls, Scene, Selection, T
 
   function spray() {
     var deselected = Input.action("BRUSH_DESELECT_MOD");
-    Geometry.getVertices().forEach(function (vert) {
-      var pos = Scene.getScreenPosition(vert.obj);
-      if (bounded(pos)) {
-        Selection.toggleSelection(vert, !deselected);
+    var targets = (Selection.mode("VERTEX")) ? Geometry.getVertices() :
+      (Selection.mode("EDGE")) ? Geometry.getEdges() :
+      (Selection.mode("FACE")) ? Geometry.getFaces() : [];
+    targets.forEach(function (target) {
+      var pos;
+      if (target.type === "VERTEX") {
+        pos = Scene.getScreenPosition(target.obj);
+      } else {
+        pos = new THREE.Vector3();
+        target.obj.geometry.vertices.forEach(function (v) { 
+          pos.add(v);
+        });
+        pos.multiplyScalar(1 / target.obj.geometry.vertices.length);
+        pos.project(Scene.camera());
+        pos.x *= canvas.width / 2;
+        pos.x += canvas.width / 2;
+        pos.y *= -canvas.height / 2;
+        pos.y += canvas.height / 2;
       }
+      if (bounded(pos)) Selection.toggleSelection(target, !deselected);
     });
   }
 
@@ -126,7 +141,7 @@ Basic3D.loadModule("BrushSelect", function (Input, Controls, Scene, Selection, T
   TipsDisplay.registerTip({
     mode: "BRUSH_SELECT",
     builder: function (get) {
-      return `${get("DELETE_VERTEX")} to delete`;
+      return `${get("DELETE_GEOM")} to delete`;
     },
     condition: function () {
       return Geometry.getSelected().length > 0;
