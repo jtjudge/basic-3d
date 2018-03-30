@@ -110,18 +110,6 @@ app.on("ready", function () {
       }
     });
     menu.submenu.push({
-      label: "Change Background Colors",
-      click: function () {
-        run("BackgroundColor");
-      }
-    });
-    menu.submenu.push({
-      label: "Change Grid Colors",
-      click: function () {
-        run("GridColor");
-      }
-    });
-    menu.submenu.push({
       label: "Change Brush Size",
       click: function () {
         run("ToggleBigBrush");
