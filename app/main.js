@@ -46,6 +46,24 @@ app.on("ready", function () {
       submenu: []
     };
     menu.submenu.push({
+      label: "Copy",
+      click: function () {
+        run("Copy");
+      }
+    });
+    menu.submenu.push({
+      label: "Cut",
+      click: function () {
+        run("Cut");
+      }
+    });
+    menu.submenu.push({
+      label: "Paste",
+      click: function () {
+        run("Paste");
+      }
+    });
+    menu.submenu.push({
       label: "Undo",
       click: function () {
         run("Undo");
