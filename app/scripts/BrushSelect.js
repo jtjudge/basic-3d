@@ -56,7 +56,7 @@ Basic3D.loadModule("BrushSelect", function (Input, Controls, Scene, Selection, T
 
   Input.register({
     onkeydown: function () {
-      if (Input.action("TOGGLE_BRUSH_SELECT")) {
+      if (Input.action("TOGGLE_BRUSH_SELECT") && !Input.action("READY_MOD")) {
         if (Input.mode("EDIT")) {
           Input.setMode("BRUSH_SELECT");
           Controls.disable(["orbit"]);

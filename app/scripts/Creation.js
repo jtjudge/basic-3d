@@ -52,7 +52,7 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
     },
     onkeydown: function () {
 
-      if (Input.action("TOGGLE_VERTEX_MODE")) {
+      if (Input.action("TOGGLE_VERTEX_MODE") && !Input.action("READY_MOD")) {
         
         if (Input.mode("VERTEX_XZ") || Input.mode("VERTEX_Y")) {
           Input.setMode("EDIT");
