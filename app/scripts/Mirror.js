@@ -27,15 +27,31 @@ Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, History
   }
 
   function mirrorVertex(v) {
+    var x = v.obj.position.x - center.x;
+    var y = v.obj.position.y - center.y;
+    var z = v.obj.position.z - center.z;
+
+    var mirrorVector = new THREE.Vector3(x, y, z);
     if(Input.mode("MIRROR_X")) {
-      v.obj.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+      mirrorVector.applyMatrix4(new THREE.Matrix4().makeScale(1, -1, -1));
+      //x = -x;
     }
     if(Input.mode("MIRROR_Y")) {
-      v.obj.applyMatrix(new THREE.Matrix4().makeScale(1, -1, 1));
+      mirrorVector.applyMatrix4(new THREE.Matrix4().makeScale(-1, 1, -1));
+      //y = -y;
     }
     if(Input.mode("MIRROR_Z")) {
-      v.obj.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1));
+      mirrorVector.applyMatrix4(new THREE.Matrix4().makeScale(-1, -1, 1));
+      //z = -z;
     }
+
+    //v.obj.position.x = mirrorVector.obj.position.x;
+    //v.obj.position.y = mirrorVector.obj.position.y;
+    //v.obj.position.z = mirrorVector.obj.position.z;
+
+    v.obj.position.x = mirrorVector.x + center.x;
+    v.obj.position.y = mirrorVector.y + center.y;
+    v.obj.position.z = mirrorVector.z + center.z;
 
     v.edges.forEach(function(e) {
       e.obj.geometry.verticesNeedUpdate = true;
