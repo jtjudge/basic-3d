@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Inset", function (Input, Geometry, Scene, History) {
+Basic3D.loadModule("Inset", function (Input, Geometry, Scene, History, TipsDisplay) {
 
   var move;
 
@@ -95,6 +95,17 @@ Basic3D.loadModule("Inset", function (Input, Geometry, Scene, History) {
     function translate(diff) {
       for (i = 0; i < 3; i++) {
         verts[i].obj.translateOnAxis(axes[i], diff);
+        var slide = new THREE.Vector3().copy(center);
+        slide.sub(verts[i].obj.position);
+        
+        if (slide.dot(axes[i]) < 0) {
+          verts[i].obj.position.copy(center);
+        }
+
+        if (slide.length() > axes[i].length()) {
+          verts[i].obj.position.copy(oldv[i].obj.position);
+        }
+
         edges.forEach(function (e) {
           e.obj.geometry.verticesNeedUpdate = true;
           e.obj.geometry.boundingSphere = null;
@@ -117,7 +128,6 @@ Basic3D.loadModule("Inset", function (Input, Geometry, Scene, History) {
   }
 
   Input.register({
-
     onmousedown: function () {
       if (Input.mode("INSET")) {
         if (Input.action("CONFIRM_INSET")) {
@@ -126,15 +136,13 @@ Basic3D.loadModule("Inset", function (Input, Geometry, Scene, History) {
         }
       }
     },
-
     onmousemove: function () {
       if (Input.mode("INSET")) {
         var dy = Scene.getMovementOnY();
         // To do: get movement on axis
-        move.translate(dy * -0.05);
+        move.translate(dy * -0.01);
       }
     },
-
     onkeydown: function () {
       if (Input.action("TOGGLE_INSET_MODE")) {
         if (Input.mode("INSET")) {
@@ -149,11 +157,39 @@ Basic3D.loadModule("Inset", function (Input, Geometry, Scene, History) {
         }
       }
     }
-
   });
 
   Input.addKeyBinding("KeyI", "TOGGLE_INSET_MODE", "Toggle Inset Mode");
   Input.addKeyBinding("LMB", "CONFIRM_INSET");
+
+  TipsDisplay.registerMode({
+    name: "INSET",
+    display: "Inset"
+  });
+
+  TipsDisplay.registerTip({
+    mode: "INSET",
+    builder: function (get) {
+      return `${get("TOGGLE_INSET_MODE")} to cancel`;
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "INSET",
+    builder: function (get) {
+      return `${get("CONFIRM_INSET")} to confirm`;
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("TOGGLE_INSET_MODE")} to inset`;
+    },
+    condition: function () {
+      return Geometry.getSelectedFaces().length === 1;
+    }
+  });
 
 
   return {};
