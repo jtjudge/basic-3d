@@ -1,5 +1,5 @@
 
-Basic3D.loadScript("ColorsMenu", function (Display, Controls, Colors, Geometry) {
+Basic3D.loadScript("ColorsMenu", function (Display, Controls, Colors, Geometry, Scene) {
 
   var script = function (data) {
 
@@ -36,6 +36,7 @@ Basic3D.loadScript("ColorsMenu", function (Display, Controls, Colors, Geometry) 
       Colors.apply(current);
       refresh();
       Geometry.refresh();
+      Scene.refreshColors();
     }
 
     function pickName(event) {
@@ -58,6 +59,7 @@ Basic3D.loadScript("ColorsMenu", function (Display, Controls, Colors, Geometry) 
       current.value = Colors[current.name];
       refresh();
       Geometry.refresh();
+      Scene.refreshColors();
     }
 
     // Color wheel

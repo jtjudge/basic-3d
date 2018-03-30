@@ -1,7 +1,7 @@
 
-Basic3D.loadModule("Scene", function (Input, Display) {
+Basic3D.loadModule("Scene", function (Input, Display, Colors) {
 
-  var renderer, width, height, camera, scene, axis;
+  var renderer, width, height, camera, scene, axis, grid;
 
   function setup() {
     width = window.innerWidth;
@@ -10,6 +10,7 @@ Basic3D.loadModule("Scene", function (Input, Display) {
     renderer = new THREE.WebGLRenderer();
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
     scene = new THREE.Scene();
+    scene.background = Colors.BACKGROUND;
     scene.add(camera);
     renderer.setSize(width, height);
 
@@ -17,10 +18,12 @@ Basic3D.loadModule("Scene", function (Input, Display) {
     camera.position.set(150, 100, 150);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     // Create grid
-    scene.add(new THREE.GridHelper(100, 10));
+    grid = new THREE.GridHelper(100, 10, Colors.GRID_CENTER, Colors.GRID);
+    scene.add(grid);
+
     // Add lighting
     scene.add(new THREE.AmbientLight(0x212223));
-    
+
     // Add to DOM
     var sceneDisplay = new Display.Scene(renderer.domElement);
     sceneDisplay.show();
@@ -56,6 +59,12 @@ Basic3D.loadModule("Scene", function (Input, Display) {
   });
 
   return {
+    refreshColors: function () {
+      scene.background = Colors.BACKGROUND;
+      scene.remove(grid);
+      grid = new THREE.GridHelper(100, 10, Colors.GRID_CENTER, Colors.GRID);
+      scene.add(grid);
+    },
     update: function () {
       renderer.render(scene, camera);
     },
