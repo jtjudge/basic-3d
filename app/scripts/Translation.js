@@ -76,6 +76,12 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
           if(Input.mode("TRANSLATE_Y")) Input.setMode("SCALE_Y");
           if(Input.mode("TRANSLATE_Z")) Input.setMode("SCALE_Z");
         }
+        if (Input.action("TOGGLE_MIRROR_MODE")) {
+          move.confirm();
+          if(Input.mode("TRANSLATE_X")) Input.setMode("MIRROR_X");
+          if(Input.mode("TRANSLATE_Y")) Input.setMode("MIRROR_Y");
+          if(Input.mode("TRANSLATE_Z")) Input.setMode("MIRROR_Z");
+        }
         if (Input.action("TOGGLE_TRANSLATE_X")) {
           Input.setMode("TRANSLATE_X");
         }

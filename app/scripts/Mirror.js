@@ -69,7 +69,81 @@ Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, Rotatio
           move.cancel();
           Input.setMode("EDIT");
         }
+        if(Input.action("TOGGLE_ROTATE_MODE")){
+          move.confirm();
+          if(Input.mode("MIRROR_X")) Input.setMode("ROTATE_X");
+          if(Input.mode("MIRROR_Y")) Input.setMode("ROTATE_Y");
+          if(Input.mode("MIRROR_Z")) Input.setMode("ROTATE_Z");
+        }
+        if(Input.action("TOGGLE_SCALE_MODE")){
+          move.confirm();
+          if(Input.mode("MIRROR_X")) Input.setMode("SCALE_X");
+          if(Input.mode("MIRROR_Y")) Input.setMode("SCALE_Y");
+          if(Input.mode("MIRROR_Z")) Input.setMode("SCALE_Z");
+        }
+        if(Input.action("TOGGLE_TRANSLATE_MODE")){
+          move.confirm();
+          if(Input.mode("MIRROR_X")) Input.setMode("TRANSLATE_X");
+          if(Input.mode("MIRROR_Y")) Input.setMode("TRANSLATE_Y");
+          if(Input.mode("MIRROR_Z")) Input.setMode("TRANSLATE_Z");
+        }
+        if(Input.action("TOGGLE_MIRROR_X")){
+          Input.setMode("MIRROR_X");
+          setAxis();
+          Geometry.getSelected().forEach(function(v) {
+            mirrorVertex(v);
+          });
+        }
+        if(Input.action("TOGGLE_MIRROR_Y")){
+          Input.setMode("MIRROR_Y");
+          setAxis();
+          Geometry.getSelected().forEach(function(v) {
+            mirrorVertex(v);
+          });
+        }
+        if(Input.action("TOGGLE_MIRROR_Z")){
+          Input.setMode("MIRROR_Z");
+          setAxis();
+          Geometry.getSelected().forEach(function(v) {
+            mirrorVertex(v);
+          });
+        }
+        setAxis();
       }
+    },
+
+    onkeyup: function() {
+      if(active(Input.mode())) setAxis();
+    },
+
+    onmode: function() {
+      if(active(Input.mode())) {
+        if(move === undefined || move.done()) {
+          move = History.startMove(Geometry.getSelected());
+        }
+        setAxis();
+      }
+    }
+
+  });
+
+  Input.addKeyBinding("KeyM", "TOGGLE_MIRROR_MODE", "Toggle Mirror Mode");
+  Input.addKeyBinding("Space", "MIRROR_WORLD_MOD");
+  Input.addKeyBinding("KeyX", "TOGGLE_MIRROR_X");
+  Input.addKeyBinding("KeyY", "TOGGLE_MIRROR_Y");
+  Input.addKeyBinding("KeyZ", "TOGGLE_MIRROR_Z");
+  Input.addKeyBinding("LMB", "MIRROR_CONFIRM");
+
+  TipsDisplay.registerMode({
+    name: "MIRROR",
+    mapped: ["MIRROR_X", "MIRROR_Y", "MIRROR_Z"],
+    display: "Mirror"
+  });
+
+  TipsDisplay.registerTip({
+    mode: "MIRROR",
+    builder: function(get) {
+      return `${get("TOGGLE_MIRROR_MODE")} to cancel`;
     }
   })
 
