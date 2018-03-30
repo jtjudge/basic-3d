@@ -64,39 +64,79 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
 
       if (!(Input.mode("EDIT") || Input.mode("BRUSH_SELECT") || Input.mode("BOX_SELECT"))) return;
 
-      if (Input.action("DELETE_VERTEX") && !Input.action("READY_MOD")) {
+      if (Input.action("DELETE_GEOM") && !Input.action("READY_MOD")) {
 
-        var selected = Geometry.getSelected();
-        var move = {
-          undo: function () {
-            selected.forEach(function (v) {
-              Geometry.addVertex(v);
-              v.edges.forEach(function(e) {
+        if (Selection.mode("VERTEX")) {
+          var selected = Geometry.getSelected();
+          var move = {
+            undo: function () {
+              selected.forEach(function (v) {
+                Geometry.addVertex(v);
+                v.edges.forEach(function(e) {
+                  Geometry.addEdge(e);
+                  Selection.toggleSelection(e, true);
+                });
+                v.faces.forEach(function(f) {
+                  Geometry.addFace(f);
+                  Selection.toggleSelection(f, true);
+                });
+              });
+            },
+            redo: function () {
+              selected.forEach(function (v) {
+                Geometry.removeVertex(v);
+                v.edges.forEach(function(e) {
+                  Geometry.removeEdge(e);
+                  Selection.toggleSelection(e, false);
+                });
+                v.faces.forEach(function(f) {
+                  Geometry.removeFace(f);
+                  Selection.toggleSelection(f, false);
+                });
+              });
+            }
+          };
+          move.redo();
+          History.addMove(move);
+        }
+        
+        if (Selection.mode("EDGE")) {
+          var selected = Geometry.getSelectedEdges();
+          var move = {
+            undo: function () {
+              selected.forEach(function (e) {
                 Geometry.addEdge(e);
-                Selection.toggleSelection(e, true);
+                e.faces().forEach(function (f) {
+                  Geometry.addFace(f);
+                });
               });
-              v.faces.forEach(function(f) {
-                Geometry.addFace(f);
-                Selection.toggleSelection(f, true);
-              });
-            });
-          },
-          redo: function () {
-            selected.forEach(function (v) {
-              Geometry.removeVertex(v);
-              v.edges.forEach(function(e) {
+            },
+            redo: function () {
+              selected.forEach(function (e) {
                 Geometry.removeEdge(e);
-                Selection.toggleSelection(e, false);
+                e.faces().forEach(function (f) {
+                  Geometry.removeFace(f);
+                });
               });
-              v.faces.forEach(function(f) {
-                Geometry.removeFace(f);
-                Selection.toggleSelection(f, false);
-              });
-            });
-          }
-        };
-        move.redo();
-        History.addMove(move);
+            }
+          };
+          move.redo();
+          History.addMove(move);
+        }
+        
+        if (Selection.mode("FACE")) {
+          var selected = Geometry.getSelectedFaces();
+          var move = {
+            undo: function () {
+              selected.forEach(Geometry.addFace);
+            },
+            redo: function () {
+              selected.forEach(Geometry.removeFace);
+            }
+          };
+          move.redo();
+          History.addMove(move);
+        }
 
       } else if (Input.action("PLACE_EDGE")) {
 
@@ -199,7 +239,7 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
   Input.addKeyBinding("LMB", "PLACE_VERTEX");
   Input.addKeyBinding("KeyE", "PLACE_EDGE");
   Input.addKeyBinding("KeyF", "PLACE_FACE");
-  Input.addKeyBinding("KeyX", "DELETE_VERTEX");
+  Input.addKeyBinding("KeyX", "DELETE_GEOM");
 
   TipsDisplay.registerMode({
     name: "VERTEX",
@@ -240,7 +280,7 @@ Basic3D.loadModule("Creation", function (Input, Scene, Colors, Geometry, Selecti
   TipsDisplay.registerTip({
     mode: "EDIT",
     builder: function (get) {
-      return `${get("DELETE_VERTEX")} to delete`;
+      return `${get("DELETE_GEOM")} to delete`;
     },
     condition: function () {
       return Geometry.getSelected().length > 0;
