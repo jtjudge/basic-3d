@@ -107,6 +107,12 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, Selection, Hist
           if(Input.mode("ROTATE_Y")) Input.setMode("SCALE_Y");
           if(Input.mode("ROTATE_Z")) Input.setMode("SCALE_Z");
         }
+        if (Input.action("TOGGLE_MIRROR_MODE")) {
+          move.confirm();
+          if(Input.mode("ROTATE_X")) Input.setMode("MIRROR_X");
+          if(Input.mode("ROTATE_Y")) Input.setMode("MIRROR_Y");
+          if(Input.mode("ROTATE_Z")) Input.setMode("MIRROR_Z");
+        }
         if (Input.action("TOGGLE_ROTATE_X")) {
           Input.setMode("ROTATE_X");
         }
@@ -180,7 +186,7 @@ Basic3D.loadModule("Rotation", function (Input, Scene, Geometry, Selection, Hist
     mode: "EDIT",
     builder: function(get) {
       return `${get("TOGGLE_ROTATE_MODE")} to rotate`;
-    }, 
+    },
     condition: function() {
       return Geometry.getSelected().length > 0;
     }

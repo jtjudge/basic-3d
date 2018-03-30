@@ -45,30 +45,30 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, Selection, History
     onmousemove: function () {
       if (Input.mode("SCALE_X")) {
         Geometry.getSelected().forEach(function (v) {
-          var val = (Scene.getMovementOnXZ().diff.x > 0) ? 
-            (.99 * (v.obj.position.x - center.x) - (v.obj.position.x - center.x)) : 
+          var val = (Scene.getMovementOnXZ().diff.x > 0) ?
+            (.99 * (v.obj.position.x - center.x) - (v.obj.position.x - center.x)) :
             (1.01 * (v.obj.position.x - center.x) - (v.obj.position.x - center.x));
-          val = (Scene.getMovementOnXZ().diff.x == 0) ? 0 : val; 
+          val = (Scene.getMovementOnXZ().diff.x == 0) ? 0 : val;
           var diff = new THREE.Vector3(val, 0, 0);
           scaleVertex(v, diff);
         });
       }
       if (Input.mode("SCALE_Y")) {
         Geometry.getSelected().forEach(function (v) {
-          var val = (Scene.getMovementOnY() > 0) ? 
-            (.99 * (v.obj.position.y - center.y) - (v.obj.position.y - center.y)) : 
+          var val = (Scene.getMovementOnY() > 0) ?
+            (.99 * (v.obj.position.y - center.y) - (v.obj.position.y - center.y)) :
             (1.01 * (v.obj.position.y - center.y) - (v.obj.position.y - center.y));
-          val = (Scene.getMovementOnY() == 0) ? 0 : val; 
+          val = (Scene.getMovementOnY() == 0) ? 0 : val;
           var diff = new THREE.Vector3(0, val, 0);
           scaleVertex(v, diff);
         });
       }
       if (Input.mode("SCALE_Z")) {
         Geometry.getSelected().forEach(function (v) {
-          var val = (Scene.getMovementOnXZ().diff.z > 0) ? 
-            (.99 * (v.obj.position.z - center.z) - (v.obj.position.z - center.z)) : 
+          var val = (Scene.getMovementOnXZ().diff.z > 0) ?
+            (.99 * (v.obj.position.z - center.z) - (v.obj.position.z - center.z)) :
             (1.01 * (v.obj.position.z - center.z) - (v.obj.position.z - center.z));
-          val = (Scene.getMovementOnXZ().diff.z == 0) ? 0 : val; 
+          val = (Scene.getMovementOnXZ().diff.z == 0) ? 0 : val;
           var diff = new THREE.Vector3(0, 0, val);
           scaleVertex(v, diff);
         });
@@ -99,6 +99,12 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, Selection, History
           if(Input.mode("SCALE_X")) Input.setMode("ROTATE_X");
           if(Input.mode("SCALE_Y")) Input.setMode("ROTATE_Y");
           if(Input.mode("SCALE_Z")) Input.setMode("ROTATE_Z");
+        }
+        if (Input.action("TOGGLE_MIRROR_MODE")) {
+          move.confirm();
+          if(Input.mode("SCALE_X")) Input.setMode("MIRROR_X");
+          if(Input.mode("SCALE_Y")) Input.setMode("MIRROR_Y");
+          if(Input.mode("SCALE_Z")) Input.setMode("MIRROR_Z");
         }
         if (Input.action("TOGGLE_SCALE_X")) {
           Input.setMode("SCALE_X");
@@ -173,7 +179,7 @@ Basic3D.loadModule("Scale", function (Input, Scene, Geometry, Selection, History
     mode: "EDIT",
     builder: function(get) {
       return `${get("TOGGLE_SCALE_MODE")} to scale`;
-    }, 
+    },
     condition: function() {
       return Geometry.getSelected().length > 0;
     }
