@@ -1,29 +1,7 @@
 
 Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDisplay, EditMenu) {
 
-  function updateConnected(vert) {
-    vert.edges.forEach(function (e) {
-      e.selected = e.v1.selected && e.v2.selected;
-      e.obj.material.color.set((e.selected) ? Colors.EDGE_SELECT : Colors.EDGE);
-    });
-    vert.faces.forEach(function (f) {
-      f.selected = f.v1.selected && f.v2.selected && f.v3.selected;
-      f.obj.material.color.set((f.selected) ? Colors.FACE_SELECT : Colors.FACE);
-    });
-  }
-
-  function updateVertex(target, value) {
-    target.selected = value;
-    target.obj.material.color.set((value) ? Colors.VERTEX_SELECT : Colors.VERTEX);
-    updateConnected(target);
-  }
-
-  function updateTarget(target, value) {
-    if (!target.v1) updateVertex(target, value);
-    if (target.v1) updateVertex(target.v1, value);
-    if (target.v2) updateVertex(target.v2, value);
-    if (target.v3) updateVertex(target.v3, value);
-  }
+  var mode = "VERTEX";
 
   function updateAll(value) {
     Geometry.getVertices().forEach(function (vertex) {
@@ -40,6 +18,51 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
     });
   }
 
+  function updateVertex(vert, value) {
+    console.log("Vertex " + vert.obj.id);
+    vert.selected = value;
+    vert.obj.material.color.set((vert.selected) ? Colors.VERTEX_SELECT : Colors.VERTEX);
+    if (mode !== "VERTEX") return;
+    vert.edges.forEach(function (e) {
+      updateEdge(e, e.vertices().every(function (v) { return v.selected; }));
+    });
+    vert.faces.forEach(function (f) {
+      updateFace(f, f.vertices().every(function (v) { return v.selected; }));
+    });
+  }
+
+  function updateEdge(edge, value) {
+    console.log("Edge " + edge.obj.id);
+    edge.selected = value;
+    edge.obj.material.color.set((edge.selected) ? Colors.EDGE_SELECT : Colors.EDGE);
+    if (mode !== "EDGE") return;
+    edge.vertices().forEach(function (v) {
+      updateVertex(v, v.edges.some(function (e) { return e.selected; }));
+    });
+    edge.faces().forEach(function (f) {
+      updateFace(f, f.edges().every(function (e) { return e.selected; }));
+    });
+  }
+
+  function updateFace(face, value) {
+    console.log("Face " + face.obj.id);
+    face.selected = value;
+    face.obj.material.color.set((face.selected) ? Colors.FACE_SELECT : Colors.FACE);
+    if (mode !== "FACE") return;
+    face.vertices().forEach(function (v) {
+      updateVertex(v, v.faces.some(function (f) { return f.selected; }));
+    });
+    face.edges().forEach(function (e) {
+      updateEdge(e, e.faces().some(function (f) { return f.selected; }));
+    });
+  }
+
+  function updateTarget(target, value) {
+    if (target.type === "VERTEX") updateVertex(target, value);
+    if (target.type === "EDGE") updateEdge(target, value);
+    if (target.type === "FACE") updateFace(target, value);
+  }
+
   function performSelection(arr) {
     var targets = Scene.intersectObjects(
       arr.map(function (o) {
@@ -50,25 +73,20 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
         return o.obj.id === obj.object.id;
       });
     });
-    if(targets.length > 0) {
-      if (Input.action("MULT_SELECT_MOD")) {
-        updateTarget(targets[0], !targets[0].selected);
-      } else {
-        updateAll(false);
-        updateTarget(targets[0], !targets[0].selected);
-      }
-      return true;
+    if (!Input.action("MULT_SELECT_MOD")) {
+      updateAll(false);
     }
-    return false;
+    if (targets.length > 0) {
+      updateTarget(targets[0], !targets[0].selected);
+    }
   }
 
   Input.register({
     onmousedown: function () {
       if (Input.mode("EDIT") && Input.action("SELECT_GEOM")) {
-        if(performSelection(Geometry.getVertices())) return;
-        if(performSelection(Geometry.getEdges())) return;
-        if(performSelection(Geometry.getFaces())) return;
-        if (!Input.action("MULT_SELECT_MOD")) updateAll(false);
+        if (mode === "VERTEX") performSelection(Geometry.getVertices());
+        if (mode === "EDGE") performSelection(Geometry.getEdges());
+        if (mode === "FACE") performSelection(Geometry.getFaces());
       }
     },
     onkeydown: function () {
@@ -82,12 +100,16 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
             }
           }
         }
+        if (Input.action("SWAP_MODE")) {
+          var modes = ["VERTEX", "EDGE", "FACE"];
+          mode = modes[(modes.indexOf(mode) + 1) % 3];
+        }
       }
     }
   });
 
   Input.addKeyBinding("LMB", "SELECT_GEOM");
-  Input.addKeyBinding("KeyA", "SELECT_ALL")
+  Input.addKeyBinding("KeyA", "SELECT_ALL");
   Input.addKeyBinding("ShiftLeft", "MULT_SELECT_MOD");
   Input.addKeyBinding("ShiftRight", "MULT_SELECT_MOD");
   Input.addKeyBinding("ControlLeft", "SELECT_ALL_MOD");
@@ -95,10 +117,19 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
   Input.addKeyBinding("ShiftLeft", "DESELECT_ALL_MOD");
   Input.addKeyBinding("ShiftRight", "DESELECT_ALL_MOD");
 
+  Input.addKeyBinding("KeyN", "SWAP_MODE", "Cycle Select Mode");
+
   TipsDisplay.registerMode({
     name: "EDIT",
     display: "Edit"
   });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function (get) {
+      return `${get("SWAP_MODE")} to cycle select mode`;
+    }
+  })
 
   EditMenu.registerComponent(function () {
     var selectMenu = document.createElement("div");
@@ -116,17 +147,20 @@ Basic3D.loadModule("Selection", function (Input, Scene, Colors, Geometry, TipsDi
       name: "SelectionMenu",
       element: selectMenu,
       update: function () {
-        var num = Geometry.getSelected().length;
-        if (num === 0) {
-          content.style.display = "none";
-          content.innerHTML = "";
+        var verts = Geometry.getSelected().map(function (v) { return v.obj.id; });
+        var edges = Geometry.getSelectedEdges().map(function (e) { return e.obj.id; });
+        var faces = Geometry.getSelectedFaces().map(function (f) { return f.obj.id; });
+        if (verts.length === 0) {
+          content.innerHTML = `<div>${mode} mode</div>`;
         } else {
           var center = Geometry.getCenter();
           var position = `(${center.x.toFixed(1)}, ${center.y.toFixed(1)}, ${center.y.toFixed(1)})`;
           content.innerHTML = 
-          `<div>${num} vertices</div>
-          <div>${position}</div>`;
-          content.style.display = "block";
+          `<div>${verts.length} vertices (${verts})</div>
+          <div>${edges.length} edges (${edges})</div>
+          <div>${faces.length} faces (${faces})</div>
+          <div>${position}</div>
+          <div>${mode} mode</div>`;
         }
       }
     };

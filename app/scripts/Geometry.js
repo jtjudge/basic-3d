@@ -15,6 +15,7 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         color: Colors.VERTEX
       });
       var vertex = {
+        type: "VERTEX",
         obj: new THREE.Points(geometry, material),
         selected: false,
         edges: [],
@@ -32,9 +33,16 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         color: Colors.EDGE
       });
       var edge = {
+        type: "EDGE",
         obj: new THREE.Line(geometry, material),
         selected: false,
-        v1: v1, v2: v2
+        v1: v1, v2: v2,
+        vertices: function () {
+          return [ v1, v2 ];
+        },
+        faces: function () {
+          return v1.faces.filter(function (f) { return v2.faces.includes(f); });
+        }
       };
       return edge;
     },
@@ -52,9 +60,24 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         color: Colors.FACE
       });
       var face = {
+        type: "FACE",
         obj: new THREE.Mesh(geometry, material),
         selected: false,
-        v1: v1, v2: v2, v3: v3
+        v1: v1, v2: v2, v3: v3,
+        vertices: function () {
+          return [ v1, v2, v3 ];
+        },
+        edges: function () {
+          return v1.edges.filter(function (e) {
+            return v2.edges.includes(e);
+          })
+          .concat(v2.edges.filter(function (e) {
+            return v3.edges.includes(e);
+          }))
+          .concat(v3.edges.filter(function (e) {
+            return v1.edges.includes(e);
+          }));
+        }
       };
       return face;
     },
@@ -149,6 +172,12 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
     getSelected: function () {
       return vertices.filter(function (v) {
         return v.selected;
+      });
+    },
+
+    getSelectedEdges: function () {
+      return edges.filter(function (e) {
+        return e.selected;
       });
     },
 
