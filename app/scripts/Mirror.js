@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, Rotation, History, TipsDisplay, EditMenu) {
+Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, History, TipsDisplay, EditMenu) {
 
   var center;
   var move;
@@ -27,14 +27,14 @@ Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, Rotatio
   }
 
   function mirrorVertex(v) {
-    if(Input.mode("MIRROR_X") {
-      v.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+    if(Input.mode("MIRROR_X")) {
+      v.obj.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
     }
     if(Input.mode("MIRROR_Y")) {
-      v.applyMatrix(new THREE.Matrix4().makeScale(1, -1, 1));
+      v.obj.applyMatrix(new THREE.Matrix4().makeScale(1, -1, 1));
     }
     if(Input.mode("MIRROR_Z")) {
-      v.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1));
+      v.obj.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1));
     }
 
     v.edges.forEach(function(e) {
@@ -145,6 +145,68 @@ Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, Rotatio
     builder: function(get) {
       return `${get("TOGGLE_MIRROR_MODE")} to cancel`;
     }
-  })
+  });
 
-})
+  TipsDisplay.registerTip({
+    mode: "MIRROR",
+    builder: function(get) {
+      return `${get("MIRROR_CONFIRM")} to confirm`;
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "MIRROR",
+    builder: function(get) {
+      var x = get("TOGGLE_MIRROR_X");
+      var y = get("TOGGLE_MIRROR_Y");
+      var z = get("TOGGLE_MIRROR_Z");
+      return `${x}, ${y}, or ${z} to swap axis`;
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "MIRROR",
+    builder: function(get) {
+      return `${get("MIRROR_WORLD_MOD")} for origin`
+    },
+    condition: function() {
+      return !Input.action("MIRROR_WORLD_MOD");
+    }
+  });
+
+  TipsDisplay.registerTip({
+    mode: "EDIT",
+    builder: function(get) {
+      return `${get("TOGGLE_MIRROR_MODE")} to mirror`;
+    },
+    condition: function() {
+      return Geometry.getSelected().length > 0;
+    }
+  });
+
+  EditMenu.registerComponent(function() {
+    var button = document.createElement("div");
+    button.className = "btn edit-menu-btn";
+    button.innerHTML = "Mirror";
+    button.onclick = function() {
+      console.log("MIRROR");
+    };
+
+    return {
+      parent: "TransformMenu",
+      name: "MirrorButton",
+      element: button,
+      update: function() {
+        if(Geometry.getSelected().length > 0) {
+          button.style.display = "block";
+        }
+        else {
+          button.style.display = "none";
+        }
+      }
+    };
+  });
+
+  return{};
+
+});
