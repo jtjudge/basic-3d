@@ -40,7 +40,6 @@ Basic3D.loadModule("TipsDisplay", function (Input, Bindings, Display, EditMenu) 
     }
 
     return {
-      order: -1,
       name: "TipsDisplay",
       element: menu,
       update: function () {
@@ -55,15 +54,14 @@ Basic3D.loadModule("TipsDisplay", function (Input, Bindings, Display, EditMenu) 
         });
         shown.forEach(function(obj, index) {
           var txt = obj.builder(function (actionCode) {
-            return Bindings.getBinding(actionCode).key;
+            return Bindings.getBinding(actionCode).keyDisplay;
           });
           html += buildTip(txt, index);
         });
-        html += buildTip(`${Bindings.getBinding("TOGGLE_TIPS").key} to hide tips`, shown.length);
+        html += buildTip(`${Bindings.getBinding("TOGGLE_TIPS").keyDisplay} to hide tips`, shown.length);
         content.innerHTML = html;
         title.innerHTML = 
-        `<div class="edit-menu-tips-title">Tips</div>
-        <div class="edit-menu-tips-mode">${mode.display} Mode</div>`;
+        `<div class="edit-menu-tips-mode">${mode.display} Mode</div>`;
       }
     };
   });

@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, History, TipsDisplay, EditMenu) {
+Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
 
   var SPEED = 0.05;
 
@@ -152,29 +152,6 @@ Basic3D.loadModule("Translation", function (Input, Scene, Geometry, Selection, H
     condition: function() {
       return Geometry.getSelected().length > 0;
     }
-  });
-
-  EditMenu.registerComponent(function () {
-
-    var button = document.createElement("div");
-    button.className = "btn edit-menu-btn";
-    button.innerHTML = "Translate";
-    button.onclick = function () {
-      console.log("TRANSLATE");
-    };
-
-    return {
-      parent: "TransformMenu",
-      name: "TranslateButton",
-      element: button,
-      update: function () {
-        if (Geometry.getSelected().length > 0) {
-          button.style.display = "block";
-        } else {
-          button.style.display = "none";
-        }
-      }
-    };
   });
 
   return {

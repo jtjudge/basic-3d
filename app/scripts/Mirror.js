@@ -1,5 +1,5 @@
 
-Basic3D.loadModule("Mirror", function (Input, Scene, Geometry, Selection, History, TipsDisplay, EditMenu) {
+Basic3D.loadModule("Mirror", function (Input, Scene, Geometry, Selection, History, TipsDisplay) {
 
   var center, move, mx = 1, my = 1, mz = 1;
 
@@ -181,29 +181,6 @@ Basic3D.loadModule("Mirror", function (Input, Scene, Geometry, Selection, Histor
     condition: function () {
       return Geometry.getSelected().length > 0;
     }
-  });
-
-  EditMenu.registerComponent(function () {
-    var button = document.createElement("div");
-    button.className = "btn edit-menu-btn";
-    button.innerHTML = "Mirror";
-    button.onclick = function () {
-      console.log("MIRROR");
-    };
-
-    return {
-      parent: "TransformMenu",
-      name: "MirrorButton",
-      element: button,
-      update: function () {
-        if (Geometry.getSelected().length > 0) {
-          button.style.display = "block";
-        }
-        else {
-          button.style.display = "none";
-        }
-      }
-    };
   });
 
   return {};

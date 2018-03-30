@@ -18,23 +18,6 @@ Basic3D.loadModule("EditMenu", function (Input, Display) {
     }
   });
 
-  registerComponent(function () {
-    var transformMenu = document.createElement("div");
-    transformMenu.className = "edit-menu-section";
-
-    var label = document.createElement("div");
-    label.innerHTML = "Transform";
-    label.className = "edit-menu-label";
-
-    transformMenu.appendChild(label);
-
-    return {
-      name: "TransformMenu",
-      element: transformMenu,
-      update: function () {}
-    }
-  });
-
   function addComp(comp) {
     components.push(comp);
     if (comp.parent === undefined) {
@@ -57,8 +40,8 @@ Basic3D.loadModule("EditMenu", function (Input, Display) {
 
   window.onload = function() {
     menu = new Display.Menu();
-    menu.align({x: "left", y: "top"});
-    menu.setCSS({marginTop: "10px", marginLeft: "10px"});
+    menu.align({ x: "left", y: "top" });
+    menu.setCSS({ borderRadius: "0 0 10px 0" });
     while(queue.length > 0) {
       addComp(queue.shift()());
     }

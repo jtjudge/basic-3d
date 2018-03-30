@@ -32,6 +32,13 @@ Basic3D.loadModule("Bindings", function () {
     });
   }
 
+  function getDisplay(code) {
+    if (code.indexOf("Key") > -1) return code.replace("Key", "");
+    if (code.indexOf("Left") > -1) return code.replace("Left", "");
+    if (code.indexOf("Right") > -1) return code.replace("Right", "");
+    return code;
+  }
+
   function addBinding(keyCode, actionCode, invert) {
     var index = getBindingIndex(keyCode, actionCode);
     if (index > -1) {
@@ -43,6 +50,7 @@ Basic3D.loadModule("Bindings", function () {
     }
     bindings.push({
       key: keyCode,
+      keyDisplay: getDisplay(keyCode),
       action: action,
       invert: (invert !== undefined)
     });
