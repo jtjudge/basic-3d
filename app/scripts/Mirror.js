@@ -2,6 +2,7 @@
 Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, Rotation, History, TipsDisplay, EditMenu) {
 
   var center;
+  var move;
 
   function active(mode) {
     return mode === "MIRROR_X"
@@ -25,6 +26,25 @@ Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, Rotatio
     }
   }
 
+  function mirrorVertex(v) {
+    if(Input.mode("MIRROR_X") {
+      v.applyMatrix(new THREE.Matrix4().makeScale(-1, 1, 1));
+    }
+    if(Input.mode("MIRROR_Y")) {
+      v.applyMatrix(new THREE.Matrix4().makeScale(1, -1, 1));
+    }
+    if(Input.mode("MIRROR_Z")) {
+      v.applyMatrix(new THREE.Matrix4().makeScale(1, 1, -1));
+    }
+
+    v.edges.forEach(function(e) {
+      e.obj.geometry.verticesNeedUpdate = true;
+    });
+    v.faces.forEach(function(f) {
+      f.obj.geometry.verticesNeedUpdate = true;
+    });
+  }
+
   Input.register({
     onmousedown: function() {
       if(active(Input.mode()) && Input.action("MIRROR_CONFIRM")) {
@@ -39,8 +59,15 @@ Basic3D.loadModule("Mirror", function(Input, Scene, Geometry, Selection, Rotatio
           if(Geometry.getSelected().length > 0) {
             move = History.startMove(Geometry.getSelected());
             //This is designed to not mirror immediately after toggling mirror mode
-            Input.setMode("MIRROR_MODE");
+            Input.setMode("MIRROR_X");
+            setAxis();
           }
+        }
+      }
+      else if(active(Input.mode())) {
+        if(Input.action("TOGGLE_MIRROR_MODE")){
+          move.cancel();
+          Input.setMode("EDIT");
         }
       }
     }
