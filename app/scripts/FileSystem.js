@@ -5,6 +5,7 @@ Basic3D.loadModule("FileSystem", function (Geometry, History) {
 
   return {
     save: function (name) {
+      if (name.length === 0) return;
       console.log("Saving " + name);
 
       var content = "START_BASIC3D\n";
@@ -36,8 +37,10 @@ Basic3D.loadModule("FileSystem", function (Geometry, History) {
       fs.writeFile(name, content, function () { });
     },
     load: function (name) {
+      if (name.length === 0) return;
       console.log("Loading " + name);
       fs.readFile(name, "utf-8", function (err, data) {
+        if (err) return;
         if (data.indexOf("START_BASIC3D") !== 0) {
           alert("Could not read Basic 3D file " + name);
         }
@@ -49,7 +52,9 @@ Basic3D.loadModule("FileSystem", function (Geometry, History) {
         var verts, edges, faces;
 
         verts = data.slice(vertStart + 9, edgeStart - 1)
-        .split("\n").map(function (v) {
+        .split("\n").filter(function (v) {
+          return v.split(" ").length === 4;
+        }).map(function (v) {
           var parts = v.split(" ");
           return {
             id: parts[0] * 1,
@@ -59,8 +64,11 @@ Basic3D.loadModule("FileSystem", function (Geometry, History) {
           };
         });
         edges = data.slice(edgeStart + 6, faceStart - 1)
-        .split("\n").map(function (e) {
+        .split("\n").filter(function (e) {
+          return e.split(" ").length === 3;
+        }).map(function (e) {
           var parts = e.split(" ");
+          console.log(parts);
           return {
             id: parts[0] * 1,
             v1: parts[1] * 1,
@@ -68,7 +76,9 @@ Basic3D.loadModule("FileSystem", function (Geometry, History) {
           };
         });
         faces = data.slice(faceStart + 6, fileEnd - 1)
-        .split("\n").map(function (f) {
+        .split("\n").filter(function (f) {
+          return f.split(" ").length === 4;
+        }).map(function (f) {
           var parts = f.split(" ");
           return {
             id: parts[0] * 1,
