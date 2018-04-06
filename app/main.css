@@ -103,7 +103,11 @@ body {
 }
 
 .edit-menu-btn {
+  border: 1px solid white;
+  border-radius: 5px;
   background-color: darkslategray;
+  padding: 0 10px;
+  margin-left: 30px;
 }
 
 .edit-menu-label {
@@ -115,6 +119,11 @@ body {
 		1px -1px 0 #000,
 		-1px 1px 0 #000,
 		1px 1px 0 #000;
+}
+
+.edit-menu-container {
+  display: flex;
+  justify-content: space-between;
 }
 
 .edit-menu-section {

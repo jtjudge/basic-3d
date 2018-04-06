@@ -28,13 +28,15 @@ app.on("ready", function () {
 
   var saveClick = function () {
     dialog.showSaveDialog(function (filename) {
-      run("SaveFile", { name: filename });
+      var name = filename === undefined ? "" : filename;
+      run("SaveFile", { name: name });
     });
   };
 
   var loadClick = function () {
     dialog.showOpenDialog(function (filenames) {
-      run("LoadFile", { name: filenames[0] });
+      var name = filenames === undefined ? "" : filenames[0];
+      run("LoadFile", { name: name });
     });
   };
 

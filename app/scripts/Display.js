@@ -19,7 +19,8 @@ Basic3D.loadModule("Display", function () {
         wrap.style.visibility = "hidden";
       },
       toggle: function () {
-        if(wrap.style.visibility === "hidden") {
+        if(wrap.style.visibility === "" 
+        || wrap.style.visibility === "hidden") {
           wrap.style.visibility = "visible";
         } else {
           wrap.style.visibility = "hidden";
