@@ -1,13 +1,13 @@
 const electron = require("electron");
 const url = require("url");
 const path = require("path");
+const fs = require('fs'); 
 
-const { app, BrowserWindow, ipcMain } = electron;
-const Menu = electron.Menu;
-
-process.env.NODE_ENV = "development";
+const { app, BrowserWindow, ipcMain, Menu, dialog } = electron;
 
 var mainWindow;
+
+process.env.NODE_ENV = "development";
 
 app.on("ready", function () {
 
@@ -26,11 +26,31 @@ app.on("ready", function () {
     });
   };
 
+  var saveClick = function () {
+    dialog.showSaveDialog(function (filename) {
+      run("SaveFile", { name: filename });
+    });
+  };
+
+  var loadClick = function () {
+    dialog.showOpenDialog(function (filenames) {
+      run("LoadFile", { name: filenames[0] });
+    });
+  };
+
   var file = (function () {
     var menu = {
       label: "File",
       submenu: []
     };
+    menu.submenu.push({
+      label: "Save",
+      click: saveClick
+    });
+    menu.submenu.push({
+      label: "Load",
+      click: loadClick
+    });
     menu.submenu.push({
       label: "Quit",
       click: function () {
