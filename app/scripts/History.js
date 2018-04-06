@@ -43,6 +43,10 @@ Basic3D.loadModule("History", function (Input) {
   Input.addKeyBinding("KeyY", "HIST_REDO");
 
   return {
+    clear: function () {
+      undoHistory = [];
+      redoHistory = [];
+    },
     addMove: function (move) {
       redoHistory.length = 0;
       undoHistory.push(move);

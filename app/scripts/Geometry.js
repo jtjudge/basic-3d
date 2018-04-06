@@ -225,6 +225,21 @@ Basic3D.loadModule("Geometry", function (Scene, Colors) {
         face.obj.material.color.set(
           (face.selected) ? Colors.FACE_SELECT : Colors.FACE);
       });
+    },
+
+    clear: function () {
+      vertices.forEach(function (v) {
+        Scene.remove(v.obj);
+      });
+      vertices = [];
+      edges.forEach(function (e) {
+        Scene.remove(e.obj);
+      });
+      edges = [];
+      faces.forEach(function (f) {
+        Scene.remove(f.obj);
+      });
+      faces = [];
     }
 
   };
